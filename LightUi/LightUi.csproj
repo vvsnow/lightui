@@ -1,0 +1,53 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>LightUi</RootNamespace>
+    <AssemblyName>LightUi</AssemblyName>
+    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Using Include="System.Windows" />
+    <Using Include="System.Windows.Controls" />
+    <Using Include="System.Windows.Controls.Primitives" />
+    <Using Include="System.Windows.Media" />
+    <Using Include="System.Windows.Media.Imaging" />
+    <Using Include="System.Windows.Input" />
+    <Using Include="System.Windows.Shapes" />
+    <Using Include="System.Windows.Threading" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Windows.Markup.XmlnsPrefixAttribute">
+      <_Parameter1>http://schemas.lightui.com/2019</_Parameter1>
+      <_Parameter2>ui</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Windows.Markup.XmlnsDefinitionAttribute">
+      <_Parameter1>http://schemas.lightui.com/2019</_Parameter1>
+      <_Parameter2>LightUi</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Windows.Markup.XmlnsDefinitionAttribute">
+      <_Parameter1>http://schemas.lightui.com/2019</_Parameter1>
+      <_Parameter2>LightUi.Controls</_Parameter2>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Windows.Markup.XmlnsDefinitionAttribute">
+      <_Parameter1>http://schemas.lightui.com/2019</_Parameter1>
+      <_Parameter2>LightUi.Controls.Primitives</_Parameter2>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--  FontIcon 的默认图标字体：打包进 dll，走 pack URI 引用，不依赖系统字体  -->
+    <Resource Include="Assets\Fonts\*.TTF" />
+  </ItemGroup>
+
+</Project>

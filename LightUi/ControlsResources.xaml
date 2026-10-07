@@ -1,0 +1,31 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  ★ Demo 的 App.xaml 唯一入口：合并 Theme + 所有扩展控件 + 内置控件样式  -->
+
+    <ResourceDictionary.MergedDictionaries>
+        <!--  Theme + ThemeManager 注册点  -->
+        <ResourceDictionary Source="/LightUi;component/Theme/ThemeResources.xaml" />
+
+        <!--  内置控件默认样式  -->
+        <ResourceDictionary Source="/LightUi;component/styles/Button.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ToggleButton.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/CheckBox.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/TextBox.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ComboBox.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ListBox.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ScrollBar.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/Menu.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ToolTip.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ProgressBar.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/Window.xaml" />
+
+        <!--  扩展控件默认样式  -->
+        <ResourceDictionary Source="/LightUi;component/controls/Flyout/Flyout.xaml" />
+        <ResourceDictionary Source="/LightUi;component/controls/MenuFlyout/MenuFlyout.xaml" />
+        <ResourceDictionary Source="/LightUi;component/controls/DropDownButton/DropDownButton.xaml" />
+        <ResourceDictionary Source="/LightUi;component/controls/HyperlinkButton/HyperlinkButton.xaml" />
+        <ResourceDictionary Source="/LightUi;component/controls/ToggleSwitch/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="/LightUi;component/controls/FontIcon/FontIcon.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

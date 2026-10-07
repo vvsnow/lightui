@@ -1,0 +1,31 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  尺寸资源（与主题无关，由 Size.xaml 提供）  -->
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/LightUi;component/Theme/Size.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <!--  12 个 brush 键的浅色实现  -->
+    <SolidColorBrush x:Key="PageBackgroundBrush" Color="#FAFAFA" />
+    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="ControlBackgroundSubtleBrush" Color="#F3F3F3" />
+    <SolidColorBrush x:Key="ControlBackgroundHoverBrush" Color="#F0F0F0" />
+    <SolidColorBrush x:Key="ControlBackgroundSelectedBrush" Color="#E5E5E5" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1F1F1F" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B6B6B" />
+    <SolidColorBrush x:Key="AccentBrush" Color="#2563EB" />
+
+    <!--
+        accent 拆成两个角色：填充色 AccentBrush + 压在填充上的 AccentForegroundBrush。
+        Tailwind blue-600 配白字 ≈ 5.2:1（WCAG AA 过）。
+    -->
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#1D4ED8" />
+    <SolidColorBrush x:Key="AccentPressedBrush" Color="#1E40AF" />
+    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
+    <!--  ToggleSwitch Thumb：两个主题都偏浅，但暗主题里不那么刺眼  -->
+    <SolidColorBrush x:Key="ToggleSwitchThumbBrush" Color="#FFFFFF" />
+
+</ResourceDictionary>

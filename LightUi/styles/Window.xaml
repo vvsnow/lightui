@@ -1,0 +1,19 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Window 默认仅给背景 + 前景；chrome 留给系统。
+        注意：WPF 的隐式样式按“精确类型”匹配，派生自 Window 的窗口（如 ShellView）
+        拿不到下面的隐式样式。派生窗口需要显式写
+        Style="{DynamicResource LightUiWindowStyle}"。
+    -->
+    <Style x:Key="LightUiWindowStyle" TargetType="Window">
+        <Setter Property="Background" Value="{DynamicResource PageBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei UI" />
+    </Style>
+
+    <!--  精确类型为 Window 的窗口仍自动套用  -->
+    <Style BasedOn="{StaticResource LightUiWindowStyle}" TargetType="Window" />
+
+</ResourceDictionary>

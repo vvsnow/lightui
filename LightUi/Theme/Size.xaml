@@ -1,0 +1,27 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!--
+        尺寸类资源（与主题无关 —— Light / Dark 共用一套）。
+
+        由 Light.xaml / Dark.xaml 通过 MergedDictionaries 引入，而不是直接写进 App.Resources，
+        这样 ThemeManager 的 "枚举 palette.Keys 写回 target" 流程不会触及尺寸资源：
+        ResourceDictionary.Keys 只返回自身直接定义的 key，合并字典的 key 不会被列出 → 切主题时尺寸不会被覆盖。
+
+        当前内容：
+          ControlHeight        - 控件统一最小高度（Button / TextBox / ComboBox 等）
+          ControlCornerRadius   - 控件主体圆角（按钮 / 输入框 / 复选框 / 列表项 / 菜单项 / Tooltip）
+          OverlayCornerRadius  - 浮层圆角（Flyout / MenuFlyout / ContextMenu）
+
+        特例：ToggleSwitch 圆轨 9 保留为 pill 形硬编码（= 控件高度一半 + 余量），不进资源。
+        如将来需要高对比度主题与亮 / 暗主题的尺寸差异化，把对应资源 Override 在对应主题里即可。
+    -->
+
+    <sys:Double x:Key="ControlHeight">28</sys:Double>
+
+    <CornerRadius x:Key="ControlCornerRadius">3</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">4</CornerRadius>
+
+</ResourceDictionary>

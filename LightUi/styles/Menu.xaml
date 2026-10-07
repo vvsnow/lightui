@@ -1,0 +1,148 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="Menu">
+        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <!--
+        MenuItem 默认样式（Menu / MenuFlyout / ContextMenu 通用）：
+        - 默认：透明背景，文字继承 Foreground
+        - 悬停（IsMouseOver）/ 键盘导航（IsHighlighted）：ControlBackgroundHoverBrush 浅灰
+        - 高度由 ControlHeight 统一控制（与 Button / ListBoxItem / ComboBoxItem 同 28）
+        - Padding 8,0 跟 ListBoxItem 对齐
+        - ContentSource="Header" 让 ContentPresenter 读 MenuItem.Header 属性
+        - HorizontalContentAlignment=Stretch 显式覆盖 WPF 主题里那个会失败绑定的 Setter
+        - OverridesDefaultStyle=True 绕过 WPF 主题里的 HorizontalContentAlignment 绑定 Setter
+    -->
+    <Style TargetType="MenuItem">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="8,0" />
+        <!--
+            MenuItem 外层有 MenuFlyout 的 1px 边框 + 圆角包裹，视觉上比 Button 等"看起来更高"，
+            所以自身高度比 ControlHeight 小 2px（26 vs 28），保持视觉一致
+        -->
+        <Setter Property="MinHeight" Value="26" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuItem">
+                    <Border
+                        x:Name="Bd"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter
+                                Grid.Column="0"
+                                Margin="0,0,8,0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                ContentSource="Icon" />
+                            <ContentPresenter
+                                Grid.Column="1"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                ContentSource="Header"
+                                RecognizesAccessKey="True" />
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="16,0,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding InputGestureText}" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        Separator（菜单分隔条）：1px 浅灰横线，上下各 4px 留白
+        - 间距只由 Separator 自身的 Margin 提供。模板里再叠一层 Margin 是错的：
+        Border 会被 1px 高的槽位挤压，部分布局下直接渲染成 0，或落在半像素上变虚
+        - SnapsToDevicePixels + UseLayoutRounding：缩放不是 100% 时 1 DIP = 1.25/1.5 物理像素，
+        不对齐就会被抗锯齿糊成两行灰带（看起来"很粗"）；对齐后是一条锐利的单物理像素细线
+        - 左右 4 缩进 = ContextMenu 的 Padding，让分割线和 MenuItem 悬停底色同宽
+    -->
+    <Style x:Key="DefaultSeparatorStyle" TargetType="Separator">
+        <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="Height" Value="1" />
+        <Setter Property="Margin" Value="4,4" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Separator">
+                    <Border Height="1" Background="{TemplateBinding Background}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  普通位置的 Separator 走隐式样式  -->
+    <Style BasedOn="{StaticResource DefaultSeparatorStyle}" TargetType="Separator" />
+
+    <!--
+        ★ 菜单里的 Separator 必须挂在这个键上（MenuItem.SeparatorStyleKey），不能只靠隐式样式：
+        Menu / MenuItem 会给每个 Separator 显式套上这个键的样式，而显式样式优先于隐式样式 ——
+        所以只有 <Style TargetType="Separator"> 时，ContextMenu / MenuFlyout / Menu 里的分割线
+        全部落回默认主题那条（Margin=0,2,0,2、左边缩进 30px、无像素对齐），改隐式样式对它们无效。
+    -->
+    <Style
+        x:Key="{x:Static MenuItem.SeparatorStyleKey}"
+        BasedOn="{StaticResource DefaultSeparatorStyle}"
+        TargetType="Separator" />
+
+    <!--
+        ContextMenu（右键菜单）：1px 边框 + 4 圆角 + 4 内边距，包裹 StackPanel IsItemsHost
+        TextBox/PasswordBox 等右键弹出的就是这个，所以让它走 LightUi 弹层风格
+    -->
+    <Style TargetType="ContextMenu">
+        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContextMenu">
+                    <Border
+                        Padding="4"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource OverlayCornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

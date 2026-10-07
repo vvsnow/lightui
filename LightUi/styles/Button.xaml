@@ -1,0 +1,89 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Button 系列的样式结构（命名参考 ModernWpf）：
+
+          DefaultButtonStyle        —— 唯一的一份模板 + 默认外观
+          <Style TargetType="Button">      —— 隐式的「默认按钮」，BasedOn 上面那份
+          <Style TargetType="RepeatButton"> —— 同外观（RepeatButton 派生自 ButtonBase 而非 Button，
+                                                 不能 BasedOn 一个 TargetType="Button" 的样式）
+          AccentButtonStyle         —— 强调按钮，只换 brush，不复制模板
+
+        用法：<Button Style="{StaticResource AccentButtonStyle}" Content="Primary" />
+
+        为什么强调变体可以不复制模板：
+        模板里的 hover / pressed 触发器改成直接改「控件自己的 Background」（不写 TargetName），
+        而 Style.Triggers 的优先级高于 Template 触发器，所以变体只要用自己的 Style.Triggers
+        覆盖 Background，就能改掉悬停 / 按下色 —— 一份模板够用。
+    -->
+    <Style x:Key="DefaultButtonStyle" TargetType="ButtonBase">
+        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <!--  高度由 ControlHeight 统一控制；左右 12 给文字/图标留出与边框的距离  -->
+        <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
+        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ButtonBase">
+                    <Border
+                        x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            RecognizesAccessKey="True" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="0.45" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  隐式：默认按钮  -->
+    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button" />
+
+    <!--  隐式：RepeatButton 与默认按钮同外观  -->
+    <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="RepeatButton" />
+
+    <!--
+        强调按钮（Primary / Accent）：accent 底色 + 与底色对得上的前景色。
+        只覆盖 brush 和 hover / pressed 色，模板复用 DefaultButtonStyle 那一份。
+    -->
+    <Style
+        x:Key="AccentButtonStyle"
+        BasedOn="{StaticResource DefaultButtonStyle}"
+        TargetType="Button">
+        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentPressedBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>
