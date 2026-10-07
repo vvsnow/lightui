@@ -8,13 +8,13 @@
         在 csproj 里以 Resource 打包进 dll），直接用 pack URI 引用文件，不依赖系统装没装
         Segoe Fluent Icons。
         - URI 里 # 后面必须是字体文件内部的家族名（这个 TTF 里就是 "Segoe Fluent Icons"），
-          且 # 前后不能有空格 —— 写成 "xxx.TTF #Segoe Fluent Icons" 会被当成系统字体名去找。
+        且 # 前后不能有空格 —— 写成 "xxx.TTF #Segoe Fluent Icons" 会被当成系统字体名去找。
         - 必须带程序集名（/LightUi;component/...）：样式被 Demo 这类外部程序集消费时，
-          "/Assets/..." 这种相对写法会按宿主程序集的根去解析，找不到文件。
+        "/Assets/..." 这种相对写法会按宿主程序集的根去解析，找不到文件。
     -->
     <Style TargetType="{x:Type local:FontIcon}">
         <Setter Property="FontFamily" Value="pack://application:,,,/LightUi;component/Assets/Fonts/SegoeIcons.TTF#Segoe Fluent Icons" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlGlyphFontSize}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="Text" Value="{Binding Glyph, RelativeSource={RelativeSource Self}}" />
         <Setter Property="VerticalAlignment" Value="Center" />

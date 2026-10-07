@@ -1,13 +1,11 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--  尺寸资源（与主题无关，由 Size.xaml 提供）  -->
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/LightUi;component/Theme/Size.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <!--  12 个 brush 键的浅色实现  -->
+    <!--  16 个 brush 键的浅色实现  -->
     <SolidColorBrush x:Key="PageBackgroundBrush" Color="#FAFAFA" />
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF" />
     <SolidColorBrush x:Key="ControlBackgroundSubtleBrush" Color="#F3F3F3" />
@@ -27,5 +25,17 @@
     <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
     <!--  ToggleSwitch Thumb：两个主题都偏浅，但暗主题里不那么刺眼  -->
     <SolidColorBrush x:Key="ToggleSwitchThumbBrush" Color="#FFFFFF" />
+
+    <!--
+        标题栏关闭键的悬停 / 按下底色（Windows 11 那颗红）与压在红底上的图标色。
+        这三个键刻意在 Light / Dark 里取**同一个值** —— 系统自己的关闭键在深浅主题下就是这样，
+        不跟着主题走。放在 Theme 里而不是写死在样式里，是为了跟其它颜色一个规矩（也方便将来自定义）。
+        
+        图标色单独开一个键、不复用 AccentForegroundBrush：后者会被 ThemeManager.ApplyAccentColor
+        按 PickOnAccent 重算，用户挑个浅色强调色时它会变成黑色，红底上就成了黑 ✕。
+    -->
+    <SolidColorBrush x:Key="SystemCloseHoverBrush" Color="#C42B1C" />
+    <SolidColorBrush x:Key="SystemClosePressedBrush" Color="#B02A1E" />
+    <SolidColorBrush x:Key="SystemCloseForegroundBrush" Color="#FFFFFF" />
 
 </ResourceDictionary>

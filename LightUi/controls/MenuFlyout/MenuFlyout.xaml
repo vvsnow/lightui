@@ -11,7 +11,7 @@
     <Style x:Key="LightUiMenuFlyoutPresenterStyle" TargetType="{x:Type local:MenuFlyoutPresenter}">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <Setter Property="Padding" Value="4" />
         <Setter Property="MinWidth" Value="160" />
         <Setter Property="Template">

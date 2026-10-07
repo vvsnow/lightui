@@ -39,7 +39,7 @@
                         <Button Content="Disabled" IsEnabled="False" />
                         <Button>
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
-                                <ui:FontIcon FontSize="14" Glyph="&#xE710;" />
+                                <ui:FontIcon Glyph="&#xE710;" />
                                 <TextBlock Text="带 FontIcon" />
                             </ui:SimpleStackPanel>
                         </Button>

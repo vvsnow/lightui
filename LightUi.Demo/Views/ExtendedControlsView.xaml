@@ -67,38 +67,35 @@
                         Text="FontIcon（Segoe Fluent Icons）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon FontSize="18" Glyph="&#xE710;" />
+                            <ui:FontIcon Glyph="&#xE710;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Add (E710)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon
-                                FontSize="18"
-                                Foreground="{DynamicResource AccentBrush}"
-                                Glyph="&#xE74D;" />
+                            <ui:FontIcon Foreground="{DynamicResource AccentBrush}" Glyph="&#xE74D;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Delete (E74D)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon FontSize="18" Glyph="&#xE713;" />
+                            <ui:FontIcon Glyph="&#xE713;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Settings (E713)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon FontSize="18" Glyph="&#xE70D;" />
+                            <ui:FontIcon Glyph="&#xE70D;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Chevron Down (E70D)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon FontSize="18" Glyph="&#xE10A;" />
+                            <ui:FontIcon Glyph="&#xE10A;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"

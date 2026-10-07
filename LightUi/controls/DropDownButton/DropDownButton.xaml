@@ -8,12 +8,12 @@
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <!--  高度由 ControlHeight 统一控制；左右 12 给文字留出与边框的距离（右侧箭头列另有自身 Margin）  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
-        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="Template">
             <Setter.Value>

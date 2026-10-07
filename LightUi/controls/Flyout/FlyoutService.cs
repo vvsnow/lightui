@@ -1,5 +1,3 @@
-using System.Windows.Controls.Primitives;
-
 using LightUi.Controls.Primitives;
 
 namespace LightUi.Controls;
@@ -28,11 +26,13 @@ public static class FlyoutService
 
     static void OnFlyoutChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is not ButtonBase button) return;
+        if (d is not ButtonBase button)
+            return;
 
         // 解除旧的 handler
         var old = (RoutedEventHandler?)button.GetValue(ClickHandlerProperty);
-        if (old != null) button.Click -= old;
+        if (old != null)
+            button.Click -= old;
 
         // 安装新的 handler：点击时弹出 Flyout
         if (e.NewValue is FlyoutBase flyout)

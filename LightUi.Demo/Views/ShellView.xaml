@@ -13,6 +13,7 @@
     Width="1080"
     Height="720"
     d:DataContext="{d:DesignInstance Type=vm:ShellViewModel}"
+    ui:WindowHelper.IsFrameless="True"
     Style="{DynamicResource LightUiWindowStyle}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -29,15 +30,23 @@
             <ContentControl x:Name="ThemeViewModel" DockPanel.Dock="Bottom" />
 
             <ListBox
+                Margin="6"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0"
                 DisplayMemberPath="Title"
                 DockPanel.Dock="Top"
                 ItemsSource="{Binding NavItems, Mode=OneWay}"
                 SelectedValue="{Binding ActiveItem}"
-                SelectedValuePath="ViewModel" />
+                SelectedValuePath="ViewModel"
+                WindowChrome.IsHitTestVisibleInChrome="True" />
 
         </DockPanel>
 
-        <ContentControl x:Name="ActiveItem" Grid.Column="1" />
+        <ContentControl
+            x:Name="ActiveItem"
+            Grid.Column="1"
+            Margin="0,32,0,0" />
 
     </Grid>
 

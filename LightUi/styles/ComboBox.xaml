@@ -8,7 +8,7 @@
         - 禁用：0.45 透明度
     -->
     <Style TargetType="ComboBoxItem">
-        <Setter Property="Padding" Value="12,0" />
+        <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="Transparent" />
@@ -19,15 +19,17 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBoxItem">
-                    <Border x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                            SnapsToDevicePixels="True">
-                        <ContentPresenter Margin="{TemplateBinding Padding}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    <Border
+                        x:Name="Bd"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                        SnapsToDevicePixels="True">
+                        <ContentPresenter
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -59,12 +61,12 @@
     -->
     <Style TargetType="ComboBox">
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
-        <Setter Property="Padding" Value="12,0" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
@@ -72,62 +74,68 @@
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
                         <!--  ToggleButton 覆盖整个点击区，IsChecked 双向绑定 IsDropDownOpen  -->
-                        <ToggleButton x:Name="DropDownButton"
-                                      Focusable="False"
-                                      IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                      ClickMode="Press"
-                                      Background="{TemplateBinding Background}"
-                                      BorderBrush="{TemplateBinding BorderBrush}"
-                                      BorderThickness="{TemplateBinding BorderThickness}">
+                        <ToggleButton
+                            x:Name="DropDownButton"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ClickMode="Press"
+                            Focusable="False"
+                            IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <ToggleButton.Template>
                                 <ControlTemplate TargetType="ToggleButton">
-                                    <Border x:Name="Bd"
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                            CornerRadius="{DynamicResource ControlCornerRadius}"
-                                            SnapsToDevicePixels="True" />
+                                    <Border
+                                        x:Name="Bd"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}"
+                                        SnapsToDevicePixels="True" />
                                 </ControlTemplate>
                             </ToggleButton.Template>
                         </ToggleButton>
                         <!--  选中项浮在上方，不挡点击  -->
-                        <ContentPresenter x:Name="ContentSite"
-                                          Margin="{TemplateBinding Padding}"
-                                          HorizontalAlignment="Left"
-                                          VerticalAlignment="Center"
-                                          IsHitTestVisible="False"
-                                          Content="{TemplateBinding SelectionBoxItem}"
-                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
-                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}" />
+                        <ContentPresenter
+                            x:Name="ContentSite"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            Content="{TemplateBinding SelectionBoxItem}"
+                            ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                            ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                            IsHitTestVisible="False" />
                         <!--  右侧箭头  -->
-                        <Path Width="10"
-                              Height="10"
-                              Margin="0,0,10,0"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Center"
-                              Data="M0,3 L5,7 L10,3"
-                              Stroke="{TemplateBinding Foreground}"
-                              StrokeThickness="1.2"
-                              StrokeLineJoin="Round"
-                              StrokeStartLineCap="Round"
-                              StrokeEndLineCap="Round"
-                              Stretch="Uniform"
-                              IsHitTestVisible="False" />
+                        <Path
+                            Width="10"
+                            Height="10"
+                            Margin="0,0,10,0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Data="M0,3 L5,7 L10,3"
+                            IsHitTestVisible="False"
+                            Stretch="Uniform"
+                            Stroke="{TemplateBinding Foreground}"
+                            StrokeEndLineCap="Round"
+                            StrokeLineJoin="Round"
+                            StrokeStartLineCap="Round"
+                            StrokeThickness="1.2" />
                         <!--  下拉弹层  -->
-                        <Popup x:Name="PART_Popup"
-                               AllowsTransparency="True"
-                               StaysOpen="False"
-                               IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                               Placement="Bottom"
-                               PopupAnimation="Fade">
-                            <Border x:Name="DropDownBd"
-                                    MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
-                                    MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                    Margin="0,4,0,0"
-                                    Background="{DynamicResource ControlBackgroundBrush}"
-                                    BorderBrush="{DynamicResource BorderBrush}"
-                                    BorderThickness="1"
-                                    CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Popup
+                            x:Name="PART_Popup"
+                            AllowsTransparency="True"
+                            IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                            Placement="Bottom"
+                            PopupAnimation="Fade"
+                            StaysOpen="False">
+                            <Border
+                                x:Name="DropDownBd"
+                                MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
+                                MaxHeight="{TemplateBinding MaxDropDownHeight}"
+                                Margin="0,4,0,0"
+                                Background="{DynamicResource ControlBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="{DynamicResource ControlBorderThickness}"
+                                CornerRadius="{DynamicResource ControlCornerRadius}">
                                 <ScrollViewer Foreground="{TemplateBinding Foreground}">
                                     <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>

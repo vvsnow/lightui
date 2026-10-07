@@ -8,11 +8,11 @@
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <!--  TextBox 需要 Padding 给文字留出与边框的距离；垂直由 ControlHeight 管  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="4,0" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}" />
         <!--  自带默认右键菜单（覆盖 WPF 内置的，走 LightUi 样式）  -->
@@ -21,23 +21,23 @@
                 <ContextMenu>
                     <MenuItem Command="ApplicationCommands.Cut" InputGestureText="Ctrl+X">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE8C6;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE8C6;" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Command="ApplicationCommands.Copy" InputGestureText="Ctrl+C">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE8C8;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE8C8;" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Command="ApplicationCommands.Paste" InputGestureText="Ctrl+V">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE77F;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE77F;" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Command="ApplicationCommands.SelectAll" InputGestureText="Ctrl+A">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE8B3;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE8B3;" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>
@@ -77,10 +77,10 @@
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="4,0" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}" />
         <!--  自带默认右键菜单（覆盖 WPF 内置的，走 LightUi 样式）  -->
@@ -89,23 +89,23 @@
                 <ContextMenu>
                     <MenuItem Command="ApplicationCommands.Cut" InputGestureText="Ctrl+X">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE8C6;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE8C6;" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Command="ApplicationCommands.Copy" InputGestureText="Ctrl+C">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE8C8;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE8C8;" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Command="ApplicationCommands.Paste" InputGestureText="Ctrl+V">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE77F;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE77F;" />
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator />
                     <MenuItem Command="ApplicationCommands.SelectAll" InputGestureText="Ctrl+A">
                         <MenuItem.Icon>
-                            <local:FontIcon FontSize="14" Glyph="&#xE8B3;" />
+                            <local:FontIcon FontSize="{DynamicResource ControlGlyphFontSize}" Glyph="&#xE8B3;" />
                         </MenuItem.Icon>
                     </MenuItem>
                 </ContextMenu>

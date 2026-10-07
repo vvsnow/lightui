@@ -3,7 +3,7 @@
     <!--  CheckBox 最小样式：勾选框 + 文本  -->
     <Style TargetType="CheckBox">
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">
@@ -17,7 +17,7 @@
                             VerticalAlignment="Center"
                             Background="{DynamicResource ControlBackgroundBrush}"
                             BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1"
+                            BorderThickness="{DynamicResource ControlBorderThickness}"
                             CornerRadius="{DynamicResource ControlCornerRadius}">
                             <Path
                                 x:Name="Check"
@@ -55,7 +55,7 @@
     <!--  RadioButton 复用 CheckBox 样式里的勾选框布局（最小）  -->
     <Style TargetType="RadioButton">
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">

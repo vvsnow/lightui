@@ -66,7 +66,8 @@ public abstract class FlyoutBase : DependencyObject
 
     private static void OnIsOpenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is not FlyoutBase self) return;
+        if (d is not FlyoutBase self)
+            return;
 
         // MenuFlyout：presenter 是 ContextMenu（MenuBase），直接同步到 ContextMenu.IsOpen
         // （它自带 Popup + OnMenuItemClicked 自动关闭 + LightDismiss）

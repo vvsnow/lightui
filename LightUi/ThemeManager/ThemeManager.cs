@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Media;
-
 namespace LightUi;
 
 /// <summary>
@@ -22,8 +17,8 @@ public static class ThemeManager
 {
     private static readonly Dictionary<ApplicationTheme, Uri> _themeSources = new()
     {
-        [ApplicationTheme.Light]        = new Uri("/LightUi;component/Theme/Light.xaml", UriKind.Relative),
-        [ApplicationTheme.Dark]         = new Uri("/LightUi;component/Theme/Dark.xaml",  UriKind.Relative),
+        [ApplicationTheme.Light] = new Uri("/LightUi;component/Theme/Light.xaml", UriKind.Relative),
+        [ApplicationTheme.Dark] = new Uri("/LightUi;component/Theme/Dark.xaml", UriKind.Relative),
         [ApplicationTheme.HighContrast] = new Uri("/LightUi;component/Theme/Light.xaml", UriKind.Relative), // TODO
     };
 
@@ -48,15 +43,17 @@ public static class ThemeManager
     /// 没自定义过就是主题自带值（不另存一份状态，避免和资源不一致）。
     /// </summary>
     public static Color? CurrentAccentColor =>
-        (Application.Current?.TryFindResource("AccentBrush") as SolidColorBrush)?.Color;
+        ( Application.Current?.TryFindResource("AccentBrush") as SolidColorBrush )?.Color;
 
     /// <summary>切到指定主题。</summary>
     public static void ApplyTheme(ApplicationTheme theme)
     {
-        if (!_themeSources.TryGetValue(theme, out var source)) return;
+        if (!_themeSources.TryGetValue(theme, out var source))
+            return;
 
         var target = _themeTarget ?? Application.Current?.Resources;
-        if (target is null) return;
+        if (target is null)
+            return;
 
         var palette = new ResourceDictionary { Source = source };
 
@@ -87,7 +84,8 @@ public static class ThemeManager
     public static void ApplyAccentColor(Color accent)
     {
         var target = _themeTarget ?? Application.Current?.Resources;
-        if (target is null) return;
+        if (target is null)
+            return;
 
         // 要的就是当前主题自带的强调色 → 等价于"重置"。
         // 主题那套 hover / pressed / 其上文字色是手写值，公式推导不出一样的结果；
@@ -128,7 +126,8 @@ public static class ThemeManager
         _customAccent = null;
 
         var target = _themeTarget ?? Application.Current?.Resources;
-        if (target is null || !_themeSources.TryGetValue(CurrentTheme, out var source)) return;
+        if (target is null || !_themeSources.TryGetValue(CurrentTheme, out var source))
+            return;
 
         var palette = new ResourceDictionary { Source = source };
         foreach (var key in palette.Keys)
@@ -168,16 +167,16 @@ public static class ThemeManager
     /// </summary>
     private static Color PickOnAccent(Color accent)
     {
-        var brightness = ((299 * accent.R) + (587 * accent.G) + (114 * accent.B)) / 1000.0;
+        var brightness = ( ( 299 * accent.R ) + ( 587 * accent.G ) + ( 114 * accent.B ) ) / 1000.0;
         return brightness >= BrightnessCrossover ? Colors.Black : Colors.White;
     }
 
     /// <summary>按比例从 a 向 b 混合。</summary>
     private static Color Blend(Color a, Color b, double t) => Color.FromArgb(
         255,
-        (byte)Math.Round((a.R * (1 - t)) + (b.R * t)),
-        (byte)Math.Round((a.G * (1 - t)) + (b.G * t)),
-        (byte)Math.Round((a.B * (1 - t)) + (b.B * t)));
+        (byte)Math.Round(( a.R * ( 1 - t ) ) + ( b.R * t )),
+        (byte)Math.Round(( a.G * ( 1 - t ) ) + ( b.G * t )),
+        (byte)Math.Round(( a.B * ( 1 - t ) ) + ( b.B * t )));
 
     /// <summary>
     /// 主动指定主题键值的写入目标（便于测试或在 App 启动时显式注册）。

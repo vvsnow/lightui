@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Caliburn.Micro;
 
 namespace LightUi.Demo.ViewModels;

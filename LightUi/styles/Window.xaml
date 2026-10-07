@@ -1,7 +1,10 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:LightUi.Controls">
 
     <!--
-        Window 默认仅给背景 + 前景；chrome 留给系统。
+        Window 默认给背景 + 前景，外加一层很薄的模板（见下）。
         注意：WPF 的隐式样式按“精确类型”匹配，派生自 Window 的窗口（如 ShellView）
         拿不到下面的隐式样式。派生窗口需要显式写
         Style="{DynamicResource LightUiWindowStyle}"。
@@ -9,8 +12,139 @@
     <Style x:Key="LightUiWindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{DynamicResource PageBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei UI" />
+
+        <!--
+            模板的目的只有一个：给右上角那三个「系统按钮」一个落脚点。
+            结构照抄 WPF 默认主题里的 Window 模板（Border → AdornerDecorator → ContentPresenter），
+            只多叠了一层按钮条。
+            
+            两个不能省的细节：
+            · AdornerDecorator —— 这是整个窗口里唯一保证存在的 AdornerLayer。
+            省掉它，FocusVisualStyle（键盘焦点框）、Validation.ErrorTemplate、
+            拖放插入指示器会一起静默失效，且没有任何报错。
+            · Border.Background 的 TemplateBinding —— WindowChrome 开了玻璃之后，
+            WindowChromeWorker 会把 CompositionTarget.BackgroundColor 设成 Transparent，
+            **整个窗口就只剩这层 Border 在画底色**。丢了它就变成全透明窗口。
+            
+            另外：根元素上不能写布局用的 Margin。WindowChromeWorker._FixupTemplateIssues
+            会执行 rootElement.Margin = ...，把根元素的 Margin 直接覆盖掉。
+        -->
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!--
+                        Padding 必须 TemplateBinding 出去：Window 是 ContentControl 自带 Padding，
+                        但模板不消费它就等于没写。最大化时下面那条 Trigger 会给 Window 设 Padding=6，
+                        靠这里把**内容区和按钮条一起**向内收 6px ——
+                        最大化后客户区比可见区域大出一圈边框宽（WindowChrome 的已知现象），
+                        不内收的话四边内容会被切掉。
+                        注意 Border 只在子元素上生效，底色仍然铺满整窗，不会露缝。
+                    -->
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+
+                            <AdornerDecorator>
+                                <ContentPresenter />
+                            </AdornerDecorator>
+
+                            <!--
+                                系统按钮条。默认收起来，由 WindowHelper.IsFrameless 打开。
+                                贴着 y=0 平铺，和 Windows 11 自己的标题栏按钮一致。
+                                
+                                代价（已知并接受）：非最大化时，"最大化按钮"那块 46px 宽的窗口上边缘
+                                会被钩子的 HTMAXBUTTON 接管，失去顶部拉大条。最小化/关闭按钮本来也是
+                                HTCLIENT（见下），它们的顶部拉大条早就没有了；标题栏其余部分不受影响。
+                                最大化状态下无所谓 —— 最大化窗口本来就不能拖边缘。
+                                
+                                IsHitTestVisibleInChrome 是「这块归 WPF 管、别当标题栏」的逃生舱；
+                                它是 Inherits 的，写在容器上子元素全都生效 —— 没有它最小化/关闭点不动。
+                            -->
+                            <StackPanel
+                                x:Name="CaptionButtons"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed"
+                                WindowChrome.IsHitTestVisibleInChrome="True">
+
+                                <Button
+                                    x:Name="PART_MinimizeButton"
+                                    Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                                    Style="{DynamicResource SystemButtonStyle}">
+                                    <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE738;" />
+                                </Button>
+
+                                <Button
+                                    x:Name="PART_MaximizeButton"
+                                    Command="{x:Static SystemCommands.MaximizeWindowCommand}"
+                                    Style="{DynamicResource SystemButtonStyle}">
+                                    <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE71A;" />
+                                </Button>
+
+                                <!--
+                                    关闭键的 FontIcon 额外绑一次按钮的 Foreground：
+                                    CloseSystemButtonStyle 悬停时会把按钮 Foreground 改成白色（红底白字），
+                                    但 FontIcon 自己的样式里定义了 Foreground，会挡住继承 —— 不显式绑就跟不上。
+                                -->
+                                <Button
+                                    x:Name="PART_CloseButton"
+                                    Command="{x:Static SystemCommands.CloseWindowCommand}"
+                                    Style="{DynamicResource CloseSystemButtonStyle}">
+                                    <local:FontIcon
+                                        FontSize="{DynamicResource CaptionGlyphFontSize}"
+                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                        Glyph="&#xE711;" />
+                                </Button>
+                            </StackPanel>
+
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="local:WindowHelper.IsFrameless" Value="True">
+                            <Setter TargetName="CaptionButtons" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!--
+                            最大化/还原按钮的悬停与按下只能由钩子驱动：
+                            一旦 WM_NCHITTEST 对它返回 HTMAXBUTTON，这块区域就成了非客户区，
+                            WPF 的输入栈根本不参与，Button.IsMouseOver 恒为 false，
+                            SystemButtonStyle 里那个 IsMouseOver 触发器永远不会亮。
+                            这两个附加属性由 WindowHelper 的钩子写，public 只读，见那边的注释。
+                        -->
+                        <Trigger Property="local:WindowHelper.IsMaximizeButtonHovered" Value="True">
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                        </Trigger>
+                        <Trigger Property="local:WindowHelper.IsMaximizeButtonPressed" Value="True">
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                        </Trigger>
+
+                        <!--
+                            窗口最大化后做两件事：
+                            1. 按钮语义从「最大化」变成「还原」。钩子生效时它自己会判断 WindowState，
+                            这条主要负责兜底路径（Win10 及更早不装钩子，按钮走普通 WPF 按钮那条路）。
+                            2. 给 Window 设 Padding=6（= ResizeBorderThickness），把内容和按钮条一起内缩。
+                            值不写 TargetName，设的就是模板父级（那个 Window），再由 Border 的
+                            TemplateBinding Padding 消费掉。
+                        -->
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="PART_MaximizeButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <!--  6 = WindowHelper.ResizeBorderThickness，不要再写一个字面量  -->
+                            <Setter Property="Padding" Value="{x:Static local:WindowHelper.MaximizedPadding}" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!--  精确类型为 Window 的窗口仍自动套用  -->
