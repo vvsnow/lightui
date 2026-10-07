@@ -16,10 +16,7 @@
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B6B6B" />
     <SolidColorBrush x:Key="AccentBrush" Color="#2563EB" />
 
-    <!--
-        accent 拆成两个角色：填充色 AccentBrush + 压在填充上的 AccentForegroundBrush。
-        Tailwind blue-600 配白字 ≈ 5.2:1（WCAG AA 过）。
-    -->
+    <!--  accent 拆两个角色：填充色 AccentBrush + 压在填充上的 AccentForegroundBrush  -->
     <SolidColorBrush x:Key="AccentHoverBrush" Color="#1D4ED8" />
     <SolidColorBrush x:Key="AccentPressedBrush" Color="#1E40AF" />
     <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
@@ -28,11 +25,11 @@
 
     <!--
         标题栏关闭键的悬停 / 按下底色（Windows 11 那颗红）与压在红底上的图标色。
-        这三个键刻意在 Light / Dark 里取**同一个值** —— 系统自己的关闭键在深浅主题下就是这样，
-        不跟着主题走。放在 Theme 里而不是写死在样式里，是为了跟其它颜色一个规矩（也方便将来自定义）。
+        这三个键在 Light / Dark 里刻意取同一个值 —— 系统自己的关闭键就不跟主题走。
+        放进 Theme 而不是写死在样式里，是为了跟其它颜色一个规矩（也方便将来自定义）。
         
-        图标色单独开一个键、不复用 AccentForegroundBrush：后者会被 ThemeManager.ApplyAccentColor
-        按 PickOnAccent 重算，用户挑个浅色强调色时它会变成黑色，红底上就成了黑 ✕。
+        图标色单独开键、不复用 AccentForegroundBrush：后者会被 ApplyAccentColor 按
+        PickOnAccent 重算，用户挑浅色强调色时它会变黑，红底上就成了黑 ✕。
     -->
     <SolidColorBrush x:Key="SystemCloseHoverBrush" Color="#C42B1C" />
     <SolidColorBrush x:Key="SystemClosePressedBrush" Color="#B02A1E" />

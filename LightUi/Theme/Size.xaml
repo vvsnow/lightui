@@ -6,60 +6,38 @@
     <!--
         尺寸类资源（与主题无关 —— Light / Dark 共用一套）。
         
-        由 Light.xaml / Dark.xaml 通过 MergedDictionaries 引入，而不是直接写进 App.Resources，
-        这样 ThemeManager 的 "枚举 palette.Keys 写回 target" 流程不会触及尺寸资源：
-        ResourceDictionary.Keys 只返回自身直接定义的 key，合并字典的 key 不会被列出 → 切主题时尺寸不会被覆盖。
+        由 Light.xaml / Dark.xaml 通过 MergedDictionaries 引入，而不是写进 App.Resources：
+        ResourceDictionary.Keys 只列自身定义的 key，合并进来的不会被列出 ——
+        所以 ThemeManager「枚举 palette.Keys 写回 target」的流程碰不到尺寸资源。
         
-        当前内容：
-        ControlHeight            - 控件统一最小高度（Button / TextBox / ComboBox 等）
-        ControlBorderThickness   - 控件描边宽度（1px 那一档：按钮 / 输入框 / 下拉 / 列表 / 菜单 / Tooltip…）
-        ControlFontSize          - 控件统一字号（按钮 / 输入框 / 下拉 / 勾选框 / 菜单项 / 窗口）
-        ControlGlyphFontSize     - 库内图标（FontIcon）的统一字号，也是 FontIcon 的默认字号
-        TextSecondaryFontSize    - 次级文字字号（菜单快捷键列 / ToolTip）
-        ControlPaddingHorizontal - 控件的左右内边距（12,0：按钮 / 切换按钮 / 下拉按钮 / 下拉框）
-        MenuItemHeight           - 菜单项自身高度（= ControlHeight − 2×ControlBorderThickness，见下方注释）
-        ScrollBarThickness       - 滚动条厚度（垂直条的宽 = 水平条的高）
-        SeparatorThickness       - 分隔线厚度（1 = 一条锐利的单物理像素细线）
-        ControlCornerRadius      - 控件主体圆角（按钮 / 输入框 / 复选框 / 列表项 / 菜单项 / Tooltip）
-        OverlayCornerRadius      - 浮层圆角（Flyout / MenuFlyout / ContextMenu）
-        CaptionGlyphFontSize     - 自绘标题栏三个系统按钮的图标字号（刻意独立于 ControlFontSize）
+        键的用途见下方各自的声明；需要额外解释的只有这几条：
+        MenuItemHeight        = ControlHeight − 2×ControlBorderThickness
+        ControlGlyphFontSize  与 CaptionGlyphFontSize 刻意分开（控件图标 / 标题栏图标两套规格）
 
-        特例：ToggleSwitch 圆轨 9 保留为 pill 形硬编码（= 控件高度一半 + 余量），不进资源。
-        如将来需要高对比度主题与亮 / 暗主题的尺寸差异化，把对应资源 Override 在对应主题里即可。
+        ToggleSwitch 圆轨 9 是 pill 形硬编码（控件高度一半 + 余量），不进资源。
+        要按主题差异化尺寸，在对应主题里 Override 即可。
     -->
 
     <sys:Double x:Key="ControlHeight">28</sys:Double>
     <!--
         类型必须是 Thickness，不能是 sys:Double —— 它只用在 BorderThickness 上（14 处），
-        而 Thickness 属性拿到 boxed double 会抛 "__不是属性 BorderThickness 的有效值"。
-        （对照：ControlPaddingHorizontal 同样用在 Thickness 属性上，所以也是 <Thickness>。）
-    -->
-    <!--
-        类型必须是 Thickness，不能是 sys:Double —— 它只用在 BorderThickness 上（14 处），
         而 Thickness 属性拿到 boxed double 会抛"__不是属性 BorderThickness 的有效值"。
-        （对照：ControlPaddingHorizontal 同样用在 Thickness 属性上，所以也是 <Thickness>。）
+        （对照：ControlPaddingHorizontal 也用在这个属性上，所以同样是 <Thickness>。）
     -->
     <Thickness x:Key="ControlBorderThickness">1</Thickness>
     <sys:Double x:Key="ControlFontSize">13</sys:Double>
     <Thickness x:Key="ControlPaddingHorizontal">12,0</Thickness>
 
     <!--
-        菜单项自身高度。
+        菜单项自身高度 = ControlHeight − 2 × ControlBorderThickness。
+        菜单项外面还裹着 MenuFlyout 的 1px 边框（上下各 1px），直接按 28 算会比 Button 高 2px。
 
-        为什么不直接复用 ControlHeight：菜单项外面还裹着 MenuFlyout 的 1px 边框（上下各 1px），
-        按 28 算的话每一行看起来都比 Button 高 2px。所以它 = ControlHeight − 2 × ControlBorderThickness。
-
-        这三个键（ControlHeight / ControlBorderThickness / MenuItemHeight）放在同一文件、相邻几行，
-        改 ControlHeight 时请一并改这里。**不用指望编译器提醒你** ——
-        WPF 的 DynamicResource 不能经过转换器，XAML 里表达不出这个减法，
-        唯一能做的就是放在一起 + 把推导式写清楚。
+        改 ControlHeight 时记得一并改这里 —— DynamicResource 不能经过转换器，
+        XAML 里表达不出这个减法，编译器不会提醒你。
     -->
     <sys:Double x:Key="MenuItemHeight">26</sys:Double>
 
-    <!--
-        库内图标（FontIcon）的统一字号，同时是 FontIcon 的默认字号。
-        和 CaptionGlyphFontSize 分开：标题栏那三个图标是另一套规格（13），别互相牵连。
-    -->
+    <!--  库内图标（FontIcon）统一字号，也是 FontIcon 默认字号。与 CaptionGlyphFontSize 分开，别互相牵连。  -->
     <sys:Double x:Key="ControlGlyphFontSize">14</sys:Double>
 
     <!--  次级文字字号：菜单项右侧的快捷键列、ToolTip 正文（对齐已有的 TextSecondaryBrush 命名）  -->
@@ -69,10 +47,8 @@
     <sys:Double x:Key="ScrollBarThickness">12</sys:Double>
 
     <!--
-        分隔线厚度。值就是 1，但它出现在两个元素上（Separator 的样式 Setter + 模板里的 Border），
-        而且 Menu.xaml 的注释专门解释过：配合 SnapsToDevicePixels + UseLayoutRounding，
-        1 对齐全 1 物理像素才是一条锐利细线，缩放不是 100% 时不对齐就会被抗锯齿糊成两行灰带。
-        所以它是个"规格"而不是随手写的 1。
+        分隔线厚度。虽是 1，但是个"规格"而不是随手写的值：配合 SnapsToDevicePixels +
+        UseLayoutRounding，对齐全 1 物理像素才是一条锐利细线；缩放非 100% 时不对齐会被抗锯齿糊成灰带。
     -->
     <sys:Double x:Key="SeparatorThickness">1</sys:Double>
 
@@ -80,11 +56,9 @@
     <CornerRadius x:Key="OverlayCornerRadius">4</CornerRadius>
 
     <!--
-        自绘标题栏那三个系统按钮（最小化 / 最大化 / 关闭）里图标字体的字号。
-
-        刻意**不复用 ControlFontSize**：那是「控件文字」的字号，改控件字号不该顺手把标题栏图标也改了。
-        三个图标共用一个值 —— 但注意字形本身的视觉大小并不一样（方框比横线/叉"重"），
-        所以这个值是给三者统一的字号，不是给它们视觉重量拉平；真觉得方框偏大要靠微调，不是靠分开写三份。
+        自绘标题栏三个系统按钮（最小化 / 最大化 / 关闭）的图标字号。
+        刻意不复用 ControlFontSize：改控件字号不该顺手把标题栏图标也改了。
+        三个图标共用一个值；字形视觉重量本就不齐（方框比横线/叉"重"），要拉平靠微调而非拆成三份。
     -->
     <sys:Double x:Key="CaptionGlyphFontSize">13</sys:Double>
 

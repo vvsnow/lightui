@@ -1,12 +1,11 @@
 namespace LightUi.Controls.Primitives;
 
 /// <summary>
-/// Flyout / MenuFlyout 的抽象基类。
-/// 子类通过覆写 <see cref="CreatePresenter"/> 自定义呈现。
-/// 承载策略：
-///   - Flyout：presenter 作为 <see cref="Popup.Child"/>，由外层 Popup 控制显示 / LightDismiss。
-///   - MenuFlyout：presenter 是 <see cref="Controls.MenuFlyoutPresenter"/>（继承 ContextMenu），
-///     ContextMenu 自带 Popup 不能有父级，所以绕开外层 Popup，直接操作 ContextMenu.PlacementTarget / IsOpen。
+/// Flyout / MenuFlyout 的抽象基类；子类覆写 <see cref="CreatePresenter"/> 自定义呈现。
+/// 两种承载策略：
+///   - Flyout：presenter 作 <see cref="Popup.Child"/>，由外层 Popup 控制显示 / LightDismiss。
+///   - MenuFlyout：presenter 是 ContextMenu（自带 Popup，不能有父级），
+///     所以绕开外层 Popup，直接操作 ContextMenu.PlacementTarget / IsOpen。
 /// </summary>
 public abstract class FlyoutBase : DependencyObject
 {
@@ -143,16 +142,11 @@ public abstract class FlyoutBase : DependencyObject
 
     private void OnPopupMouseLeave(object sender, MouseEventArgs e) { /* 预留 API 兼容扩展点 */ }
 
-    /// <summary>
-    /// 外层 Popup 因 StaysOpen=false 被点击外部关掉时，把 IsOpen 同步回 false。
-    /// 否则 IsOpen 会一直停在 true，依赖它的地方（如 DropDownButton 的弹层状态）会失真。
-    /// </summary>
+    /// <summary>Popup 因 StaysOpen=false 被点外部关掉时把 IsOpen 同步回 false，
+    /// 否则它会一直停在 true，依赖它的地方（如 DropDownButton 的弹层状态）会失真。</summary>
     private void OnPopupClosed(object? sender, EventArgs e) => IsOpen = false;
 
-    /// <summary>
-    /// MenuFlyout 的 ContextMenu 自动关闭时（点 MenuItem / LightDismiss），
-    /// 把 IsOpen 同步回 false。
-    /// </summary>
+    /// <summary>MenuFlyout 的 ContextMenu 自动关闭时（点 MenuItem / LightDismiss）把 IsOpen 同步回 false。</summary>
     private void OnMenuFlyoutClosed(object? sender, RoutedEventArgs e) => IsOpen = false;
 
     /// <summary>子类返回承载 Flyout 内容的根 FrameworkElement（Flyout = 任意 Content；MenuFlyout = ContextMenu）。</summary>

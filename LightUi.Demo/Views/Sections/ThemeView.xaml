@@ -12,33 +12,12 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <ui:SimpleStackPanel Spacing="12">
+    <ui:SimpleStackPanel Spacing="6">
 
         <!--  切换按钮  -->
-        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="4">
             <Button cal:Message.Attach="ApplyLight" Content="浅色" />
             <Button cal:Message.Attach="ApplyDark" Content="深色" />
-        </ui:SimpleStackPanel>
-
-        <ui:SimpleStackPanel Spacing="8">
-
-            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-
-                <TextBox
-                    Width="120"
-                    VerticalContentAlignment="Center"
-                    Text="{Binding AccentInput, UpdateSourceTrigger=PropertyChanged}" />
-
-                <Button cal:Message.Attach="ApplyAccent" Content="应用" />
-                <Button cal:Message.Attach="ResetAccent" Content="重置" />
-
-            </ui:SimpleStackPanel>
-
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="12"
-                Foreground="{DynamicResource TextSecondaryBrush}"
-                Text="{Binding AccentError, Mode=OneWay}" />
         </ui:SimpleStackPanel>
 
     </ui:SimpleStackPanel>

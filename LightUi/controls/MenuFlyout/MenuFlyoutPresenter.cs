@@ -1,13 +1,10 @@
 namespace LightUi.Controls;
 
 /// <summary>
-/// 承载 <see cref="MenuFlyout"/> 内容的宿主。
-/// 继承自 <see cref="ContextMenu"/>（即 <see cref="System.Windows.Controls.Primitives.MenuBase"/>），
-/// 从而让 WPF 原生 MenuBase 接管：
-///   1) 点 MenuItem 后自动关闭弹层
-///   2) LightDismiss（点击 Popup 外部自动关闭，<see cref="StaysOpen"/>=false 时）
-///   3) 键盘方向键导航 / 高亮态
-/// 参考实现：ModernWpf.Controls.MenuFlyoutPresenter。
+/// 承载 <see cref="MenuFlyout"/> 内容的宿主。继承 <see cref="ContextMenu"/>
+/// （即 <see cref="System.Windows.Controls.Primitives.MenuBase"/>），让 WPF 原生接管：
+/// 点 MenuItem 自动关闭、LightDismiss（<see cref="StaysOpen"/>=false 时点外部关闭）、
+/// 键盘方向键导航与高亮态。参考实现：ModernWpf.Controls.MenuFlyoutPresenter。
 /// </summary>
 public class MenuFlyoutPresenter : ContextMenu
 {

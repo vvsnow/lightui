@@ -14,7 +14,6 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         HomeViewModel homeViewModel,
         ButtonsViewModel buttonsViewModel,
         CommonControlsViewModel commonControlsViewModel,
-        CustomTitleBarViewModel customTitleBarViewModel,
         ExtendedControlsViewModel extendedControlViewModel,
         ThemeViewModel themeViewModel)
     {
@@ -22,7 +21,6 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         NavItems.Add(new NavItem("Buttons", buttonsViewModel));
         NavItems.Add(new NavItem("Common Controls", commonControlsViewModel));
         NavItems.Add(new NavItem("Extended Control", extendedControlViewModel));
-        NavItems.Add(new NavItem("Custom Title Bar", customTitleBarViewModel));
 
         ThemeViewModel = themeViewModel;
     }

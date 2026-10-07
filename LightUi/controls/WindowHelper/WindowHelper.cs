@@ -5,11 +5,11 @@ namespace LightUi.Controls;
 
 /// <summary>
 /// 一行开关，把「无系统边框的自绘标题栏窗口」需要的三件事一次做完：
-///   1. 给窗口挂上 <see cref="WindowChrome"/>（标题栏 32px、整窗玻璃、6px 缩放边框、不让系统再画一套按钮）
-///   2. 让 <c>LightUiWindowStyle</c> 模板里的三个系统按钮（最小化 / 最大化 / 关闭）显形，并接上行为
+///   1. 给窗口挂上 <see cref="WindowChrome"/>（标题栏 28px、整窗玻璃、6px 缩放边框、不让系统再画按钮）
+///   2. 让 <c>LightUiWindowStyle</c> 模板里的三个系统按钮（最小化 / 最大化 / 关闭）显形并接上行为
 ///   3. 钩 WM_NCHITTEST，让最大化按钮获得 Windows 11 的 Snap Layouts（悬停弹出贴边布局）
 ///
-/// 用法（<b>只能用在 <see cref="Window"/> 上</b>，原因见 <see cref="OnIsFramelessChanged"/>）：
+/// 只能用在 <see cref="Window"/> 上，原因见 <see cref="OnIsFramelessChanged"/>：
 /// <code>
 /// &lt;Window Style="{DynamicResource LightUiWindowStyle}" ui:WindowHelper.IsFrameless="True"&gt;
 /// </code>
@@ -40,9 +40,9 @@ public static class WindowHelper
     public const double ResizeBorderThickness = 6;
 
     /// <summary>
-    /// 窗口最大化时，内容区与标题栏按钮要一起内缩的量（= <see cref="ResizeBorderThickness"/>）。
+    /// 窗口最大化时内容区与标题栏按钮要内缩的量（= <see cref="ResizeBorderThickness"/>）：
     /// WindowChrome 最大化后客户区比可见区域大出一圈边框宽，不内缩四边内容会被切掉。
-    /// 必须是 Thickness 类型：XAML 那边 <c>Padding</c> 是 Thickness，{x:Static} 不做标量转换。
+    /// 必须是 Thickness —— XAML 那边 <c>Padding</c> 是 Thickness，{x:Static} 不做标量转换。
     /// </summary>
     public static readonly Thickness MaximizedPadding = new(ResizeBorderThickness);
 
@@ -61,20 +61,17 @@ public static class WindowHelper
 
     private static void OnIsFramelessChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        // 设计期直接跳过。VS 的 XAML 设计器 / 热重载宿主里，同一个名字的类型未必是同一份类型标识，
-        // d 可能不是我们认识的那个 Window。WPF 自己的 WindowChrome 回调第一件事也是这个判断
-        // （WindowChrome.cs 的 _OnChromeChanged 开头就是 GetIsInDesignMode）。
+        // 设计期直接跳过：VS 设计器 / 热重载宿主里同一个名字的类型未必是同一份类型标识，
+        // d 可能不是我们认识的那个 Window。WPF 的 WindowChrome 回调开头也是这个判断。
         if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(d))
         {
             return;
         }
 
-        // 「只能用在 Window 上」这条约束真正靠的是 Get/Set 的**形参类型**（编译期就拦住），
-        // 这里只兜底，而且**故意不抛异常**：
-        //   · DependencyProperty 回调里抛异常会把整份 XAML 加载打断 —— 窗口直接出不来，
-        //     异常还可能被上层（如 Caliburn 未 await 的 Task）吞掉，只剩一个"白屏/无窗口"；
-        //   · XAML 端本来就校验不了 getter/setter 签名，写错了也不会走这里。
-        // 代价不对等，所以静默忽略 + 调试期在输出窗口提示一句就够了。
+        // 「只能用在 Window 上」真正靠 Get/Set 的形参类型在编译期拦住，这里只兜底，
+        // 且故意不抛异常：DP 回调里抛异常会打断整份 XAML 加载（窗口直接出不来，
+        // 异常还可能被上层未 await 的 Task 吞掉，只剩白屏），而 XAML 端本来就校验不了
+        // getter/setter 签名、写错了也走不到这里。代价不对等，静默忽略 + Debug 提示即可。
         if (d is not Window window)
         {
             System.Diagnostics.Debug.WriteLine(
@@ -235,7 +232,7 @@ public static class WindowHelper
 
     /// <summary>
     /// 窗口原本没有 WindowChrome 时，<see cref="WindowChrome.GlassFrameThickness"/> 的默认值来自系统参数
-    /// （Win11 上实测约 3.2,26.4,3.2,3.2），是「非零」的，所以玻璃路径默认就是开的。
+    /// （Win11 实测约 3.2,26.4,3.2,3.2），非零 —— 所以玻璃路径默认就是开的。
     /// </summary>
     private static WindowChrome BuildChrome() => new()
     {
@@ -253,9 +250,8 @@ public static class WindowHelper
             return;
         }
 
-        // Win10 及更早：HTMAXBUTTON 会被 DefWindowProc 当成它自己算出来的标题栏按钮，
-        // 和我们手动接管的点击撞成「最大化两次」。这些系统上干脆整个不接管，
-        // 最大化按钮退回普通 WPF 按钮（靠 Command）工作。
+        // Win10 及更早：HTMAXBUTTON 会被 DefWindowProc 当成它自己算的标题栏按钮，
+        // 与手动接管撞成「最大化两次」。这些系统上整个不接管，按钮退回靠 Command 工作。
         if (Environment.OSVersion.Version.Build < Windows11Build)
         {
             return;
@@ -331,12 +327,9 @@ public static class WindowHelper
 
     private static void AddCommandBindings(FramelessState state)
     {
-        // SystemCommands 的那 5 个 RoutedCommand，WPF 自己一个 CommandBinding 都不注册
-        // （Window.cs 只给 DialogCancelCommand 注册过），所以不自己挂，模板里的按钮就是灰的、
-        // 点了也什么都不发生。
-        //
-        // 只给 Executed、不给 CanExecute：这种组合下 CommandBinding.OnCanExecute 会自动
-        // 把 e.CanExecute 置 true，按钮才是可用的。
+        // SystemCommands 那几个 RoutedCommand，WPF 自己不注册任何 CommandBinding
+        // （Window.cs 只给 DialogCancelCommand 注册过），不自己挂的话模板里的按钮就是灰的。
+        // 只给 Executed、不给 CanExecute：这种组合下 OnCanExecute 会自动置 e.CanExecute = true。
         var registrations = new (RoutedCommand Command, Action<Window> Execute)[]
         {
             (SystemCommands.MinimizeWindowCommand, SystemCommands.MinimizeWindow),
