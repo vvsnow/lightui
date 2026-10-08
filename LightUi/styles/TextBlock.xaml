@@ -8,8 +8,20 @@
         独立使用的 TextBlock 没父级 Foreground 时会回退到系统 WindowTextBrushKey，跟随系统主题。
     -->
 
-    <Style TargetType="{x:Type TextBlock}">
-        <Setter Property="FontSize" Value="{StaticResource ControlFontSize}" />
+
+
+    <Style x:Key="DefaultTextStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
     </Style>
+
+    <Style
+        x:Key="HeaderTextStyle"
+        BasedOn="{StaticResource DefaultTextStyle}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Medium" />
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultTextStyle}" TargetType="{x:Type TextBlock}" />
 
 </ResourceDictionary>

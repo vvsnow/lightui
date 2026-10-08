@@ -3,40 +3,76 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
+    <!--
+        ToggleSwitch 默认样式（方案 B）：
+        - 不画外层 Grid，改用横向 StackPanel：[Toggle pill] [Label]
+        - Label 在开关右边，状态变化时 OffContent / OnContent 二选一显示
+        - 整体宽度由内容决定（Track 固定 36×18 + Label 8px gap + 文字宽度）
+        - 不写 Width / Height 默认值，由 demo 自己按需覆盖
+        - 文字用 TextBlock.FontSize / TextBlock.Foreground（attached property），
+        避开项目 XAML 环境不允许 ContentPresenter.Foreground / .FontSize 属性的限制
+    -->
+
     <Style TargetType="{x:Type local:ToggleSwitch}">
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="Width" Value="36" />
-        <Setter Property="Height" Value="18" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ToggleSwitch}">
-                    <Grid>
-                        <!--
-                            不写死宽高：Track 拉伸填满 Grid（= 控件尺寸），
-                            这样控件被改尺寸时轨道和圆球才不会错位
-                        -->
+                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+
+                        <!--  Track + Thumb：开关本体（36×18 固定大小）  -->
                         <Border
                             x:Name="Track"
+                            Width="36"
+                            Height="18"
+                            VerticalAlignment="Center"
                             Background="{TemplateBinding Background}"
-                            CornerRadius="9" />
-                        <Ellipse
-                            x:Name="Thumb"
-                            Width="14"
-                            Height="14"
-                            Margin="2,0,0,0"
-                            HorizontalAlignment="Left"
-                            Fill="{DynamicResource ToggleSwitchThumbBrush}" />
-                    </Grid>
+                            CornerRadius="9"
+                            SnapsToDevicePixels="True">
+                            <Ellipse
+                                x:Name="Thumb"
+                                Width="14"
+                                Height="14"
+                                Margin="2,0,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Fill="{DynamicResource ToggleSwitchThumbBrush}" />
+                        </Border>
+
+                        <!--  OffContent：折叠态默认显示，开关右侧 6px 间距  -->
+                        <ContentPresenter
+                            x:Name="OffContentPresenter"
+                            Margin="6,0,2,0"
+                            VerticalAlignment="Center"
+                            Content="{Binding OffContent, RelativeSource={RelativeSource TemplatedParent}}"
+                            TextBlock.FontSize="{DynamicResource ControlFontSize}"
+                            TextBlock.Foreground="{DynamicResource TextPrimaryBrush}" />
+
+                        <!--  OnContent：默认隐藏，选中态显示在同一位置  -->
+                        <ContentPresenter
+                            x:Name="OnContentPresenter"
+                            Margin="6,0,2,0"
+                            VerticalAlignment="Center"
+                            Content="{Binding OnContent, RelativeSource={RelativeSource TemplatedParent}}"
+                            TextBlock.FontSize="{DynamicResource ControlFontSize}"
+                            TextBlock.Foreground="{DynamicResource TextPrimaryBrush}"
+                            Visibility="Collapsed" />
+
+                    </StackPanel>
+
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Track" Property="Background" Value="{DynamicResource AccentBrush}" />
                             <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right" />
                             <Setter TargetName="Thumb" Property="Margin" Value="0,0,2,0" />
+                            <Setter TargetName="OnContentPresenter" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="OffContentPresenter" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.45" />
+                            <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

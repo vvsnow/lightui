@@ -18,77 +18,77 @@
                 FontSize="22"
                 FontWeight="SemiBold"
                 Text="扩展控件（ui:*）" />
-            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="LightUi 自研：ToggleSwitch / FontIcon / SimpleStackPanel / HyperlinkButton / Flyout" />
+            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="扩展控件：ToggleSwitch / FontIcon / SimpleStackPanel / HyperlinkButton / Flyout" />
 
             <!--  ToggleSwitch  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="ToggleSwitch" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToggleSwitch" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="20">
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:ToggleSwitch IsChecked="False" />
-                            <TextBlock VerticalAlignment="Center" Text="关闭" />
+                            <ui:ToggleSwitch
+                                IsChecked="False"
+                                OffContent="关闭"
+                                OnContent="打开" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:ToggleSwitch IsChecked="True" />
-                            <TextBlock VerticalAlignment="Center" Text="打开" />
+                            <ui:ToggleSwitch
+                                IsChecked="True"
+                                OffContent="关闭"
+                                OnContent="打开" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:ToggleSwitch IsChecked="True" IsEnabled="False" />
-                            <TextBlock
-                                VerticalAlignment="Center"
-                                Foreground="{DynamicResource TextSecondaryBrush}"
-                                Text="Disabled" />
+                            <ui:ToggleSwitch
+                                IsChecked="True"
+                                IsEnabled="False"
+                                OffContent="关闭"
+                                OnContent="打开" />
                         </ui:SimpleStackPanel>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
 
             <!--  FontIcon  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="FontIcon（Segoe Fluent Icons）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="FontIcon（Segoe Fluent Icons）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon Glyph="&#xE710;" />
+                            <ui:FontIcon FontSize="18" Glyph="&#xE710;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Add (E710)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon Foreground="{DynamicResource AccentBrush}" Glyph="&#xE74D;" />
+                            <ui:FontIcon
+                                FontSize="18"
+                                Foreground="{DynamicResource AccentBrush}"
+                                Glyph="&#xE74D;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Delete (E74D)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon Glyph="&#xE713;" />
+                            <ui:FontIcon FontSize="18" Glyph="&#xE713;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Settings (E713)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon Glyph="&#xE70D;" />
+                            <ui:FontIcon
+                                FontSize="18"
+                                Foreground="{DynamicResource AccentBrush}"
+                                Glyph="&#xE70D;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="Chevron Down (E70D)" />
                         </ui:SimpleStackPanel>
                         <ui:SimpleStackPanel Spacing="4">
-                            <ui:FontIcon Glyph="&#xE10A;" />
+                            <ui:FontIcon FontSize="18" Glyph="&#xE10A;" />
                             <TextBlock
                                 FontSize="11"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
@@ -99,43 +99,18 @@
             </Border>
 
             <!--  SimpleStackPanel 演示  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="SimpleStackPanel（带 Spacing 的 Panel）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="SimpleStackPanel（带 Spacing 的 Panel）" />
                     <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="横向 Spacing=12" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource AccentBrush}"
-                            CornerRadius="3">
-                            <TextBlock Foreground="{DynamicResource AccentForegroundBrush}" Text="Item 1" />
-                        </Border>
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource AccentBrush}"
-                            CornerRadius="3">
-                            <TextBlock Foreground="{DynamicResource AccentForegroundBrush}" Text="Item 2" />
-                        </Border>
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource AccentBrush}"
-                            CornerRadius="3">
-                            <TextBlock Foreground="{DynamicResource AccentForegroundBrush}" Text="Item 3" />
-                        </Border>
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource AccentBrush}"
-                            CornerRadius="3">
-                            <TextBlock Foreground="{DynamicResource AccentForegroundBrush}" Text="Item 4" />
-                        </Border>
+                        <Button Content="Item1" Style="{DynamicResource AccentButtonStyle}" />
+                        <Button Content="Item2" Style="{DynamicResource AccentButtonStyle}" />
+                        <Button Content="Item3" Style="{DynamicResource AccentButtonStyle}" />
+                        <Button Content="Item4" Style="{DynamicResource AccentButtonStyle}" />
                     </ui:SimpleStackPanel>
 
                     <TextBlock
@@ -143,48 +118,23 @@
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="纵向 Spacing=8" />
                     <ui:SimpleStackPanel Orientation="Vertical" Spacing="8">
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource ControlBackgroundSubtleBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="3">
-                            <TextBlock Text="Row 1" />
-                        </Border>
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource ControlBackgroundSubtleBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="3">
-                            <TextBlock Text="Row 2" />
-                        </Border>
-                        <Border
-                            Padding="12,6"
-                            Background="{DynamicResource ControlBackgroundSubtleBrush}"
-                            BorderBrush="{DynamicResource BorderBrush}"
-                            BorderThickness="1"
-                            CornerRadius="3">
-                            <TextBlock Text="Row 3" />
-                        </Border>
+                        <Button Content="Item1" Style="{DynamicResource AccentButtonStyle}" />
+                        <Button Content="Item2" Style="{DynamicResource AccentButtonStyle}" />
+                        <Button Content="Item3" Style="{DynamicResource AccentButtonStyle}" />
+
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
 
             <!--  Flyout 演示  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="Flyout（依附弹出）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout（依附弹出）" />
                     <ui:DropDownButton Content="点击我弹 Flyout">
                         <ui:DropDownButton.Flyout>
                             <ui:Flyout>
                                 <ui:SimpleStackPanel Width="260" Spacing="8">
-                                    <TextBlock FontWeight="SemiBold" Text="Flyout 内容" />
+                                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout 内容" />
                                     <TextBlock
                                         Foreground="{DynamicResource TextSecondaryBrush}"
                                         Text="Flyout 是依附控件的弹出层，可以承载任意 XAML 内容。"
@@ -196,7 +146,39 @@
                 </ui:SimpleStackPanel>
             </Border>
 
+            <!--  Flyout（FlyoutService 附着属性）  -->
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Button + Flyout" />
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="普通按钮 挂 Flyout">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout Placement="Top" VerticalOffset="-4">
+                                    <Border Padding="12">
+                                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                                            <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
+                                            <Button Content="普通按钮" />
+                                        </ui:SimpleStackPanel>
+                                    </Border>
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                        <Button Content="普通 Button 挂 MenuFlyout">
+                            <ui:FlyoutService.Flyout>
+                                <ui:MenuFlyout VerticalOffset="6">
+                                    <MenuItem Header="选项 1" />
+                                    <MenuItem Header="选项 2" />
+                                    <Separator />
+                                    <MenuItem Header="更多…" />
+                                </ui:MenuFlyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
         </ui:SimpleStackPanel>
 
     </ScrollViewer>
+
 </UserControl>

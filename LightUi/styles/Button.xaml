@@ -55,7 +55,7 @@
                             <Setter Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.45" />
+                            <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -144,7 +144,7 @@
                             <Setter Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.45" />
+                            <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

@@ -7,11 +7,14 @@
     xmlns:local="clr-namespace:LightUi.Demo.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lightui.com/2019"
+    xmlns:vm="clr-namespace:LightUi.Demo.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:ButtonsViewModel}"
     d:DesignHeight="900"
     d:DesignWidth="600"
     mc:Ignorable="d">
 
     <ScrollViewer Padding="22" VerticalScrollBarVisibility="Auto">
+
         <ui:SimpleStackPanel Spacing="12">
 
             <TextBlock
@@ -22,19 +25,14 @@
             <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="Button / RepeatButton / ToggleButton / HyperlinkButton / DropDownButton" />
 
             <!--  Button  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="Button" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Button" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <Button Content="普通按钮" />
                         <Button Content="Primary" Style="{StaticResource AccentButtonStyle}" />
                         <Button Content="Disabled" IsEnabled="False" />
-                        <Button>
+                        <Button Style="{DynamicResource AccentButtonStyle}">
                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                                 <ui:FontIcon Glyph="&#xE710;" />
                                 <TextBlock Text="带 FontIcon" />
@@ -45,46 +43,34 @@
             </Border>
 
             <!--  RepeatButton  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="RepeatButton（按住连续）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="RepeatButton（按住连续）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <RepeatButton
-                            xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
                             cal:Message.Attach="Increase"
-                            Content="+"
                             Delay="200"
-                            FontSize="16"
-                            Interval="80" />
+                            Interval="80">
+                            <ui:FontIcon Glyph="&#xE710;" />
+                        </RepeatButton>
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="18"
                             Text="{Binding Counter}" />
                         <RepeatButton
-                            xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
                             cal:Message.Attach="Decrease"
-                            Content="−"
                             Delay="200"
-                            FontSize="16"
-                            Interval="80" />
+                            Interval="80">
+                            <ui:FontIcon Glyph="&#xE738;" />
+                        </RepeatButton>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
 
             <!--  ToggleButton  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="ToggleButton（切换状态）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToggleButton" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ToggleButton Content="未选中" />
                         <ToggleButton Content="已选中" IsChecked="True" />
@@ -94,15 +80,11 @@
             </Border>
 
             <!--  HyperlinkButton  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="HyperlinkButton（轻量跳转）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="HyperlinkButton" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="这是一个超链接按钮:" />
                         <ui:HyperlinkButton Content="访问 GitHub" NavigateUri="https://github.com" />
                         <ui:HyperlinkButton Content="访问 NuGet" NavigateUri="https://www.nuget.org" />
                         <ui:HyperlinkButton Content="不跳转（纯样式）" />
@@ -110,51 +92,12 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  Button + Flyout（FlyoutService 附着属性）  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
-                <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="Button + Flyout（ui:FlyoutService.Flyout）" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                        <Button Content="普通按钮 挂 Flyout">
-                            <ui:FlyoutService.Flyout>
-                                <ui:Flyout Placement="Top" VerticalOffset="-4">
-                                    <Border Padding="12">
-                                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                                            <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
-                                            <Button Content="普通按钮" />
-                                        </ui:SimpleStackPanel>
-                                    </Border>
-                                </ui:Flyout>
-                            </ui:FlyoutService.Flyout>
-                        </Button>
-                        <Button Content="普通 Button 也能挂 MenuFlyout">
-                            <ui:FlyoutService.Flyout>
-                                <ui:MenuFlyout VerticalOffset="6">
-                                    <MenuItem Header="选项 1" />
-                                    <MenuItem Header="选项 2" />
-                                    <Separator />
-                                    <MenuItem Header="更多…" />
-                                </ui:MenuFlyout>
-                            </ui:FlyoutService.Flyout>
-                        </Button>
-                    </ui:SimpleStackPanel>
-                </ui:SimpleStackPanel>
-            </Border>
+
 
             <!--  DropDownButton  -->
-            <Border
-                Padding="16"
-                Background="{DynamicResource ControlBackgroundBrush}"
-                BorderBrush="{DynamicResource BorderBrush}"
-                BorderThickness="1"
-                CornerRadius="6">
+            <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock FontWeight="SemiBold" Text="DropDownButton（点击弹出）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="DropDownButton" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:DropDownButton Content="新建">
                             <ui:DropDownButton.Flyout>
@@ -220,9 +163,11 @@
                         </ui:DropDownButton>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
+
             </Border>
 
-
         </ui:SimpleStackPanel>
+
     </ScrollViewer>
+
 </UserControl>

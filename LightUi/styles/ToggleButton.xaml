@@ -35,10 +35,14 @@
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
-                            <!--  边框保持原样（与 Button 一致），不叠 AccentBrush，避免在灰页面上形成高对比假"边框"  -->
+                            <!--
+                                选中态边框刷成透明（BorderBrush=Transparent）：BorderThickness 保留 1px 不变，
+                                不影响基于边框尺寸的布局计算；视觉上等同于无边框，与 AccentButton 一致。
+                            -->
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="0.45" />
+                            <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

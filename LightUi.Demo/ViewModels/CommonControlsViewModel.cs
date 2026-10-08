@@ -11,5 +11,5 @@ internal class CommonControlsViewModel : Screen
         "Lemon", "Mango", "Nectarine", "Orange", "Papaya"
     };
 
-    public string SelectedFruit { get; set; } = "Mango";
+    public string SelectedFruit { get; set; } = "Apple";
 }

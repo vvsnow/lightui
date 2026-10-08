@@ -18,8 +18,9 @@
 
                 <ResourceDictionary Source="pack://application:,,,/LightUi;component/ControlsResources.xaml" />
 
-            </ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Common.xaml" />
 
+            </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
 
