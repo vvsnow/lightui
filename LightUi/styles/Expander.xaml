@@ -4,7 +4,7 @@
         Expander 默认样式（Win11 风味）：
         - 卡片化外观：圆角 6（ContainerCornerRadius）+ 1px 边框（BorderBrush）+ 底色（ControlBackgroundBrush）
         - 折叠态：只显示一行高 ExpanderHeaderHeight（默认 60）的头部
-        - 展开态：头部 + 1px 分隔线 + body；body 用 ControlBackgroundSubtleBrush（略浅一档）
+        - 展开态：头部 + 1px 分隔线 + body；body 用 ControlSubtleBackgroundBrush（略浅一档）
         - 头部用 chrome-less ToggleButton（模板内联重写）实现点击 + 键盘可访问
         IsChecked 与 Expander.IsExpanded 双向绑定
         - 箭头：复用 DropDownButton / ComboBox 已有的 ChevronDown Path（Data="M0,3 L5,7 L10,3"），
@@ -132,10 +132,10 @@
 
                                         <ControlTemplate.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="HeaderBd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                                                <Setter TargetName="HeaderBd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                                             </Trigger>
                                             <Trigger Property="IsPressed" Value="True">
-                                                <Setter TargetName="HeaderBd" Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                                                <Setter TargetName="HeaderBd" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
                                             </Trigger>
                                             <!--  展开态：箭头翻 180°（直接替换 Path 自己的 RenderTransform）  -->
                                             <Trigger Property="IsChecked" Value="True">
@@ -156,12 +156,12 @@
                                 Grid.Row="1"
                                 Background="{DynamicResource BorderBrush}" />
 
-                            <!--  body：略浅一档底色 ControlBackgroundSubtleBrush  -->
+                            <!--  body：略浅一档底色 ControlSubtleBackgroundBrush  -->
                             <Border
                                 x:Name="BodyBd"
                                 Grid.Row="2"
                                 Padding="12,12"
-                                Background="{DynamicResource ControlBackgroundSubtleBrush}"
+                                Background="{DynamicResource ControlSubtleBackgroundBrush}"
                                 CornerRadius="0,0,6,6">
                                 <ContentPresenter
                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -188,7 +188,7 @@
                             （同理 TabItem 那次 SourceName="Bd" 的修复）
                         -->
                         <Trigger SourceName="HeaderToggle" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="OuterBd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter TargetName="OuterBd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <!--  禁用  -->
                         <Trigger Property="IsEnabled" Value="False">

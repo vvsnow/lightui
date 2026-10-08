@@ -3,7 +3,7 @@
     <!--
         ComboBoxItem 默认样式（下拉项容器）：
         - 默认：透明背景，文字继承 ComboBox Foreground（TextPrimaryBrush）
-        - 悬停 / 键盘导航（IsHighlighted）：ControlBackgroundHoverBrush 浅灰
+        - 悬停 / 键盘导航（IsHighlighted）：ControlHoverBackgroundBrush 浅灰
         - 选中（IsSelected）：AccentBrush 蓝底 + AccentForegroundBrush 白字
         - 禁用：0.45 透明度
     -->
@@ -33,13 +33,13 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
@@ -144,7 +144,7 @@
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="DropDownButton" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter TargetName="DropDownButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
                             <Setter TargetName="DropDownButton" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />

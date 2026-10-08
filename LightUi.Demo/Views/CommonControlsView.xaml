@@ -128,17 +128,17 @@
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="确定 65%" />
-                    <ProgressBar Height="6" Value="65" />
+                    <ProgressBar Value="65" />
                     <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="Indeterminate" />
-                    <ProgressBar Height="6" IsIndeterminate="True" />
+                    <ProgressBar IsIndeterminate="True" />
                     <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="完成 100%" />
-                    <ProgressBar Height="6" Value="100" />
+                    <ProgressBar Value="100" />
                 </ui:SimpleStackPanel>
             </Border>
 

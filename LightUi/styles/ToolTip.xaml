@@ -12,7 +12,7 @@
           在 Border 上加 <Border.Effect><DropShadowEffect .../></Border.Effect> 即可（这次不做）。
     -->
     <Style TargetType="ToolTip">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundSubtleBrush}" />
+        <Setter Property="Background" Value="{DynamicResource ControlSubtleBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />

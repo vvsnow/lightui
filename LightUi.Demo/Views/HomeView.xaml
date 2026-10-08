@@ -57,12 +57,12 @@
                 <Border
                     Margin="4"
                     Padding="12"
-                    Background="{DynamicResource ControlBackgroundSubtleBrush}"
+                    Background="{DynamicResource ControlSubtleBackgroundBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="6">
                     <ui:SimpleStackPanel Spacing="4">
-                        <TextBlock FontSize="12" Text="ControlBackgroundSubtleBrush" />
+                        <TextBlock FontSize="12" Text="ControlSubtleBackgroundBrush" />
                         <TextBlock
                             FontSize="11"
                             Foreground="{DynamicResource TextSecondaryBrush}"
@@ -73,12 +73,12 @@
                 <Border
                     Margin="4"
                     Padding="12"
-                    Background="{DynamicResource ControlBackgroundHoverBrush}"
+                    Background="{DynamicResource ControlHoverBackgroundBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="6">
                     <ui:SimpleStackPanel Spacing="4">
-                        <TextBlock FontSize="12" Text="ControlBackgroundHoverBrush" />
+                        <TextBlock FontSize="12" Text="ControlHoverBackgroundBrush" />
                         <TextBlock
                             FontSize="11"
                             Foreground="{DynamicResource TextSecondaryBrush}"
@@ -89,12 +89,12 @@
                 <Border
                     Margin="4"
                     Padding="12"
-                    Background="{DynamicResource ControlBackgroundSelectedBrush}"
+                    Background="{DynamicResource ControlSelectedBackgroundBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
                     BorderThickness="1"
                     CornerRadius="6">
                     <ui:SimpleStackPanel Spacing="4">
-                        <TextBlock FontSize="12" Text="ControlBackgroundSelectedBrush" />
+                        <TextBlock FontSize="12" Text="ControlSelectedBackgroundBrush" />
                         <TextBlock
                             FontSize="11"
                             Foreground="{DynamicResource TextSecondaryBrush}"

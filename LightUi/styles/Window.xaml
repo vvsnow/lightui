@@ -121,10 +121,10 @@
                             这两个附加属性由 WindowHelper 的钩子写，public 只读，见那边的注释。
                         -->
                         <Trigger Property="local:WindowHelper.IsMaximizeButtonHovered" Value="True">
-                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="local:WindowHelper.IsMaximizeButtonPressed" Value="True">
-                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
                         </Trigger>
 
                         <!--

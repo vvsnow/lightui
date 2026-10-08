@@ -3,7 +3,7 @@
     <!--
         TabItem 默认样式（toggle button 外观）：
         - 圆角 = ControlCornerRadius（与项目内 Button / CheckBox 一致 —— tab 看上去就是 toggle button）
-        - 默认背景透明；hover 用 ControlBackgroundHoverBrush
+        - 默认背景透明；hover 用 ControlHoverBackgroundBrush
         - 选中态（IsSelected=True）：背景 = AccentBrush、前景 = AccentForegroundBrush（与 AccentButton 一致），
         只有选中的 tab 才有这个外观
         - 选中 + hover：覆盖为 AccentHoverBrush；选中 + pressed：覆盖为 AccentPressedBrush
@@ -40,14 +40,14 @@
                     <ControlTemplate.Triggers>
 
                         <Trigger SourceName="Bd" Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
                         </Trigger>
 
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
                         </Trigger>
 
                     </ControlTemplate.Triggers>

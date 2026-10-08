@@ -49,10 +49,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
@@ -138,10 +138,10 @@
                     <ControlTemplate.Triggers>
                         <!--  不写 TargetName：改的是控件自己的 Background，Style.Triggers 才能盖掉它（同 DefaultButtonStyle）  -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundHoverBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" Value="{DynamicResource ControlBackgroundSelectedBrush}" />
+                            <Setter Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
