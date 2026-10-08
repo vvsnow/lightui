@@ -30,18 +30,18 @@
                         直接在内层元素上用 DynamicResource 取尺寸令牌。
                     -->
                     <local:ProgressBar
+                        MinHeight="{TemplateBinding MinHeight}"
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
                         Background="{TemplateBinding Background}"
-                        Foreground="{TemplateBinding Foreground}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
-                        MinHeight="{TemplateBinding MinHeight}"
+                        Foreground="{TemplateBinding Foreground}"
+                        IsIndeterminate="{TemplateBinding IsIndeterminate}"
                         IsTabStop="{TemplateBinding IsTabStop}"
-                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                        Minimum="{TemplateBinding Minimum}"
                         Maximum="{TemplateBinding Maximum}"
-                        Value="{TemplateBinding Value}"
-                        IsIndeterminate="{TemplateBinding IsIndeterminate}" />
+                        Minimum="{TemplateBinding Minimum}"
+                        Value="{TemplateBinding Value}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

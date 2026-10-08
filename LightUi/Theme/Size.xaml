@@ -15,7 +15,7 @@
         线维度    边框、padding、滚动条、分隔线 等线性度量
         字号      主字号 / 图标字号 / 标题栏图标字号 / 次级字号
         圆角      控件 / 浮层 / 容器卡片 三档
-          状态      禁用态的 Opacity（IsEnabled=False 触发器复用）
+        状态      禁用态的 Opacity（IsEnabled=False 触发器复用）
         
         需要额外解释的只有这几条：
         MenuItemHeight        = ControlHeight − 2×ControlBorderThickness
