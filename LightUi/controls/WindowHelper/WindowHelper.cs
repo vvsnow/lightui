@@ -240,7 +240,7 @@ public static class WindowHelper
         ResizeBorderThickness = new Thickness(ResizeBorderThickness),
         GlassFrameThickness = WindowChrome.GlassFrameCompleteThickness, // = new Thickness(-1)，整窗玻璃
         UseAeroCaptionButtons = false,                                  // 不让 DWM 再画一套系统按钮
-        // CornerRadius 故意留默认 0：非 0 会走 SetWindowRgn 硬切圆角，反而顶掉 Win11 的原生圆角与投影
+        NonClientFrameEdges = NonClientFrameEdges.Right,                // 剔除右侧系统边框
     };
 
     private static void AddHook(FramelessState state, HwndSource source)

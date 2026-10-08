@@ -112,7 +112,8 @@
         x:Key="SystemButtonStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"
         TargetType="Button">
-        <Setter Property="Width" Value="42" />
+        <!--  系统按钮46宽  -->
+        <Setter Property="Width" Value="46" />
         <Setter Property="Height" Value="{x:Static local:WindowHelper.CaptionHeight}" />
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="Background" Value="Transparent" />
@@ -169,6 +170,8 @@
         x:Key="CloseSystemButtonStyle"
         BasedOn="{StaticResource SystemButtonStyle}"
         TargetType="Button">
+        <!--  关闭按钮比最小化 / 最大化宽 6px。  -->
+        <Setter Property="Width" Value="52" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource SystemCloseHoverBrush}" />
