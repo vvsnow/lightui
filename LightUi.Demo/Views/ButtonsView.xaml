@@ -29,10 +29,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="Button" />
+                    <TextBlock FontWeight="SemiBold" Text="Button" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <Button Content="普通按钮" />
                         <Button Content="Primary" Style="{StaticResource AccentButtonStyle}" />
@@ -55,10 +52,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="RepeatButton（按住连续）" />
+                    <TextBlock FontWeight="SemiBold" Text="RepeatButton（按住连续）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <RepeatButton
                             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
@@ -70,7 +64,6 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             FontSize="18"
-                            Foreground="{DynamicResource TextPrimaryBrush}"
                             Text="{Binding Counter}" />
                         <RepeatButton
                             xmlns:cal="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro.Platform"
@@ -91,10 +84,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="ToggleButton（切换状态）" />
+                    <TextBlock FontWeight="SemiBold" Text="ToggleButton（切换状态）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ToggleButton Content="未选中" />
                         <ToggleButton Content="已选中" IsChecked="True" />
@@ -111,10 +101,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="HyperlinkButton（轻量跳转）" />
+                    <TextBlock FontWeight="SemiBold" Text="HyperlinkButton（轻量跳转）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <ui:HyperlinkButton Content="访问 GitHub" NavigateUri="https://github.com" />
                         <ui:HyperlinkButton Content="访问 NuGet" NavigateUri="https://www.nuget.org" />
@@ -131,10 +118,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="Button + Flyout（ui:FlyoutService.Flyout）" />
+                    <TextBlock FontWeight="SemiBold" Text="Button + Flyout（ui:FlyoutService.Flyout）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <Button Content="普通按钮 挂 Flyout">
                             <ui:FlyoutService.Flyout>
@@ -170,10 +154,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="DropDownButton（点击弹出）" />
+                    <TextBlock FontWeight="SemiBold" Text="DropDownButton（点击弹出）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <ui:DropDownButton Content="新建">
                             <ui:DropDownButton.Flyout>

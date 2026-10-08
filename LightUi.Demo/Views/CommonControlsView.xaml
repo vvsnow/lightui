@@ -6,6 +6,8 @@
     xmlns:local="clr-namespace:LightUi.Demo.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lightui.com/2019"
+    xmlns:vm="clr-namespace:LightUi.Demo.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:CommonControlsViewModel}"
     d:DesignHeight="950"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -19,7 +21,7 @@
                 FontWeight="SemiBold"
                 Foreground="{DynamicResource TextPrimaryBrush}"
                 Text="内置 WPF 控件" />
-            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="被 LightUi styles/ 重新样式化过的常见控件" />
+            <TextBlock Text="被 LightUi styles/ 重新样式化过的常见控件" />
 
             <!--  CheckBox  -->
             <Border
@@ -29,10 +31,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="CheckBox" />
+                    <TextBlock FontWeight="SemiBold" Text="CheckBox" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
                         <CheckBox Content="未选中" />
                         <CheckBox Content="已选中" IsChecked="True" />
@@ -49,10 +48,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="RadioButton（一组）" />
+                    <TextBlock FontWeight="SemiBold" Text="RadioButton（一组）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
                         <RadioButton Content="选项 A" GroupName="g1" />
                         <RadioButton
@@ -72,10 +68,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="TextBox / PasswordBox" />
+                    <TextBlock FontWeight="SemiBold" Text="TextBox / PasswordBox" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <TextBox Width="200" Text="普通文本" />
                         <TextBox
@@ -95,10 +88,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="ComboBox（下拉选择）" />
+                    <TextBlock FontWeight="SemiBold" Text="ComboBox（下拉选择）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <ComboBox Width="180" ItemsSource="{Binding FruitItems}" />
                         <ComboBox
@@ -122,19 +112,19 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="ListBox（水果列表）" />
+                    <TextBlock FontWeight="SemiBold" Text="ListBox（水果列表）" />
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
+
                         <ListBox
                             MaxHeight="140"
+                            BorderThickness="1"
                             ItemsSource="{Binding FruitItems}"
                             SelectedItem="{Binding SelectedFruit}" />
+
                         <ui:SimpleStackPanel
                             Grid.Column="1"
                             Margin="12,0,0,0"
@@ -146,7 +136,6 @@
                             <TextBlock
                                 FontSize="16"
                                 FontWeight="SemiBold"
-                                Foreground="{DynamicResource TextPrimaryBrush}"
                                 Text="{Binding SelectedFruit}" />
                         </ui:SimpleStackPanel>
                     </Grid>
@@ -161,10 +150,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="8">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="ProgressBar" />
+                    <TextBlock FontWeight="SemiBold" Text="ProgressBar" />
                     <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
@@ -191,10 +177,7 @@
                 BorderThickness="1"
                 CornerRadius="6">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Foreground="{DynamicResource TextPrimaryBrush}"
-                        Text="ToolTip（hover 触发）" />
+                    <TextBlock FontWeight="SemiBold" Text="ToolTip（hover 触发）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
                         <Button
                             Content="tooltip 左"
@@ -216,6 +199,67 @@
                             ToolTip="这是下面的 tooltip"
                             ToolTipService.Placement="Bottom"
                             ToolTipService.VerticalOffset="6" />
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <!--  TabControl（标签页）  -->
+            <Border
+                Padding="16"
+                Background="{DynamicResource ControlBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="6">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="TabControl（标签页，头部与内容分开）" />
+                    <TabControl Padding="6" BorderThickness="0">
+                        <TabItem>
+                            <TabItem.Header>
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                                    <ui:FontIcon Margin="0,2.8,0,0" Glyph="&#xE700;" />
+                                    <TextBlock Text="选项 A" />
+                                </ui:SimpleStackPanel>
+                            </TabItem.Header>
+                            <Border>
+                                <TextBlock Text="这是选项 A 的内容。点其它 tab 切到这里。" />
+                            </Border>
+                        </TabItem>
+                        <TabItem Header="选项 B" IsSelected="True">
+                            <TextBlock Text="这是选项 B 的内容。IsSelected=True 初始化时就是选中态 —— 只有选中那个有选中外观。" />
+                        </TabItem>
+                        <TabItem Header="选项 C">
+                            <TextBlock Text="这是选项 C 的内容。" />
+                        </TabItem>
+                        <TabItem Header="Disabled" IsEnabled="False">
+                            <TextBlock Text="不可用" />
+                        </TabItem>
+                    </TabControl>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <!--  Expander（折叠面板）  -->
+            <Border
+                Padding="16"
+                Background="{DynamicResource ControlBackgroundBrush}"
+                BorderBrush="{DynamicResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="6">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock FontWeight="SemiBold" Text="Expander（折叠面板，Win11 风味）" />
+                    <ui:SimpleStackPanel Spacing="12">
+                        <Expander Header="展开查看详情">
+                            <ui:SimpleStackPanel Spacing="6">
+                                <TextBlock Text="这是一个 60px 高的卡片化 Expander。区背景比头部略浅一档，更贴近 Win11。" TextWrapping="Wrap" />
+                                <TextBlock Text="这是一个 60px 高的卡片化 Expander 区背景比头部略浅一档，更贴近 Win11。" TextWrapping="Wrap" />
+                            </ui:SimpleStackPanel>
+
+                        </Expander>
+                        <Expander Header="默认展开" IsExpanded="True">
+                            <TextBlock Text="初始 IsExpanded=True，箭头已旋转 180°，分隔线可见。" TextWrapping="Wrap" />
+                        </Expander>
+                        <Expander Header="Disabled" IsEnabled="False">
+                            <TextBlock Text="不可用" TextWrapping="Wrap" />
+                        </Expander>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>

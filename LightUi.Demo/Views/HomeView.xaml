@@ -17,7 +17,6 @@
             <TextBlock
                 FontSize="14"
                 FontWeight="SemiBold"
-                Foreground="{DynamicResource TextPrimaryBrush}"
                 Text="调色板（9 个 brush）" />
             <TextBlock
                 FontSize="12"
@@ -128,7 +127,7 @@
                     Padding="12"
                     Background="{DynamicResource PageBackgroundBrush}"
                     BorderBrush="{DynamicResource BorderBrush}"
-                    BorderThickness="2"
+                    BorderThickness="1"
                     CornerRadius="6">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="BorderBrush" />
@@ -147,10 +146,7 @@
                     BorderThickness="1"
                     CornerRadius="6">
                     <ui:SimpleStackPanel Spacing="4">
-                        <TextBlock
-                            FontSize="12"
-                            Foreground="{DynamicResource TextPrimaryBrush}"
-                            Text="TextPrimaryBrush" />
+                        <TextBlock FontSize="12" Text="TextPrimaryBrush" />
                         <TextBlock
                             FontSize="11"
                             Foreground="{DynamicResource TextSecondaryBrush}"

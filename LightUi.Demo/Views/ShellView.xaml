@@ -46,7 +46,7 @@
         <ContentControl
             x:Name="ActiveItem"
             Grid.Column="1"
-            Margin="0,32,0,0" />
+            Margin="0,28,0,0" />
 
     </Grid>
 

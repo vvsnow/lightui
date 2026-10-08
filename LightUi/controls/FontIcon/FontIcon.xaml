@@ -15,7 +15,11 @@
     <Style TargetType="{x:Type local:FontIcon}">
         <Setter Property="FontFamily" Value="pack://application:,,,/LightUi;component/Assets/Fonts/SegoeIcons.TTF#Segoe Fluent Icons" />
         <Setter Property="FontSize" Value="{DynamicResource ControlGlyphFontSize}" />
-        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <!--
+            不设 Foreground：让 FontIcon 的前景色跟随父级（按钮 / TabItem / 列表项 …）的 Foreground，
+            与同位置的文字颜色保持一致。
+            一旦 Style Setter 写了具体 brush，local value 会盖掉继承 —— TabItem 选中态改 Foreground 就传不下来了。
+        -->
         <Setter Property="Text" Value="{Binding Glyph, RelativeSource={RelativeSource Self}}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />

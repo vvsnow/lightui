@@ -11,7 +11,7 @@
     <SolidColorBrush x:Key="ControlBackgroundSubtleBrush" Color="#252525" />
     <SolidColorBrush x:Key="ControlBackgroundHoverBrush" Color="#363636" />
     <SolidColorBrush x:Key="ControlBackgroundSelectedBrush" Color="#404040" />
-    <SolidColorBrush x:Key="BorderBrush" Color="#3F3F3F" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#4A4A4A" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#F5F5F5" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#B0B0B0" />
     <SolidColorBrush x:Key="AccentBrush" Color="#3B82F6" />

@@ -26,7 +26,6 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
-        <!--  高度由 ControlHeight 统一控制；左右 12 给文字/图标留出与边框的距离  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
         <Setter Property="Cursor" Value="Hand" />
@@ -113,11 +112,9 @@
         x:Key="SystemButtonStyle"
         BasedOn="{StaticResource DefaultButtonStyle}"
         TargetType="Button">
-        <Setter Property="Width" Value="46" />
-        <!--  高度跟着标题栏走：WindowHelper.CaptionHeight（32），不要在这里另写一个字面量  -->
+        <Setter Property="Width" Value="42" />
         <Setter Property="Height" Value="{x:Static local:WindowHelper.CaptionHeight}" />
         <Setter Property="MinHeight" Value="0" />
-        <!--  透明而非不设值：留空的 Background 不参与命中测试，整块 46×32 就点不到了  -->
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />

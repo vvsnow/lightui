@@ -1,0 +1,68 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        TabControl 默认样式：
+        - 卡片化外观：圆角 6（ContainerCornerRadius，复用已有 token）+ 1px 边框
+        - Tab strip（头部）与内容区同底色（ControlBackgroundBrush），无分割线 ——
+        视觉区分靠 tab 自身的 hover / 选中外观
+        - 模板只支持 TabStripPlacement=Top（其它方向 DockPanel.Dock="Top" 会渲染异常 —— 与 Win11 行为一致）
+    -->
+
+    <Style x:Key="DefaultTabControlStyle" TargetType="TabControl">
+        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TabControl">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{DynamicResource ContainerCornerRadius}"
+                        SnapsToDevicePixels="True">
+
+                        <DockPanel Margin="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            <!--
+                                Tab 头部条：与内容区同底色（ControlBackgroundBrush），靠 tab 自身 hover/选中外观区分。
+                                WPF 必须有 TabPanel + IsItemsHost=True 才会渲染 TabItem。
+                            -->
+                            <StackPanel
+                                HorizontalAlignment="Left"
+                                DockPanel.Dock="Top"
+                                Orientation="Horizontal">
+                                <Border
+                                    Background="{DynamicResource ControlBackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="{DynamicResource ControlBorderThickness}"
+                                    CornerRadius="{DynamicResource ControlCornerRadius}"
+                                    DockPanel.Dock="Top">
+                                    <TabPanel
+                                        x:Name="HeaderPanel"
+                                        Background="Transparent"
+                                        IsItemsHost="True" />
+                                </Border>
+
+                            </StackPanel>
+
+                            <!--  内容区：WPF 必需 PART_SelectedContentHost + ContentSource="SelectedContent"  -->
+                            <Border Margin="1.5,10,1.5,1.5">
+                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
+                            </Border>
+                        </DockPanel>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  隐式：所有 TabControl 都用这套  -->
+    <Style BasedOn="{StaticResource DefaultTabControlStyle}" TargetType="{x:Type TabControl}" />
+
+</ResourceDictionary>

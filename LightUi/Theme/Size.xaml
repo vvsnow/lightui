@@ -5,12 +5,18 @@
 
     <!--
         尺寸类资源（与主题无关 —— Light / Dark 共用一套）。
-        
+
         由 Light.xaml / Dark.xaml 通过 MergedDictionaries 引入，而不是写进 App.Resources：
         ResourceDictionary.Keys 只列自身定义的 key，合并进来的不会被列出 ——
         所以 ThemeManager「枚举 palette.Keys 写回 target」的流程碰不到尺寸资源。
-        
-        键的用途见下方各自的声明；需要额外解释的只有这几条：
+
+        分组（自上而下）：
+          高度      控件 / 菜单项 / 容器卡片 自身的纵向高度
+          线维度    边框、padding、滚动条、分隔线 等线性度量
+          字号      主字号 / 图标字号 / 标题栏图标字号 / 次级字号
+          圆角      控件 / 浮层 / 容器卡片 三档
+
+        需要额外解释的只有这几条：
         MenuItemHeight        = ControlHeight − 2×ControlBorderThickness
         ControlGlyphFontSize  与 CaptionGlyphFontSize 刻意分开（控件图标 / 标题栏图标两套规格）
 
@@ -18,15 +24,10 @@
         要按主题差异化尺寸，在对应主题里 Override 即可。
     -->
 
+
+    <!--  ─────────  高度  ─────────  -->
+
     <sys:Double x:Key="ControlHeight">28</sys:Double>
-    <!--
-        类型必须是 Thickness，不能是 sys:Double —— 它只用在 BorderThickness 上（14 处），
-        而 Thickness 属性拿到 boxed double 会抛"__不是属性 BorderThickness 的有效值"。
-        （对照：ControlPaddingHorizontal 也用在这个属性上，所以同样是 <Thickness>。）
-    -->
-    <Thickness x:Key="ControlBorderThickness">1</Thickness>
-    <sys:Double x:Key="ControlFontSize">13</sys:Double>
-    <Thickness x:Key="ControlPaddingHorizontal">12,0</Thickness>
 
     <!--
         菜单项自身高度 = ControlHeight − 2 × ControlBorderThickness。
@@ -37,11 +38,19 @@
     -->
     <sys:Double x:Key="MenuItemHeight">26</sys:Double>
 
-    <!--  库内图标（FontIcon）统一字号，也是 FontIcon 默认字号。与 CaptionGlyphFontSize 分开，别互相牵连。  -->
-    <sys:Double x:Key="ControlGlyphFontSize">14</sys:Double>
+    <!--  Expander 折叠态头部位默认高度（用户要求 50；可按主题差异化覆盖）  -->
+    <sys:Double x:Key="ExpanderHeaderHeight">50</sys:Double>
 
-    <!--  次级文字字号：菜单项右侧的快捷键列、ToolTip 正文（对齐已有的 TextSecondaryBrush 命名）  -->
-    <sys:Double x:Key="TextSecondaryFontSize">12</sys:Double>
+
+    <!--  ─────────  线维度  ─────────  -->
+
+    <!--
+        类型必须是 Thickness，不能是 sys:Double —— 它只用在 BorderThickness 上（14 处），
+        而 Thickness 属性拿到 boxed double 会抛"__不是属性 BorderThickness 的有效值"。
+        （对照：ControlPaddingHorizontal 也用在这个属性上，所以同样是 <Thickness>。）
+    -->
+    <Thickness x:Key="ControlBorderThickness">1</Thickness>
+    <Thickness x:Key="ControlPaddingHorizontal">12,0</Thickness>
 
     <!--  滚动条厚度：垂直条的 Width/MinWidth 与水平条的 Height/MinHeight 共用这一个值  -->
     <sys:Double x:Key="ScrollBarThickness">12</sys:Double>
@@ -52,8 +61,16 @@
     -->
     <sys:Double x:Key="SeparatorThickness">1</sys:Double>
 
-    <CornerRadius x:Key="ControlCornerRadius">3</CornerRadius>
-    <CornerRadius x:Key="OverlayCornerRadius">4</CornerRadius>
+
+    <!--  ─────────  字号  ─────────  -->
+
+    <sys:Double x:Key="ControlFontSize">13</sys:Double>
+
+    <!--  库内图标（FontIcon）统一字号，也是 FontIcon 默认字号。与 CaptionGlyphFontSize 分开，别互相牵连。  -->
+    <sys:Double x:Key="ControlGlyphFontSize">14</sys:Double>
+
+    <!--  次级文字字号：菜单项右侧的快捷键列、ToolTip 正文（对齐已有的 TextSecondaryBrush 命名）  -->
+    <sys:Double x:Key="TextSecondaryFontSize">12</sys:Double>
 
     <!--
         自绘标题栏三个系统按钮（最小化 / 最大化 / 关闭）的图标字号。
@@ -61,5 +78,17 @@
         三个图标共用一个值；字形视觉重量本就不齐（方框比横线/叉"重"），要拉平靠微调而非拆成三份。
     -->
     <sys:Double x:Key="CaptionGlyphFontSize">13</sys:Double>
+
+
+    <!--  ─────────  圆角  ─────────  -->
+
+    <CornerRadius x:Key="ControlCornerRadius">3</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">4</CornerRadius>
+
+    <!--
+        容器型卡片（Expander / TabControl）圆角：6 是与 ControlCornerRadius(3) / OverlayCornerRadius(4) 的折中，
+        也与 lightui demo 卡普遍使用的 6 对齐；单独 key 方便后续按主题或设计稿再调。
+    -->
+    <CornerRadius x:Key="ContainerCornerRadius">6</CornerRadius>
 
 </ResourceDictionary>

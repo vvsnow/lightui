@@ -8,10 +8,10 @@
     <!--  16 个 brush 键的浅色实现  -->
     <SolidColorBrush x:Key="PageBackgroundBrush" Color="#FAFAFA" />
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="ControlBackgroundSubtleBrush" Color="#F3F3F3" />
-    <SolidColorBrush x:Key="ControlBackgroundHoverBrush" Color="#F0F0F0" />
-    <SolidColorBrush x:Key="ControlBackgroundSelectedBrush" Color="#E5E5E5" />
-    <SolidColorBrush x:Key="BorderBrush" Color="#E0E0E0" />
+    <SolidColorBrush x:Key="ControlBackgroundSubtleBrush" Color="#F8F8F8" />
+    <SolidColorBrush x:Key="ControlBackgroundHoverBrush" Color="#F3F3F3" />
+    <SolidColorBrush x:Key="ControlBackgroundSelectedBrush" Color="#E9E9E9" />
+    <SolidColorBrush x:Key="BorderBrush" Color="#D3D3D3" />
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1F1F1F" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B6B6B" />
     <SolidColorBrush x:Key="AccentBrush" Color="#2563EB" />

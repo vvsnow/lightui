@@ -18,6 +18,10 @@
         <ResourceDictionary Source="/LightUi;component/styles/ToolTip.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/ProgressBar.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/Window.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/Expander.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/TabItem.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/TabControl.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/TextBlock.xaml" />
 
         <!--  扩展控件默认样式  -->
         <ResourceDictionary Source="/LightUi;component/controls/Flyout/Flyout.xaml" />
