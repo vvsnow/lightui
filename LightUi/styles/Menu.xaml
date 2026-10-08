@@ -33,40 +33,80 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
-                    <Border
-                        x:Name="Bd"
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{DynamicResource ControlCornerRadius}"
-                        SnapsToDevicePixels="True">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ContentPresenter
-                                Grid.Column="0"
-                                Margin="0,0,8,0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                ContentSource="Icon" />
-                            <ContentPresenter
-                                Grid.Column="1"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                ContentSource="Header"
-                                RecognizesAccessKey="True" />
-                            <TextBlock
-                                Grid.Column="2"
-                                Margin="16,0,0,0"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                FontSize="{DynamicResource TextSecondaryFontSize}"
-                                Foreground="{TemplateBinding Foreground}"
-                                Text="{TemplateBinding InputGestureText}" />
-                        </Grid>
-                    </Border>
+                    <Grid>
+                        <Border
+                            x:Name="Bd"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter
+                                    Grid.Column="0"
+                                    Margin="0,0,8,0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ContentSource="Icon" />
+                                <ContentPresenter
+                                    Grid.Column="1"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentSource="Header"
+                                    RecognizesAccessKey="True" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Margin="16,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="{DynamicResource TextSecondaryFontSize}"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding InputGestureText}" />
+                                <!--  子菜单箭头：只有 SubmenuHeader 角色才显示（见下方 Role 触发器）  -->
+                                <Path
+                                    x:Name="SubmenuArrow"
+                                    Grid.Column="3"
+                                    Margin="8,0,0,0"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Data="M0,0 L4,4 L0,8"
+                                    Stroke="{TemplateBinding Foreground}"
+                                    StrokeThickness="1.2"
+                                    Visibility="Collapsed" />
+                            </Grid>
+                        </Border>
+
+                        <!--
+                            ★ 子菜单弹层。这个部件必须叫 PART_Popup —— WPF 的 MenuItem.OnApplyTemplate
+                            靠 GetTemplateChild("PART_Popup") 取它来展开子菜单；换成别的名字，
+                            所有嵌套 MenuItem / 带子项的 ContextMenu 都会永远打不开（且不报错）。
+                            背景色不能 TemplateBinding Background：MenuItem 自身是 Transparent，
+                            那样弹层会透明。这里按弹层规格单独取令牌，与本文件 ContextMenu 一致。
+                        -->
+                        <Popup
+                            x:Name="PART_Popup"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            IsOpen="{TemplateBinding IsSubmenuOpen}"
+                            Placement="Bottom"
+                            PopupAnimation="None">
+                            <Border
+                                MinWidth="120"
+                                Padding="4"
+                                Background="{DynamicResource ControlBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}"
+                                BorderThickness="{DynamicResource ControlBorderThickness}"
+                                CornerRadius="{DynamicResource OverlayCornerRadius}"
+                                SnapsToDevicePixels="True">
+                                <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle" />
+                            </Border>
+                        </Popup>
+                    </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
@@ -76,6 +116,15 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
+                        </Trigger>
+
+                        <!--  子菜单从右侧展开并显示箭头；菜单栏顶层的下拉仍走 Bottom  -->
+                        <Trigger Property="Role" Value="SubmenuHeader">
+                            <Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Right" />
+                        </Trigger>
+                        <Trigger Property="Role" Value="SubmenuItem">
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Right" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

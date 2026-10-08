@@ -153,7 +153,7 @@
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <Button Content="普通按钮 挂 Flyout">
                             <ui:FlyoutService.Flyout>
-                                <ui:Flyout Placement="Top" VerticalOffset="-4">
+                                <ui:Flyout>
                                     <Border Padding="12">
                                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                                             <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
@@ -165,7 +165,7 @@
                         </Button>
                         <Button Content="普通 Button 挂 MenuFlyout">
                             <ui:FlyoutService.Flyout>
-                                <ui:MenuFlyout VerticalOffset="6">
+                                <ui:MenuFlyout>
                                     <MenuItem Header="选项 1" />
                                     <MenuItem Header="选项 2" />
                                     <Separator />

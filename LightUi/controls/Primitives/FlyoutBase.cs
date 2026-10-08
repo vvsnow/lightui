@@ -99,6 +99,7 @@ public abstract class FlyoutBase : DependencyObject
                 // MenuFlyout：ContextMenu 自带内部 Popup，绝对不能塞进 Popup.Child。
                 // 监听 ContextMenu.Closed，把 IsOpen 同步回来。
                 cm.Closed += OnMenuFlyoutClosed;
+                cm.DismissedByAnchorClick += OnMenuFlyoutDismissedByAnchorClick;
             }
             else
             {
@@ -148,6 +149,22 @@ public abstract class FlyoutBase : DependencyObject
 
     /// <summary>MenuFlyout 的 ContextMenu 自动关闭时（点 MenuItem / LightDismiss）把 IsOpen 同步回 false。</summary>
     private void OnMenuFlyoutClosed(object? sender, RoutedEventArgs e) => IsOpen = false;
+
+    /// <summary>
+    /// 菜单是被"点在 anchor 上"的那一次点击关掉时，重新弹出。
+    /// ContextMenu 的 LightDismiss 会吃掉这次点击（普通 Popup 会把点击交还给按钮，于是 Button.Click 又弹出一次），
+    /// 不补这一步，点 anchor 的语义就从 Flyout 的"保持弹出"变成"关掉"。
+    /// 用 Background 优先级：等这一下的 MouseUp 走完再弹，免得弹层正好垫在光标底下被 MouseUp 误触。
+    /// </summary>
+    private void OnMenuFlyoutDismissedByAnchorClick(object? sender, EventArgs e)
+    {
+        if (sender is not Controls.MenuFlyoutPresenter { PlacementTarget: FrameworkElement anchor } presenter)
+            return;
+
+        presenter.Dispatcher.BeginInvoke(
+            new Action(() => ShowAt(anchor)),
+            DispatcherPriority.Background);
+    }
 
     /// <summary>子类返回承载 Flyout 内容的根 FrameworkElement（Flyout = 任意 Content；MenuFlyout = ContextMenu）。</summary>
     protected abstract FrameworkElement CreatePresenter();
