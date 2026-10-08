@@ -29,6 +29,7 @@
         <ResourceDictionary Source="/LightUi;component/controls/DropDownButton/DropDownButton.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/HyperlinkButton/HyperlinkButton.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/ToggleSwitch/ToggleSwitch.xaml" />
+        <ResourceDictionary Source="/LightUi;component/controls/ProgressBar/ProgressBar.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/FontIcon/FontIcon.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
