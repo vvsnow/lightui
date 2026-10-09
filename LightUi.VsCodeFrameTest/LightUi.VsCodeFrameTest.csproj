@@ -12,6 +12,10 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+
+    <!-- DPI 感知级别（PerMonitorV2）在 app.manifest 里声明。
+         实测过：.NET SDK 不会自动识别工程根目录下的 app.manifest，必须显式写这一行，否则进程仍是 SYSTEM_AWARE。 -->
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
 
 </Project>

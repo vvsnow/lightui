@@ -3,6 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shell;
+using System.Windows.Threading;
 
 using LightUi.VsCodeFrameTest.Native;
 
@@ -24,29 +26,8 @@ namespace LightUi.VsCodeFrameTest;
 /// </summary>
 public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
 {
-    private const int GWL_STYLE = -16;
-    private const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
-
-    [DllImport("user32.dll")]
-    private static extern bool GetWindowRect(IntPtr hwnd, out RECT rect);
-
-    [DllImport("user32.dll")]
-    private static extern bool GetClientRect(IntPtr hwnd, out RECT rect);
-
-    [DllImport("user32.dll")]
-    private static extern int GetWindowLong(IntPtr hwnd, int index);
-
-    [DllImport("dwmapi.dll")]
-    private static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out RECT value, int size);
-
-    [StructLayout(LayoutKind.Sequential)]
-    private struct RECT
-    {
-        public int Left;
-        public int Top;
-        public int Right;
-        public int Bottom;
-    }
+    // 用到的 Win32 常量 / 结构体 / P/Invoke 一律集中在全工程唯一的 NativeMethods 里（见 Native/NativeMethods.cs），
+    // 这里不再各留一份 —— 否则同一个签名会出现两个版本，改一处忘一处。
 
     #region 标题栏高度（自定义）
 
@@ -142,6 +123,38 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
 
         _handler = new HwndMessageHandler(this);
         _handler.Attach(_hwnd, source);
+
+        // ★ 对应 Electron 的 ready-to-show：等 WPF 把第一帧真正画完，再让窗口现身。
+        // 窗口在 Attach 里就已经隐身了，所以用户一眼都看不到「无边框但内容还是空的」那一帧。
+        ContentRendered += OnFirstContentRendered;
+
+        // 兜底：万一 ContentRendered 因为任何原因没来，3 秒后无条件解除 ——
+        // 宁可闪一下，也不能让用户面对一个永远隐身的窗口。
+        var safety = new DispatcherTimer(DispatcherPriority.Send, Dispatcher)
+        {
+            Interval = TimeSpan.FromSeconds(3),
+        };
+        safety.Tick += (_, _) =>
+        {
+            safety.Stop();
+            _handler?.SetCloaked(false);
+        };
+        safety.Start();
+    }
+
+    private bool _revealed;
+
+    /// <summary>第一帧画完了 —— 解除隐身（对应 Electron 的 ready-to-show）。</summary>
+    private void OnFirstContentRendered(object? sender, EventArgs e)
+    {
+        if (_revealed)
+        {
+            return;
+        }
+
+        _revealed = true;
+        ContentRendered -= OnFirstContentRendered;
+        _handler?.SetCloaked(false);
     }
 
     private void OnClosed(object? sender, EventArgs e)
@@ -216,6 +229,37 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
         _lastHitCode = hitCode;
     }
 
+    /// <summary>
+    /// 这一点上是不是有「标了 <c>WindowChrome.IsHitTestVisibleInChrome</c>」的元素。
+    ///
+    /// 对应参考里 <c>window_-&gt;NonClientHitTest(point)</c>（先问内容区），也对应 Electron WCO 里
+    /// CSS 的 <c>app-region: no-drag</c> —— 在 WPF 里就是拿这点去命中测试视觉树，
+    /// 然后沿祖先链看有没有那个标记。
+    ///
+    /// ★ 读的是 WPF 自带的那个附加属性，**不需要给窗口挂 WindowChrome**（读附加属性不需要）。
+    /// 反过来，为了"能读到这个属性"去挂一个空 WindowChrome 是错的：那会把 WindowChromeWorker
+    /// 整套请回来，它会自己处理 WM_NCCALCSIZE / WM_NCHITTEST，和这套 insets + 命中判定打架。
+    ///
+    /// 那个属性是 <c>Inherits</c> 的（反射读过元数据：Inherits = True），所以标在容器上子元素全生效；
+    /// 下面的祖先链遍历让这一点在"不是 Inherits"的情况下也成立。
+    ///
+    /// 传入的坐标是**客户区 DIP**，而 WPF 的根视觉元素正好铺满客户区，可以直接用。
+    /// </summary>
+    bool IHwndMessageHandlerDelegate.IsInteractiveCaptionElementAt(Point clientPointDip)
+    {
+        HitTestResult? hit = VisualTreeHelper.HitTest(this, clientPointDip);
+
+        for (DependencyObject? node = hit?.VisualHit; node is not null; node = VisualTreeHelper.GetParent(node))
+        {
+            if (node is IInputElement input && WindowChrome.GetIsHitTestVisibleInChrome(input))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     void IHwndMessageHandlerDelegate.SetTitlebarHeight(double heightDip)
     {
         if (_titleBar is not null && Math.Abs(_titleBar.Height - heightDip) > 0.5 && heightDip > 0)
@@ -253,10 +297,11 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
             return new NativeGeometry(false, default, default, 0, 0, 0, 0, false);
         }
 
-        GetWindowRect(_hwnd, out RECT windowRect);
-        GetClientRect(_hwnd, out RECT clientRect);
+        NativeMethods.GetWindowRect(_hwnd, out NativeMethods.RECT windowRect);
+        NativeMethods.GetClientRect(_hwnd, out NativeMethods.RECT clientRect);
 
-        int hr = DwmGetWindowAttribute(_hwnd, DWMWA_EXTENDED_FRAME_BOUNDS, out RECT frame, Marshal.SizeOf<RECT>());
+        int hr = NativeMethods.DwmGetWindowAttribute(
+            _hwnd, NativeMethods.DWMWA_EXTENDED_FRAME_BOUNDS, out NativeMethods.RECT frame, Marshal.SizeOf<NativeMethods.RECT>());
         bool hasFrame = hr == 0 && frame.Right > frame.Left;
 
         return new NativeGeometry(
@@ -268,7 +313,7 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
             clientRect.Right - clientRect.Left,
             clientRect.Bottom - clientRect.Top,
             WinFrameView.GetFrameThicknessFromWindowPx(_hwnd),
-            GetWindowLong(_hwnd, GWL_STYLE) & 0xFFFFFFFFL,
+            NativeMethods.GetWindowLong(_hwnd, NativeMethods.GWL_STYLE) & 0xFFFFFFFFL,
             NativeMethods.IsZoomed(_hwnd));
     }
 
@@ -276,6 +321,9 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
     public string DwmFrameReport => _handler is null
         ? "窗口过程还没挂上"
         : $"UpdateDwmFrame 调用 {_handler.DwmFrameCallCount} 次，DwmExtendFrameIntoClientArea HRESULT=0x{_handler.DwmFrameResult:X8}";
+
+    /// <summary>诊断：首帧隐身（DWM cloak）的调用结果。</summary>
+    public string CloakReport => _handler?.CloakReport ?? "窗口过程还没挂上";
 
     public string HitTestTrace =>
         _hitTestCount == 0
@@ -318,7 +366,7 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
 
     private Size ClientSizeDip()
     {
-        if (_hwnd == IntPtr.Zero || !GetClientRect(_hwnd, out RECT rect))
+        if (_hwnd == IntPtr.Zero || !NativeMethods.GetClientRect(_hwnd, out NativeMethods.RECT rect))
         {
             return new Size(ActualWidth, ActualHeight);
         }

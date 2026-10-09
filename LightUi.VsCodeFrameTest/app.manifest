@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="LightUi.VsCodeFrameTest.app" />
+
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" /><!-- Windows 10 / 11 -->
+    </application>
+  </compatibility>
+
+  <!--
+    ★ 这份清单存在的唯一理由：DPI 感知级别。
+
+    不声明的话 WPF 默认给进程设的是 SYSTEM_AWARE（已实测确认），于是：
+    · 显示缩放一变（比如 125% → 150%），进程收不到 WM_DPICHANGED，
+      Windows 直接把整扇窗当位图拉大 —— 字就发糊；
+    · 同时 Win32 侧 GetDpiForWindow 返回新 DPI(150%)，而 WPF 的渲染尺度
+      还停在启动时的 125%，两边对不上，度量会打架。
+
+    PerMonitorV2 之后：DPI 变化收到 WM_DPICHANGED，WPF 按新 DPI 重新渲染
+    （矢量重绘，不是拉伸），我们自己的度量也每次重算，两边同一个值。
+  -->
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+    </windowsSettings>
+  </application>
+</assembly>

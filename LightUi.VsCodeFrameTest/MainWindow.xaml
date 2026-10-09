@@ -11,7 +11,7 @@
     FontSize="13"
     Foreground="#1F1F1F"
     ResizeMode="CanResize"
-    TitlebarOverlayHeight="86"
+    TitlebarOverlayHeight="30"
     WindowStartupLocation="CenterScreen">
     <!--
         TitlebarOverlayHeight = 自定义标题栏高度（DIP），对应 Electron 的 titleBarOverlay.height。
@@ -32,7 +32,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="86" />
+            <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
 
@@ -50,6 +50,23 @@
                 VerticalAlignment="Center"
                 FontSize="12"
                 Text="{Binding Title, RelativeSource={RelativeSource AncestorType={x:Type local:NativeFrameWindow}}}" />
+
+            <!--
+                标题栏里的可交互控件演示：标了 WindowChrome.IsHitTestVisibleInChrome（逃生出口）。
+                不标的话，这块会被 WM_NCHITTEST 判成 HTCAPTION —— 点下去变成"拖窗口"，控件完全收不到鼠标。
+                标了之后那一点返回 HTCLIENT，WPF 正常接收：可以点进这个框里输入试试。
+                
+                这个属性是 Inherits 的（已用反射读过元数据：Inherits = True），所以标在外层容器上也一样、
+                子元素全都生效；这里只标单个控件是为了演示"精确到这一个"的用法。
+            -->
+            <TextBox
+                x:Name="CaptionDemoTextBox"
+                Width="150"
+                Margin="220,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Text="标题栏里可输入"
+                WindowChrome.IsHitTestVisibleInChrome="True" />
 
             <!--
                 按钮宿主必须铺满整条标题栏（不要靠右对齐）：

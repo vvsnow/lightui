@@ -21,9 +21,16 @@ internal sealed class WinFrameView
 
     private readonly WinCaptionButtonContainer _container;
 
-    public WinFrameView(WinCaptionButtonContainer container)
+    /// <summary>
+    /// 宿主窗口（对应参考里的 <c>window_</c>）。frame view 看不到 WPF 视觉树，
+    /// "这点上有没有可交互元素"只能问宿主 —— 对应 <c>window_-&gt;NonClientHitTest(point)</c> 那一步。
+    /// </summary>
+    private readonly IHwndMessageHandlerDelegate _window;
+
+    public WinFrameView(WinCaptionButtonContainer container, IHwndMessageHandlerDelegate window)
     {
         _container = container;
+        _window = window;
     }
 
     public WinCaptionButtonContainer CaptionButtons => _container;
@@ -264,11 +271,20 @@ internal sealed class WinFrameView
             return component;
         }
 
-        // ⑤ 基类 FramelessView::NonClientHitTest 的等价物：
-        //    内容区的命中判定（这里用"标题栏条带当拖动区"代替）→ 其余是客户区。
-        return windowPointDip.Y < TitlebarHeight(hwnd)
-            ? NativeMethods.HTCAPTION
-            : NativeMethods.HTCLIENT;
+        // ⑤ 基类 FramelessView::NonClientHitTest 的等价物。
+        //    containerPoint 就是客户区坐标（容器的坐标原点与客户区一致），所以这里可以直接用它判高度。
+        if (containerPoint.Y < TitlebarHeight(hwnd))
+        {
+            // 标题栏条带：这点上有"标了逃生出口"的 WPF 元素就交回 WPF（HTCLIENT），
+            // 否则当拖动区（HTCAPTION）—— 对应参考里 NonClientHitTest 开头那一步
+            // window_->NonClientHitTest(point)：先问内容区，内容说是它的就返回 HTCLIENT。
+            // 不这么做的话，放进标题栏的控件会"点不动"，一点就变成拖窗口。
+            return _window.IsInteractiveCaptionElementAt(containerPoint)
+                ? NativeMethods.HTCLIENT
+                : NativeMethods.HTCAPTION;
+        }
+
+        return NativeMethods.HTCLIENT;
     }
 
     /// <summary>点是否落在客户区之内（客户区 = 窗口矩形按 insets 内缩；非最大化时顶部内缩为 0）。</summary>

@@ -39,7 +39,7 @@ internal sealed class HwndMessageHandler
     public HwndMessageHandler(IHwndMessageHandlerDelegate messageDelegate)
     {
         _delegate = messageDelegate;
-        _frameView = new WinFrameView(new WinCaptionButtonContainer(messageDelegate.CaptionButtonHost));
+        _frameView = new WinFrameView(new WinCaptionButtonContainer(messageDelegate.CaptionButtonHost), messageDelegate);
     }
 
     /// <summary>Electron 的窗口自绘标题栏，对应 <c>FrameMode::CUSTOM_DRAWN</c>。</summary>
@@ -61,7 +61,53 @@ internal sealed class HwndMessageHandler
         source.AddHook(hook);
 
         UpdateDwmFrame();
+
+        // ★「启动不闪原生标题栏」的那一步。
+        //
+        // 窗口是带 WS_CAPTION 创建的，系统在 CreateWindowEx 里那次 WM_NCCALCSIZE
+        // （早于我们挂钩子）就把原生标题栏算进非客户区并缓存了下来。之后只挂钩子、
+        // 只扩 DWM frame 都不会让它重算，系统一直用缓存那份 —— 第一次上屏画出来的
+        // 就是完整的原生标题栏（图标 + 标题 + — □ ✕）。
+        //
+        // SWP_FRAMECHANGED 的文档原文正是干这个的：
+        //   "Sends a WM_NCCALCSIZE message to the window, even if the window's size is not being changed."
+        // 主动向系统要一次重算，而且必须在窗口第一次上屏之前 —— SourceInitialized
+        // 就是那个时刻（WPF 这时还没调 ShowWindow）。
+        ForceFrameRecompute();
+
+        // ★ 启动「一眼都不闪」的最后一块：先把窗口隐身。
+        //
+        // 对应 Electron 的 show:false —— 窗口建好了、也渲染得了，但用户看不见。
+        // 实测（2026-10-09，独立实验）：被 cloak 的窗口 WPF 照常渲染，ContentRendered
+        // 正常触发；解除隐身到屏幕出现成品只差约 15ms，不是再等一次首帧。
+        //
+        // 必须赶在窗口第一次上屏之前 —— SourceInitialized 就是那个时刻
+        // （实测此刻 IsWindowVisible 还是 False），所以连「空白一帧」都不会露。
+        SetCloaked(true);
+
         Relayout();
+    }
+
+    /// <summary>要一次非客户区重算，让 <see cref="OnNcCalcSize"/> 在窗口首次上屏之前先跑一遍。</summary>
+    private void ForceFrameRecompute()
+    {
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        NativeMethods.SetWindowPos(
+            _hwnd,
+            IntPtr.Zero,
+            0,
+            0,
+            0,
+            0,
+            NativeMethods.SWP_FRAMECHANGED
+            | NativeMethods.SWP_NOMOVE
+            | NativeMethods.SWP_NOSIZE
+            | NativeMethods.SWP_NOZORDER
+            | NativeMethods.SWP_NOACTIVATE);
     }
 
     public void Detach()
@@ -163,6 +209,39 @@ internal sealed class HwndMessageHandler
 
     /// <summary>诊断：DwmExtendFrameIntoClientArea 的 HRESULT（0 = S_OK）。</summary>
     public int DwmFrameResult { get; private set; }
+
+    #endregion
+
+    #region 隐身（DWM cloak，对应 Electron 的 show:false）
+
+    /// <summary>
+    /// 隐身 / 解除隐身（DWM cloak）。
+    ///
+    /// 只能由窗口自己的进程设：跨进程调 <c>DwmSetWindowAttribute(DWMWA_CLOAK)</c> 会返回
+    /// <c>E_ACCESSDENIED (0x80070005)</c> —— 文档里这条属性的语义就是「被属主应用 cloak」
+    /// （<c>DWM_CLOAKED_APP</c>）。
+    /// </summary>
+    public void SetCloaked(bool cloaked)
+    {
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        int value = cloaked ? 1 : 0;
+        CloakResult = NativeMethods.DwmSetWindowAttribute(
+            _hwnd, NativeMethods.DWMWA_CLOAK, ref value, sizeof(int));
+    }
+
+    /// <summary>诊断：最近一次 DWM cloak 调用的 HRESULT（0 = S_OK）。</summary>
+    public int CloakResult { get; private set; } = int.MinValue;
+
+    /// <summary>诊断：隐身调用结果。</summary>
+    public string CloakReport => CloakResult == int.MinValue
+        ? "还没调用过"
+        : CloakResult == 0
+            ? "DWM cloak 调用成功"
+            : $"失败 HRESULT=0x{CloakResult:X8}";
 
     #endregion
 
@@ -444,6 +523,13 @@ internal interface IHwndMessageHandlerDelegate
     void PerformCaptionButtonAction(CaptionButton button);
 
     void SetHoveredCaptionButton(CaptionButton button);
+
+    /// <summary>
+    /// 这个客户区坐标点上是不是有"标了逃生出口"的元素（对应参考里
+    /// <c>window_-&gt;NonClientHitTest(point)</c> 那一步：先问内容区）。
+    /// 为真则返回 HTCLIENT（交给 WPF），否则标题栏条带按 HTCAPTION 当拖动区。
+    /// </summary>
+    bool IsInteractiveCaptionElementAt(Point clientPointDip);
 
     /// <summary>把算出来的标题栏高度告诉宿主，好让标题栏那一行的行高跟按钮条一致。</summary>
     void SetTitlebarHeight(double heightDip);

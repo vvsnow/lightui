@@ -59,15 +59,58 @@ internal static class NativeMethods
 
     #region 系统度量
 
+    /// <summary>可缩放窗口的边框厚度（水平方向，像素）。</summary>
     public const int SM_CXSIZEFRAME = 32;
+
+    /// <summary>可缩放窗口的边框厚度（垂直方向，像素）。本工程未用到。</summary>
     public const int SM_CYSIZEFRAME = 33;
+
+    /// <summary>边框额外追加的宽度（像素）；与 <c>SM_CXSIZEFRAME</c> 相加就是那圈「不可见边框」。</summary>
     public const int SM_CXPADDEDBORDER = 92;
+
+    /// <summary>标题栏高度（像素）；<c>WinFrameView.TitlebarMaximizedVisualHeight()</c> 读它。</summary>
     public const int SM_CYCAPTION = 4;
 
+    /// <summary><c>MonitorFromWindow</c> 的标志：取离窗口最近的那块显示器。本工程未用到。</summary>
     public const uint MONITOR_DEFAULTTONEAREST = 2;
 
+    /// <summary>DWM 属性：窗口的<b>可见边框</b>；<c>GetWindowRect</c> 减掉它才是「不可见边框」。</summary>
     public const int DWMWA_EXTENDED_FRAME_BOUNDS = 9;
+
+    /// <summary>DWM 属性：系统认为的标题栏按钮区（窗口坐标）。</summary>
     public const int DWMWA_CAPTION_BUTTON_BOUNDS = 5;
+
+    /// <summary>GetWindowLong 的索引：窗口样式位（GWLP_ 系列之一）。</summary>
+    public const int GWL_STYLE = -16;
+
+    /// <summary>
+    /// DWM 属性：把窗口「隐身」—— 用户看不见，但窗口照常被 DWM 合成。
+    /// 文档原文："Cloaks the window such that it is not visible to the user. The window is still composed by DWM."
+    /// ★ 只能由窗口自己的进程设（跨进程调用会返回 E_ACCESSDENIED）。
+    /// </summary>
+    public const int DWMWA_CLOAK = 13;
+
+    /// <summary>DWM 属性（只读）：当前是否被隐身、以及是谁隐的（1 = 属主应用，DWM_CLOAKED_APP）。</summary>
+    public const int DWMWA_CLOAKED = 14;
+
+    #endregion
+
+    #region SetWindowPos 标志
+
+    /// <summary>按新样式重算非客户区 —— 即使尺寸没变，也会发一次 <c>WM_NCCALCSIZE</c>。</summary>
+    public const uint SWP_FRAMECHANGED = 0x0020;
+
+    /// <summary>不改尺寸。</summary>
+    public const uint SWP_NOSIZE = 0x0001;
+
+    /// <summary>不改位置。</summary>
+    public const uint SWP_NOMOVE = 0x0002;
+
+    /// <summary>不改 Z 序。</summary>
+    public const uint SWP_NOZORDER = 0x0004;
+
+    /// <summary>不激活窗口。</summary>
+    public const uint SWP_NOACTIVATE = 0x0010;
 
     #endregion
 
@@ -151,11 +194,21 @@ internal static class NativeMethods
     [DllImport("user32.dll")]
     public static extern int GetWindowLong(IntPtr hwnd, int index);
 
+    [DllImport("user32.dll")]
+    public static extern bool SetWindowPos(
+        IntPtr hwnd, IntPtr insertAfter, int x, int y, int cx, int cy, uint flags);
+
     [DllImport("dwmapi.dll")]
     public static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out RECT value, int size);
 
     [DllImport("dwmapi.dll")]
     public static extern int DwmExtendFrameIntoClientArea(IntPtr hwnd, ref MARGINS margins);
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
+
+    [DllImport("dwmapi.dll")]
+    public static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out int value, int size);
 
     #endregion
 }

@@ -69,6 +69,7 @@ public partial class MainWindow : NativeFrameWindow
             $"最大化        {g.IsZoomed}    当前悬停按钮 {HoveredCaptionButton}",
             string.Empty,
             $"DWM frame     {DwmFrameReport}",
+            $"首帧隐身      {CloakReport}",
             $"命中追踪      {HitTestTrace}",
             $"按钮布局      {CaptionButtonReport()}",
             $"诊断旁路      {DiagnosticsDumpStatus}",
