@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="LightUi.Demo/LightUi.Demo.csproj" Id="fa89e2f9-a64b-46f3-8cc3-319b9112f09a" />
   <Project Path="LightUi/LightUi.csproj" />
+  <Project Path="LightUi.VsCodeFrameTest/LightUi.VsCodeFrameTest.csproj" />
 </Solution>

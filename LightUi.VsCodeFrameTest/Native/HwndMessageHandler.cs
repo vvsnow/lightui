@@ -1,0 +1,453 @@
+using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+
+namespace LightUi.VsCodeFrameTest.Native;
+
+/// <summary>
+/// 窗口过程那一层。对应 Chromium <c>ui/views/win/hwnd_message_handler.cc</c> 的 <c>HWNDMessageHandler</c>：
+/// 它挂 <c>HwndSource</c> 钩子、分发消息，并在合适的时机调 <c>UpdateDwmFrame()</c>。
+///
+/// <para>框架模式：本工程自绘标题栏，所以是 <see cref="FrameMode.CustomDrawn"/> —— 和 Chromium 一样，
+/// 这个标志用来决定 <c>WM_NCUAHDRAWCAPTION / WM_NCUAHDRAWFRAME</c> 要不要吃掉
+/// （源码里就这两条：<c>SetMsgHandled(delegate_->GetFrameMode() == FrameMode::CUSTOM_DRAWN)</c>）。</para>
+/// </summary>
+internal sealed class HwndMessageHandler
+{
+    /// <summary>Chromium 的 <c>FrameMode</c>（<c>ui/views/widget/widget.h</c>）。</summary>
+    public enum FrameMode
+    {
+        SystemDrawn,
+        CustomDrawn,
+    }
+
+    private readonly IHwndMessageHandlerDelegate _delegate;
+    private readonly WinFrameView _frameView;
+
+    private HwndSource? _source;
+
+    /// <summary>必须缓存同一个委托实例：RemoveHook 按引用匹配。</summary>
+    private HwndSourceHook? _hook;
+
+    private IntPtr _hwnd;
+
+    /// <summary>对应 Chromium 的 <c>last_dwm_frame_insets_</c>：避免重复的跨进程 DWM 调用。</summary>
+    private NativeMethods.MARGINS? _lastDwmFrameInsets;
+
+    private CaptionButton _pressedButton = CaptionButton.None;
+
+    public HwndMessageHandler(IHwndMessageHandlerDelegate messageDelegate)
+    {
+        _delegate = messageDelegate;
+        _frameView = new WinFrameView(new WinCaptionButtonContainer(messageDelegate.CaptionButtonHost));
+    }
+
+    /// <summary>Electron 的窗口自绘标题栏，对应 <c>FrameMode::CUSTOM_DRAWN</c>。</summary>
+    public FrameMode CurrentFrameMode => FrameMode.CustomDrawn;
+
+    public WinFrameView FrameView => _frameView;
+
+    public IntPtr Hwnd => _hwnd;
+
+    #region 挂载 / 卸载
+
+    public void Attach(IntPtr hwnd, HwndSource source)
+    {
+        _hwnd = hwnd;
+        _source = source;
+
+        HwndSourceHook hook = FilterMessage;
+        _hook = hook;
+        source.AddHook(hook);
+
+        UpdateDwmFrame();
+        Relayout();
+    }
+
+    public void Detach()
+    {
+        if (_hook is not null)
+        {
+            _source?.RemoveHook(_hook);
+            _hook = null;
+        }
+
+        _source = null;
+        _hwnd = IntPtr.Zero;
+    }
+
+    /// <summary>同步窗口状态 + 重新摆按钮 + 刷新外观。窗口尺寸/状态/DPI 变化后都要来一次。</summary>
+    public void Relayout()
+    {
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        SyncWindowState();
+
+        _delegate.SetTitlebarHeight(_frameView.TitlebarHeight(_hwnd));
+
+        _frameView.LayoutCaptionButtons(_hwnd, _delegate.ClientWidthDip);
+        _frameView.CaptionButtons.UpdateButtons(
+            _delegate.IsMinimizable,
+            _delegate.IsMaximizable,
+            WinFrameView.IsMaximized(_hwnd),
+            _delegate.IsClosable);
+
+        // 布局完再摆一次：UpdateButtons 会改可见性，可见性影响排版
+        _frameView.LayoutCaptionButtons(_hwnd, _delegate.ClientWidthDip);
+
+        _frameView.CaptionButtons.ApplyVisualState(
+            _frameView.HitTestCaptionButton(_hwnd, CurrentCursorWindowPointDip()),
+            _pressedButton);
+    }
+
+    private void SyncWindowState()
+    {
+        _frameView.DpiScale = _delegate.DpiScale;
+        _frameView.CanResize = _delegate.CanResize;
+        _frameView.TitlebarOverlayHeight = _delegate.TitlebarOverlayHeight;
+        // 是否最大化 / 全屏**不缓存**：由 frame view 直接问操作系统
+        // （对应 Electron 的 frame()->IsMaximized()），这样任何时候读都是对的。
+    }
+
+    #endregion
+
+    #region UpdateDwmFrame（Chromium 同名方法，位于 hwnd_message_handler.cc）
+
+    /// <summary>
+    /// 对应 <c>HWNDMessageHandler::UpdateDwmFrame()</c>：
+    /// <code>gfx::Insets insets;
+    /// if (delegate_->GetDwmFrameInsetsInPixels(&amp;insets)) {
+    ///   if (last_dwm_frame_insets_ == insets) return;      // "Avoid redundant cross-process DWM calls"
+    ///   last_dwm_frame_insets_ = insets;
+    ///   MARGINS margins = {insets.left(), insets.right(), insets.top(), insets.bottom()};
+    ///   DwmExtendFrameIntoClientArea(hwnd(), &amp;margins);
+    /// }</code>
+    ///
+    /// Electron 的 <c>GetDwmFrameInsetsInPixels</c> 给的就是全 0（<c>*insets = gfx::Insets();</c>，
+    /// 注释 "Don't extend the glass in at all if it won't be visible."）。
+    ///
+    /// <b>全 0 不等于不调用</b>：这一步把窗口交给 DWM 的 frame 通道。
+    /// 少了它，系统不把标题栏那块当非客户区，<c>WM_NCHITTEST</c> 一次都不会来 ——
+    /// 自绘按钮既没有悬停高亮，也换不来 Snap Layouts 浮窗。
+    /// </summary>
+    private void UpdateDwmFrame()
+    {
+        if (_hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        NativeMethods.MARGINS insets = _delegate.GetDwmFrameInsetsInPixels();
+
+        if (_lastDwmFrameInsets is { } last
+            && last.LeftWidth == insets.LeftWidth
+            && last.RightWidth == insets.RightWidth
+            && last.TopHeight == insets.TopHeight
+            && last.BottomHeight == insets.BottomHeight)
+        {
+            return;
+        }
+
+        _lastDwmFrameInsets = insets;
+
+        // 记下 HRESULT：这一步是「能不能收到 WM_NCHITTEST」的开关，失败就没必要往下猜了
+        DwmFrameCallCount++;
+        DwmFrameResult = NativeMethods.DwmExtendFrameIntoClientArea(_hwnd, ref insets);
+    }
+
+    /// <summary>诊断：UpdateDwmFrame 调了几次、DWM 返回什么。</summary>
+    public int DwmFrameCallCount { get; private set; }
+
+    /// <summary>诊断：DwmExtendFrameIntoClientArea 的 HRESULT（0 = S_OK）。</summary>
+    public int DwmFrameResult { get; private set; }
+
+    #endregion
+
+    #region 消息分发
+
+    private IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        switch (msg)
+        {
+            case NativeMethods.WM_NCCALCSIZE:
+                return OnNcCalcSize(hwnd, wParam, lParam, ref handled);
+
+            case NativeMethods.WM_NCHITTEST:
+                return OnNcHitTest(hwnd, lParam, ref handled);
+
+            case NativeMethods.WM_NCLBUTTONDOWN:
+                // 记下按下的是哪颗按钮，并把这组消息吃掉：动作由我们自己执行。
+                // 依据：参考实现里按钮是 views::Button，点击回调直接调
+                // NativeWindow::Minimize/Maximize/Restore/Close —— 不是让系统去做。
+                // DefWindowProc 也不会替我们做：那块在系统看来是客户区。
+                _pressedButton = CurrentHoveredButton(hwnd);
+                _frameView.CaptionButtons.ApplyVisualState(_pressedButton, _pressedButton);
+                handled = _pressedButton != CaptionButton.None;
+                break;
+
+            case NativeMethods.WM_NCLBUTTONUP:
+                // 抬起时指针仍停在同一颗按钮上才执行 —— 这就是"按下后拖走可取消"的手感
+                if (_pressedButton != CaptionButton.None)
+                {
+                    if (CurrentHoveredButton(hwnd) == _pressedButton)
+                    {
+                        _delegate.PerformCaptionButtonAction(_pressedButton);
+                    }
+
+                    _pressedButton = CaptionButton.None;
+                    handled = true;
+                }
+
+                UpdateHoverFromCursor(hwnd);
+                break;
+
+            case NativeMethods.WM_NCMOUSELEAVE:
+                _pressedButton = CaptionButton.None;
+                UpdateHoverFromCursor(hwnd);
+                break;
+
+            case NativeMethods.WM_NCUAHDRAWCAPTION:
+            case NativeMethods.WM_NCUAHDRAWFRAME:
+                // "系统偷偷画原生标题栏"的两条私人消息。自绘标题栏时必须吃掉，
+                // 否则激活/尺寸变化时会闪一下原生标题栏。
+                if (CurrentFrameMode == FrameMode.CustomDrawn)
+                {
+                    handled = true;
+                    return IntPtr.Zero;
+                }
+
+                break;
+
+            case NativeMethods.WM_GETMINMAXINFO:
+                OnGetMinMaxInfo(hwnd, lParam);
+                break;
+
+            case NativeMethods.WM_SIZE:
+                // 尺寸/最大化状态变了就重摆按钮（Chromium 的 handler 也处理 WM_SIZE）。
+                // 光靠 WPF 的 StateChanged 不够稳：最大化时它不一定先于这里到。
+                // ★ 不设 handled，WPF 自己要这条消息做布局。
+                Relayout();
+                break;
+
+            case NativeMethods.WM_WINDOWPOSCHANGED:
+                // Chromium 也是在 WM_WINDOWPOSCHANGED 里 UpdateDwmFrame。
+                // ★ 绝不设 handled：WPF 自己要这条消息做布局。
+                UpdateDwmFrame();
+                Relayout();
+                break;
+
+            case NativeMethods.WM_DPICHANGED:
+            case NativeMethods.WM_SETTINGCHANGE:
+            case NativeMethods.WM_THEMECHANGED:
+                // 度量可能变了，重算。同样不设 handled —— WM_DPICHANGED 更要留给 WPF，
+                // 它要按 lParam 里的建议矩形 SetWindowPos（吃掉它窗口会卡在旧尺寸）。
+                Relayout();
+                break;
+        }
+
+        return IntPtr.Zero;
+    }
+
+    /// <summary>
+    /// 对应 <c>HWNDMessageHandler::OnNCCalcSize</c>：用 frame view 给的 insets 改客户区，返回 0
+    /// （不是 WVR_REDRAW —— 返回它会整窗重绘，拖边框缩放时肉眼可见闪烁）。
+    /// </summary>
+    private IntPtr OnNcCalcSize(IntPtr hwnd, IntPtr wParam, IntPtr lParam, ref bool handled)
+    {
+        if (wParam == IntPtr.Zero)
+        {
+            // wParam = FALSE：只是查询客户区，不改动
+            handled = true;
+            return IntPtr.Zero;
+        }
+
+        SyncWindowState();
+
+        Thickness insets = _frameView.GetClientAreaInsetsPx(hwnd);
+        NativeMethods.NCCALCSIZE_PARAMS p = Marshal.PtrToStructure<NativeMethods.NCCALCSIZE_PARAMS>(lParam);
+
+        p.Rgrc0.Left += (int)insets.Left;
+        p.Rgrc0.Top += (int)insets.Top;
+        p.Rgrc0.Right -= (int)insets.Right;
+        p.Rgrc0.Bottom -= (int)insets.Bottom;
+
+        Marshal.StructureToPtr(p, lParam, false);
+        handled = true;
+        return IntPtr.Zero;
+    }
+
+    /// <summary>对应 <c>HWNDMessageHandler::OnNCHitTest</c>。</summary>
+    private IntPtr OnNcHitTest(IntPtr hwnd, IntPtr lParam, ref bool handled)
+    {
+        // lParam 的低/高 16 位是屏幕物理像素，且是有符号的 —— 多显示器摆在主屏左/上时坐标是负的
+        long packed = (long)lParam;
+        var screenPointPx = new Point(
+            unchecked((short)(packed & 0xFFFF)),
+            unchecked((short)((packed >> 16) & 0xFFFF)));
+
+        if (!NativeMethods.GetWindowRect(hwnd, out NativeMethods.RECT windowRect))
+        {
+            return IntPtr.Zero;
+        }
+
+        SyncWindowState();
+
+        double scale = _delegate.DpiScale;
+        var windowPointDip = new Point(
+            (screenPointPx.X - windowRect.Left) / scale,
+            (screenPointPx.Y - windowRect.Top) / scale);
+
+        var windowSizeDip = new Size(
+            (windowRect.Right - windowRect.Left) / scale,
+            (windowRect.Bottom - windowRect.Top) / scale);
+
+        int code = _frameView.NonClientHitTest(hwnd, windowPointDip, windowSizeDip);
+        _delegate.RecordHitTest(screenPointPx, code);
+
+        // 悬停外观：命中的是哪个按钮
+        CaptionButton hovered = code switch
+        {
+            NativeMethods.HTMINBUTTON => CaptionButton.Minimize,
+            NativeMethods.HTMAXBUTTON => WinFrameView.IsMaximized(hwnd) ? CaptionButton.Restore : CaptionButton.Maximize,
+            NativeMethods.HTCLOSE => CaptionButton.Close,
+            _ => CaptionButton.None,
+        };
+
+        _delegate.SetHoveredCaptionButton(hovered);
+        _frameView.CaptionButtons.ApplyVisualState(hovered, _pressedButton);
+
+        if (code == NativeMethods.HTNotHandled)
+        {
+            return IntPtr.Zero;
+        }
+
+        handled = true;
+        return new IntPtr(code);
+    }
+
+    /// <summary>
+    /// 鼠标离开非客户区。这里**不能**盲目清掉悬停：我们给标题栏返回的是非客户区 HT 码，
+    /// 而系统认为那块是客户区，于是刚设上的悬停会被一条 WM_NCMOUSELEAVE 立刻清掉。
+    /// 所以按当前真实光标位置重新判一次。
+    /// </summary>
+    private void UpdateHoverFromCursor(IntPtr hwnd)
+    {
+        CaptionButton button = CurrentHoveredButton(hwnd);
+        _delegate.SetHoveredCaptionButton(button);
+        _frameView.CaptionButtons.ApplyVisualState(button, _pressedButton);
+    }
+
+    private CaptionButton CurrentHoveredButton(IntPtr hwnd)
+    {
+        if (!NativeMethods.GetWindowRect(hwnd, out NativeMethods.RECT windowRect)
+            || !NativeMethods.GetCursorPos(out NativeMethods.POINT cursor))
+        {
+            return CaptionButton.None;
+        }
+
+        double scale = _delegate.DpiScale;
+        var windowPointDip = new Point(
+            (cursor.X - windowRect.Left) / scale,
+            (cursor.Y - windowRect.Top) / scale);
+
+        var windowSizeDip = new Size(
+            (windowRect.Right - windowRect.Left) / scale,
+            (windowRect.Bottom - windowRect.Top) / scale);
+
+        bool inside = windowPointDip.X >= 0 && windowPointDip.Y >= 0
+                      && windowPointDip.X <= windowSizeDip.Width
+                      && windowPointDip.Y <= windowSizeDip.Height;
+
+        return inside ? _frameView.HitTestCaptionButton(hwnd, windowPointDip) : CaptionButton.None;
+    }
+
+    private Point CurrentCursorWindowPointDip()
+    {
+        if (_hwnd == IntPtr.Zero
+            || !NativeMethods.GetWindowRect(_hwnd, out NativeMethods.RECT windowRect)
+            || !NativeMethods.GetCursorPos(out NativeMethods.POINT cursor))
+        {
+            return new Point(double.NegativeInfinity, double.NegativeInfinity);
+        }
+
+        double scale = _delegate.DpiScale;
+        return new Point(
+            (cursor.X - windowRect.Left) / scale,
+            (cursor.Y - windowRect.Top) / scale);
+    }
+
+    /// <summary>
+    /// 对应 <c>HWNDMessageHandler::OnGetMinMaxInfo</c>：
+    /// "Add the native frame border size to the minimum and maximum size if the view reports its size
+    /// as the client size." 窗口有 WS_THICKFRAME，系统给的 track size 是「窗口矩形」尺寸，
+    /// 而 WPF 的 MinWidth/MinHeight 是客户区尺寸 —— 不加回去，MinWidth=520 实际会少掉两边边框。
+    /// </summary>
+    private void OnGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+    {
+        var info = Marshal.PtrToStructure<MINMAXINFO>(lParam);
+        int frame = WinFrameView.GetFrameThicknessFromWindowPx(hwnd);
+
+        info.PtMinTrackSize.X += frame * 2;
+        info.PtMinTrackSize.Y += frame * 2;
+
+        Marshal.StructureToPtr(info, lParam, false);
+        // 不设 handled：其余字段（ptMaxSize / ptMaxPosition 等）交给系统
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MINMAXINFO
+    {
+        public NativeMethods.POINT PtReserved;
+        public NativeMethods.POINT PtMaxSize;
+        public NativeMethods.POINT PtMaxPosition;
+        public NativeMethods.POINT PtMinTrackSize;
+        public NativeMethods.POINT PtMaxTrackSize;
+    }
+
+    #endregion
+}
+
+/// <summary>
+/// 对应 Chromium 的 <c>HWNDMessageHandlerDelegate</c>：窗口过程需要从宿主窗口问到的东西。
+/// </summary>
+internal interface IHwndMessageHandlerDelegate
+{
+    /// <summary>四个标题栏按钮挂在哪（对应容器 <c>AddChildView</c> 的宿主）。</summary>
+    System.Windows.Controls.Canvas CaptionButtonHost { get; }
+
+    double DpiScale { get; }
+
+    /// <summary>客户区宽度（DIP）—— 对应 <c>WinFrameView::LayoutCaptionButtons()</c> 里的 <c>width()</c>。</summary>
+    double ClientWidthDip { get; }
+
+    bool IsMinimizable { get; }
+
+    bool IsMaximizable { get; }
+
+    bool IsClosable { get; }
+
+    bool CanResize { get; }
+
+    /// <summary>对应 Electron <c>window()->titlebar_overlay_height()</c>；0 = 用默认高度。</summary>
+    int TitlebarOverlayHeight { get; }
+
+    /// <summary>对应 <c>GetDwmFrameInsetsInPixels</c>；本工程返回全 0（同 Electron）。</summary>
+    NativeMethods.MARGINS GetDwmFrameInsetsInPixels();
+
+    /// <summary>
+    /// 点击标题栏按钮时要执行的动作。对应 Electron 里按钮回调直接调的
+    /// <c>NativeWindow::Minimize() / Maximize() / Restore() / Close()</c>。
+    /// </summary>
+    void PerformCaptionButtonAction(CaptionButton button);
+
+    void SetHoveredCaptionButton(CaptionButton button);
+
+    /// <summary>把算出来的标题栏高度告诉宿主，好让标题栏那一行的行高跟按钮条一致。</summary>
+    void SetTitlebarHeight(double heightDip);
+
+    /// <summary>诊断用：记一条命中测试的踪迹。</summary>
+    void RecordHitTest(Point screenPointPx, int hitCode);
+}
