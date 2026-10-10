@@ -141,7 +141,7 @@
                             <Setter TargetName="PART_MaximizeButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
                             <Setter TargetName="PART_MaximizeButton" Property="Content">
                                 <Setter.Value>
-                                    <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE923;" />
+                                    <local:FontIcon FontSize="10" Glyph="&#xE923;" />
                                 </Setter.Value>
                             </Setter>
                         </Trigger>

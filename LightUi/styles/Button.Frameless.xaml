@@ -33,6 +33,13 @@
         <Setter Property="Height" Value="{DynamicResource FramelessCaptionButtonHeight}" />
         <!--  基类按钮样式可能把 MinHeight 设成控件高度，不归零的话将来会被顶高  -->
         <Setter Property="MinHeight" Value="0" />
+        <!--
+            必须显式给前景色：FontIcon 的隐式样式**故意不设** Foreground，靠继承"按钮"的 Foreground；
+            而本样式是自带的（没 BasedOn DefaultButtonStyle），不写这条，按钮就落在
+            Control.Foreground 的默认值上（黑）—— 深色主题下黑底黑字，看不见。
+            必须用 DynamicResource：切主题时才会跟着重求值。
+        -->
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />

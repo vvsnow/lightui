@@ -14,7 +14,6 @@
     Height="720"
     d:DataContext="{d:DesignInstance Type=vm:ShellViewModel}"
     ui:FramelessHelper.IsFrameless="True"
-    ui:WindowHelper.IsFrameless="False"
     Style="{DynamicResource FramelessWindowStyle}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -44,10 +43,28 @@
 
         </DockPanel>
 
-        <ContentControl
-            x:Name="ActiveItem"
-            Grid.Column="1"
-            Margin="0,28,0,0" />
+        <Grid Grid.Column="1">
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
+            <ui:SimpleStackPanel
+                Height="{Binding Path=(ui:FramelessHelper.CaptionHeight), Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                WindowChrome.IsHitTestVisibleInChrome="True">
+                <TextBox
+                    MinWidth="120"
+                    VerticalAlignment="Center"
+                    Text="你好啊" />
+                <Button Content="点击" />
+            </ui:SimpleStackPanel>
+            
+            <ContentControl x:Name="ActiveItem" Grid.Row="1" />
+        </Grid>
 
     </Grid>
 
