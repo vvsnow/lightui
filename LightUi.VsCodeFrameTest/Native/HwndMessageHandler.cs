@@ -248,35 +248,8 @@ internal sealed class HwndMessageHandler
 
     #region 消息分发
 
-    /// <summary>[临时诊断] 把关键消息写一行到 %TEMP%\vsct-msgtrace.txt。排查完就删。</summary>
-    private static void Trace(string s)
-    {
-        try
-        {
-            System.IO.File.AppendAllText(
-                System.IO.Path.Combine(System.IO.Path.GetTempPath(), "vsct-msgtrace.txt"),
-                $"{Environment.TickCount64} {s}{Environment.NewLine}");
-        }
-        catch
-        {
-        }
-    }
-
     private IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
-        // [临时诊断] 右键标题栏的消息轨迹 —— 不改行为、不设 handled。排查完就删。
-        switch (msg)
-        {
-            case 0x00A4: Trace($"WM_NCRBUTTONDOWN hit={(long)wParam}"); break;
-            case 0x00A5: Trace($"WM_NCRBUTTONUP hit={(long)wParam}"); break;
-            case 0x0204: Trace("WM_RBUTTONDOWN"); break;
-            case 0x0205: Trace("WM_RBUTTONUP"); break;
-            case 0x007B: Trace("WM_CONTEXTMENU"); break;
-            case 0x0112: Trace($"WM_SYSCOMMAND cmd=0x{((long)wParam & 0xFFF0L):X4}"); break;
-            case 0x00A1: Trace($"WM_NCLBUTTONDOWN hit={(long)wParam}"); break;
-            case 0x00A2: Trace($"WM_NCLBUTTONUP hit={(long)wParam}"); break;
-        }
-
         switch (msg)
         {
             case NativeMethods.WM_NCCALCSIZE:
