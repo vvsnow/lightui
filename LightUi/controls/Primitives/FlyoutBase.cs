@@ -89,6 +89,7 @@ public abstract class FlyoutBase : DependencyObject
     /// <summary>在指定 anchor 控件旁弹出 Flyout。</summary>
     public void ShowAt(FrameworkElement anchor)
     {
+        (double offsetV, double offsetH) = GetPopupOffsets();
         // 一次性：创建 presenter 与（如果是 Flyout 的）外层 Popup
         if (_presenter is null)
         {
