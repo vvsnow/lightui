@@ -1,7 +1,12 @@
 namespace LightUi.Controls;
 
 /// <summary>
-/// 开关：继承 ToggleButton，On/Off 两态（不做拖动动画，保持最小）。
+/// 开关：继承 ToggleButton，On / Off 两态，不做拖动动画。
+///
+/// 用法：
+/// <code>
+/// &lt;ui:ToggleSwitch OnContent="开" OffContent="关" /&gt;
+/// </code>
 /// </summary>
 public class ToggleSwitch : ToggleButton
 {

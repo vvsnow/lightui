@@ -1,13 +1,17 @@
 namespace LightUi;
 
 /// <summary>
-/// 主题切换运行时：把主题 xaml 里的 brush 键值写进资源链<b>顶层</b>字典
-/// （<see cref="Application.Resources"/>）自己的键上。不监听 UISettings、不探测 HighContrast。
+/// 主题切换运行时：把主题 xaml 里的 brush 写进资源链<b>顶层</b>字典（<see cref="Application.Resources"/>）自己的键上。
 ///
-/// 必须写顶层键：Light/Dark 挂在三层字典深处（Application.Resources →
-/// ControlsResources.xaml → Theme/ThemeResources.xaml），而 WPF 只在资源链顶层变更时
-/// 才做全树 DynamicResource 失效重求值 —— 改嵌套层不会通知元素，值变了、界面不重绘。
-/// 早期实现在 ThemeRoot 上换 MergedDictionaries，切主题后界面因此完全不动。
+/// 用法：
+/// <code>
+/// ThemeManager.ApplyTheme(ApplicationTheme.Dark);
+/// ThemeManager.ApplyAccentColor(Colors.Orange);   // 可选：自定义强调色
+/// ThemeManager.CurrentThemeChanged += (_, t) =&gt; { };
+/// </code>
+/// 必须写顶层键：Light / Dark 挂在三层字典深处（Application.Resources → ControlsResources.xaml →
+/// Theme/ThemeResources.xaml），而 WPF 只在资源链顶层变更时才让全树 DynamicResource 失效重求值 ——
+/// 改嵌套层会值变了而界面不重绘。不监听 UISettings、不探测 HighContrast。
 /// </summary>
 public static class ThemeManager
 {

@@ -3,14 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <!--
-        WPF 自带 ProgressBar 的默认样式 —— 只是个「壳子」。
-        模板根元素是 <local:ProgressBar />（LightUi 自定义控件），WPF 侧属性经 TemplateBinding 透传，
-        所以用户照常写 <ProgressBar Value="65" IsIndeterminate="True" /> 就能拿到 LightUi 风格。
-        真正的可视逻辑与动画在 controls/ProgressBar/ProgressBar.xaml。
-        与 ModernWpf 的 Styles/ProgressBar.xaml 同一套做法。
-    -->
-
+    <!--  只是壳子：模板根是 LightUi 的 ProgressBar 自定义控件，属性经 TemplateBinding 透传；可视逻辑在 controls/ProgressBar/  -->
     <Style TargetType="ProgressBar">
         <!--  隔断 WPF 默认主题样式里其余的 setter  -->
         <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -25,10 +18,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ProgressBar">
-                    <!--
-                        原生 ProgressBar 没有 CornerRadius 属性，所以不能 TemplateBinding，
-                        直接在内层元素上用 DynamicResource 取尺寸令牌。
-                    -->
+                    <!--  原生 ProgressBar 没有 CornerRadius 属性，不能 TemplateBinding，只能在内层元素上取令牌  -->
                     <local:ProgressBar
                         MinHeight="{TemplateBinding MinHeight}"
                         VerticalAlignment="{TemplateBinding VerticalAlignment}"

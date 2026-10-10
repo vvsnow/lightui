@@ -1,12 +1,10 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!--  ToggleButton 默认样式：未选中与 Button 同；选中态用 AccentBrush  -->
     <Style TargetType="ToggleButton">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
-        <!--  高度由 ControlHeight 统一控制；左右 12 给文字/图标留出与边框的距离  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Height" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
@@ -36,10 +34,7 @@
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
-                            <!--
-                                选中态边框刷成透明（BorderBrush=Transparent）：BorderThickness 保留 1px 不变，
-                                不影响基于边框尺寸的布局计算；视觉上等同于无边框，与 AccentButton 一致。
-                            -->
+                            <!--  边框刷成透明而不是去掉：BorderThickness 保持 1px，不影响按边框算的布局  -->
                             <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">

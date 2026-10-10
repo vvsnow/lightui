@@ -24,7 +24,6 @@
                 Text="按钮类控件" />
             <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="Button / RepeatButton / ToggleButton / HyperlinkButton / DropDownButton" />
 
-            <!--  Button  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Button" />
@@ -42,7 +41,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  RepeatButton  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="RepeatButton（按住连续）" />
@@ -67,7 +65,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  ToggleButton  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToggleButton" />
@@ -79,7 +76,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  HyperlinkButton  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="HyperlinkButton" />
@@ -94,7 +90,6 @@
 
 
 
-            <!--  DropDownButton  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="DropDownButton" />

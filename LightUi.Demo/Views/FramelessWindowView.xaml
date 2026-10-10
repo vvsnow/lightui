@@ -1,0 +1,41 @@
+<Window
+    x:Class="LightUi.Demo.Views.FramelessWindowView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lightui.com/2019"
+    xmlns:vm="clr-namespace:LightUi.Demo.ViewModels"
+    Title="无边框子窗口"
+    Width="520"
+    Height="300"
+    d:DataContext="{d:DesignInstance Type=vm:FramelessWindowViewModel}"
+    d:DesignHeight="300"
+    d:DesignWidth="520"
+    ui:FramelessHelper.IsFrameless="True"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+
+    <!--  故意不写 Style：验证「XAML 窗口 = 派生类，样式由 FramelessHelper 挂载时补上」  -->
+
+    <DockPanel>
+        <ui:SimpleStackPanel
+            Height="{Binding Path=(ui:FramelessHelper.CaptionHeight), RelativeSource={RelativeSource AncestorType=Window}}"
+            Background="{DynamicResource PageBackgroundBrush}"
+            DockPanel.Dock="Top">
+            <TextBlock
+                Margin="12,0"
+                VerticalAlignment="Center"
+                Text="无边框子窗口（XAML 窗口 = 派生类，没写 Style）" />
+        </ui:SimpleStackPanel>
+
+        <ui:SimpleStackPanel Margin="16" Spacing="12">
+            <TextBlock Text="这个窗口没写 Style=，样式应是 FramelessHelper 挂载时补上的。" />
+            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="隐式样式按精确类型匹配、命不中派生窗口，所以「默认样式」只能在代码里补。" />
+            <Button
+                x:Name="TryCloseAsync"
+                HorizontalAlignment="Left"
+                Content="关闭" />
+        </ui:SimpleStackPanel>
+    </DockPanel>
+</Window>

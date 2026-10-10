@@ -23,7 +23,6 @@
                 Text="内置 WPF 控件" />
             <TextBlock Text="被 LightUi styles/ 重新样式化过的常见控件" />
 
-            <!--  CheckBox  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="CheckBox" />
@@ -35,7 +34,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  RadioButton  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="RadioButton（一组）" />
@@ -50,7 +48,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  TextBox + PasswordBox  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="TextBox / PasswordBox" />
@@ -65,7 +62,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  ComboBox  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ComboBox（下拉选择）" />
@@ -87,7 +83,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  ListBox  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ListBox（水果列表）" />
@@ -120,7 +115,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  ProgressBar  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="8">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ProgressBar" />
@@ -142,7 +136,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  ToolTip  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToolTip（hover 触发）" />
@@ -171,7 +164,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  TabControl（标签页）  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="TabControl" />
@@ -200,7 +192,6 @@
                 </ui:SimpleStackPanel>
             </Border>
 
-            <!--  Expander（折叠面板）  -->
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Expander（折叠面板）" />

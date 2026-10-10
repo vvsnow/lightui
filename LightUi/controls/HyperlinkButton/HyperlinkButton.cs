@@ -3,7 +3,13 @@ using System.Diagnostics;
 namespace LightUi.Controls;
 
 /// <summary>
-/// 按钮外观的超链接：有 <see cref="Content"/>，可选 <see cref="NavigateUri"/>。
+/// 超链接外观的按钮：点击后用系统 shell 打开 <see cref="NavigateUri"/>。
+///
+/// 用法：
+/// <code>
+/// &lt;ui:HyperlinkButton Content="了解详情" NavigateUri="https://example.com" /&gt;
+/// </code>
+/// 不设 NavigateUri 时就是个普通按钮，可以自己挂 Click。
 /// </summary>
 public class HyperlinkButton : Button
 {
@@ -31,8 +37,7 @@ public class HyperlinkButton : Button
         }
         catch (Exception ex)
         {
-            // 设计期 / 没有 shell 时不崩 UI，但要留痕：裸 catch 会把 Uri 非法、
-            // Process.Start 失败之类的真问题一起吞掉，事后无从排查。
+            // 打不开（Uri 非法 / 没有 shell）不崩 UI，但要留痕，免得真问题被吞掉
             Debug.WriteLine($"HyperlinkButton 打开 \"{NavigateUri}\" 失败: {ex}");
         }
     }

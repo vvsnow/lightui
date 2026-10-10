@@ -4,28 +4,20 @@
     xmlns:local="clr-namespace:LightUi.Controls">
 
     <!--
-        无边框窗口的「样式」那一半 —— 逻辑在 controls/FramelessHelper/（自己处理非客户区，不用 WindowChrome）。
-        用法：Style="{DynamicResource FramelessWindowStyle}" + ui:FramelessHelper.IsFrameless="True"。
+        无边框窗口的「样式」那一半（逻辑在 controls/FramelessHelper/）。
+        用法：ui:FramelessHelper.IsFrameless="True" —— 样式已经是 Window 的隐式默认，不用自己写 Style。
 
-        与 LightUiWindowStyle（旧的那套，现已移除）四处不同：
-        · 悬停/按下**不由 IsMouseOver 驱动**：返回 HT* 之后那块是非客户区，WPF 输入栈根本不参与，
-          颜色全靠 FramelessHelper.HoveredCaptionButton / PressedCaptionButton 这两个只读附加属性；
-        · 按钮尺寸来自 FramelessSystemButtonStyle（46×30），**与 caption 高度无关**；
-        · **没有**「最大化时 Padding=6」那条 —— 最大化的内缩由 WM_NCCALCSIZE 的 insets 处理，
-          这里再补一次会把内容推两次；
-        · 按钮的可见性由本文件的 ResizeMode 触发器管（旧实现的逻辑层替它做了这件事，
-          现在逻辑层只管命中 —— 所以元素必须真的 IsVisible=false，命中判定才会跳过它）。
-
-        ★ 刻意**不注册隐式样式**：合并集里只能有一个 <Style TargetType="Window"/>，
-          旧的 LightUiWindowStyle 当初占了那条（Window.xaml，现已移除），再来一个会互相顶掉。
-          所以这套必须显式引用。
-
-        ★ caption（标题栏）的视觉与**行高**完全由你自己的内容决定 —— 本样式只负责右上角那条按钮。
-          FramelessHelper 也不往任何元素上写高度：它算出来的 caption 高度只用于命中判定
-          （「多高算拖动区」，见 ui:FramelessHelper.CaptionHeight）。
+        ★ 合并集里只能有一条 <Style TargetType="Window"/>，就是本文件末尾那条隐式样式；它只对精确的 Window 生效 ——
+          XAML 里 x:Class 声明的窗口都是派生类（隐式样式按精确类型匹配，命不中），那些由 FramelessHelper
+          在挂载时补上（窗口自己写了 Style 就不动）。要显式引用或单独覆盖时用 x:Key="DefaultFramelessWindowStyle"。
+        ★ 悬停/按下不由 IsMouseOver 驱动：返回 HT* 之后那块是非客户区，颜色只能来自
+          FramelessHelper.HoveredCaptionButton / PressedCaptionButton 这两个只读附加属性。
+        ★ caption 的视觉与行高由你自己的内容决定，本样式只管右上角那三颗按钮；
+          FramelessHelper 也不往任何元素写高度，它算的 caption 高度只用于命中判定。
+        ★ 按钮必须真的 IsVisible=false（ResizeMode 触发器做的），命中判定才会跳过它。
     -->
 
-    <Style x:Key="FramelessWindowStyle" TargetType="Window">
+    <Style x:Key="DefaultFramelessWindowStyle" TargetType="Window">
         <Setter Property="Background" Value="{DynamicResource PageBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
@@ -47,7 +39,6 @@
                                 <ContentPresenter />
                             </AdornerDecorator>
 
-                            <!--  三颗按钮贴右上角，和 Windows 11 自己的标题栏按钮一致  -->
                             <StackPanel
                                 x:Name="CaptionButtons"
                                 HorizontalAlignment="Right"
@@ -70,11 +61,7 @@
                                     <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE71A;" />
                                 </Button>
 
-                                <!--
-                                    关闭键的 FontIcon 额外绑一次按钮的 Foreground：悬停时触发器会把按钮
-                                    Foreground 改成白色（红底白字），而 FontIcon 自己的样式里定义了
-                                    Foreground，会挡住继承 —— 不显式绑就跟不上。
-                                -->
+                                <!--  必须显式绑 Foreground：悬停时触发器把按钮前景改成白字，而 FontIcon 自己的样式挡着继承  -->
                                 <Button
                                     x:Name="PART_CloseButton"
                                     Command="{x:Static SystemCommands.CloseWindowCommand}"
@@ -97,8 +84,8 @@
                         </Trigger>
 
                         <!--
-                            悬停 / 按下。写在这里而不是按钮样式里：ControlTemplate 的触发器以
-                            **模板父级（这个 Window）**为对象，而那两个附加属性正是写在窗口上的。
+                            悬停 / 按下写在这里而不是按钮样式里：模板触发器以**模板父级（这个 Window）**为对象，
+                            而那两个附加属性正是写在窗口上的。
                         -->
 
                         <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Minimize">
@@ -107,7 +94,7 @@
                         <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Maximize">
                             <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
-                        <!--  最大化后同一颗按钮的身份变成「还原」（命中判定按 IsZoomed 报），配色一样  -->
+                        <!--  最大化后这颗按钮的身份变成「还原」（命中判定按 IsZoomed 报），配色一样  -->
                         <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Restore">
                             <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
                         </Trigger>
@@ -132,10 +119,8 @@
                         </Trigger>
 
                         <!--
-                            最大化后：这颗按钮的语义从「最大化」变成「还原」——
-                            命令换成 Restore，字形也换（同一颗按钮元素，命中码恒为 HTMAXBUTTON）。
-                            字形直接换 Content：这样就不用给 FontIcon 写内联样式
-                            （写了会丢掉 FontIcon.xaml 里那份带打包字体的隐式样式）。
+                            最大化后语义变成「还原」：命令换 Restore、字形换 Content。
+                            字形走 Content 而不是给 FontIcon 写内联样式 —— 内联样式会丢掉 FontIcon.xaml 里那份带打包字体的隐式样式。
                         -->
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="PART_MaximizeButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
@@ -146,10 +131,7 @@
                             </Setter>
                         </Trigger>
 
-                        <!--
-                            按 ResizeMode 收起按钮。这件事必须由样式做：命中判定要求元素真的
-                            IsVisible=false 才会跳过它 —— 逻辑层现在不再替样式隐藏按钮了。
-                        -->
+                        <!--  必须由样式收起：命中判定要求元素真的 IsVisible=false 才会跳过它  -->
                         <Trigger Property="ResizeMode" Value="NoResize">
                             <Setter TargetName="PART_MinimizeButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="PART_MaximizeButton" Property="Visibility" Value="Collapsed" />
@@ -163,5 +145,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <!--  隐式：所有 Window 默认套这套  -->
+    <Style BasedOn="{StaticResource DefaultFramelessWindowStyle}" TargetType="{x:Type Window}" />
 
 </ResourceDictionary>

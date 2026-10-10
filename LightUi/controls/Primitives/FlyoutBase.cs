@@ -1,11 +1,11 @@
 namespace LightUi.Controls.Primitives;
 
 /// <summary>
-/// Flyout / MenuFlyout 的抽象基类；子类覆写 <see cref="CreatePresenter"/> 自定义呈现。
-/// 两种承载策略：
-///   - Flyout：presenter 作 <see cref="Popup.Child"/>，由外层 Popup 控制显示 / LightDismiss。
-///   - MenuFlyout：presenter 是 ContextMenu（自带 Popup，不能有父级），
-///     所以绕开外层 Popup，直接操作 ContextMenu.PlacementTarget / IsOpen。
+/// Flyout / MenuFlyout 的抽象基类：管 Placement / Offset / IsOpen 与 ShowAt / Hide。
+/// 一般不直接用（用 Flyout 或 MenuFlyout）；要自定义弹层时继承它并覆写 <see cref="CreatePresenter"/>。
+///
+/// 两种承载策略：Flyout 的 presenter 作 <see cref="Popup.Child"/>，由外层 Popup 管显示与 LightDismiss；
+/// MenuFlyout 的 presenter 自己是 ContextMenu（自带 Popup、不能有父级），所以绕开外层 Popup 直接操作它。
 /// </summary>
 public abstract class FlyoutBase : DependencyObject
 {

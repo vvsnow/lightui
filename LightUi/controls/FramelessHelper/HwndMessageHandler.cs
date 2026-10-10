@@ -5,16 +5,11 @@ using System.Windows.Interop;
 namespace LightUi.Controls.Frameless;
 
 /// <summary>
-/// 窗口过程那一层。对应 Chromium <c>ui/views/win/hwnd_message_handler.cc</c> 的 <c>HWNDMessageHandler</c>：
-/// 它挂 <c>HwndSource</c> 钩子、分发消息，并在合适的时机调 <c>UpdateDwmFrame()</c>。
-///
-/// <para>框架模式：本工程自绘标题栏，所以是 <see cref="FrameMode.CustomDrawn"/> —— 和 Chromium 一样，
-/// 这个标志用来决定 <c>WM_NCUAHDRAWCAPTION / WM_NCUAHDRAWFRAME</c> 要不要吃掉
-/// （源码里就这两条：<c>SetMsgHandled(delegate_->GetFrameMode() == FrameMode::CUSTOM_DRAWN)</c>）。</para>
+/// 窗口过程那一层：挂 <c>HwndSource</c> 钩子、分发消息，并在合适的时机重设 DWM frame。
 /// </summary>
 internal sealed class HwndMessageHandler
 {
-    /// <summary>Chromium 的 <c>FrameMode</c>（<c>ui/views/widget/widget.h</c>）。</summary>
+    /// <summary>框架模式：标题栏是系统画的还是自己画的。本工程自绘，恒为 <see cref="FrameMode.CustomDrawn"/>。</summary>
     public enum FrameMode
     {
         SystemDrawn,
@@ -31,7 +26,7 @@ internal sealed class HwndMessageHandler
 
     private IntPtr _hwnd;
 
-    /// <summary>对应 Chromium 的 <c>last_dwm_frame_insets_</c>：避免重复的跨进程 DWM 调用。</summary>
+    /// <summary>上次设给 DWM 的 insets：相同就不必再调一次跨进程的 DWM。</summary>
     private NativeMethods.MARGINS? _lastDwmFrameInsets;
 
     private CaptionButton _pressedButton = CaptionButton.None;
@@ -42,7 +37,7 @@ internal sealed class HwndMessageHandler
         _frameView = new FrameView(messageDelegate);
     }
 
-    /// <summary>Electron 的窗口自绘标题栏，对应 <c>FrameMode::CUSTOM_DRAWN</c>。</summary>
+    /// <summary>本工程自绘标题栏，恒为 <see cref="FrameMode.CustomDrawn"/> —— 它决定 WM_NCUAHDRAW* 要不要吃掉。</summary>
     public FrameMode CurrentFrameMode => FrameMode.CustomDrawn;
 
     public FrameView FrameView => _frameView;
@@ -119,10 +114,9 @@ internal sealed class HwndMessageHandler
     }
 
     /// <summary>
-    /// 同步窗口状态 + 按当前光标刷新悬停。窗口尺寸/状态/DPI 变化后都要来一次。
+    /// 同步 window frame 的度量 + 按当前光标刷新悬停。窗口尺寸 / 状态 / DPI 变化后都要来一次。
     ///
-    /// 按钮的**摆位与尺寸不在这里了** —— 那是样式的事（旧实现的 LayoutCaptionButtons /
-    /// UpdateButtons / SetButtonSize / ApplyVisualState 整块删掉）；本方法也**不往任何元素上写高度**。
+    /// 按钮的**摆位与尺寸不在这里** —— 那是样式的事；本方法也不往任何元素上写高度。
     /// </summary>
     public void Relayout()
     {
@@ -143,30 +137,18 @@ internal sealed class HwndMessageHandler
         _frameView.DpiScale = _delegate.DpiScale;
         _frameView.CanResize = _delegate.CanResize;
         _frameView.CaptionHeight = _delegate.CaptionHeight;
-        // 是否最大化 / 全屏**不缓存**：由 frame view 直接问操作系统
-        // （对应 Electron 的 frame()->IsMaximized()），这样任何时候读都是对的。
+        // 是否最大化 / 全屏**不缓存**：由 frame view 直接问操作系统，这样任何时候读都是对的。
     }
 
     #endregion
 
-    #region UpdateDwmFrame（Chromium 同名方法，位于 hwnd_message_handler.cc）
+    #region UpdateDwmFrame
 
     /// <summary>
-    /// 对应 <c>HWNDMessageHandler::UpdateDwmFrame()</c>：
-    /// <code>gfx::Insets insets;
-    /// if (delegate_->GetDwmFrameInsetsInPixels(&amp;insets)) {
-    ///   if (last_dwm_frame_insets_ == insets) return;      // "Avoid redundant cross-process DWM calls"
-    ///   last_dwm_frame_insets_ = insets;
-    ///   MARGINS margins = {insets.left(), insets.right(), insets.top(), insets.bottom()};
-    ///   DwmExtendFrameIntoClientArea(hwnd(), &amp;margins);
-    /// }</code>
+    /// 设置 DWM frame insets（本工程全 0），值没变就跳过 —— 那是跨进程调用，不必每次来一次。
     ///
-    /// Electron 的 <c>GetDwmFrameInsetsInPixels</c> 给的就是全 0（<c>*insets = gfx::Insets();</c>，
-    /// 注释 "Don't extend the glass in at all if it won't be visible."）。
-    ///
-    /// <b>全 0 不等于不调用</b>：这一步把窗口交给 DWM 的 frame 通道。
-    /// 少了它，系统不把标题栏那块当非客户区，<c>WM_NCHITTEST</c> 一次都不会来 ——
-    /// 自绘按钮既没有悬停高亮，也换不来 Snap Layouts 浮窗。
+    /// <b>全 0 不等于不调用</b>：这一步把窗口交给 DWM 的 frame 通道。少了它，系统不把标题栏那块
+    /// 当非客户区，<c>WM_NCHITTEST</c> 一次都不会来 —— 自绘按钮既没有悬停高亮，也换不来 Snap Layouts 浮窗。
     /// </summary>
     private void UpdateDwmFrame()
     {
@@ -195,7 +177,7 @@ internal sealed class HwndMessageHandler
 
     #endregion
 
-    #region 隐身（DWM cloak，对应 Electron 的 show:false）
+    #region 隐身（DWM cloak）
 
     /// <summary>
     /// 隐身 / 解除隐身（DWM cloak）。
@@ -230,10 +212,8 @@ internal sealed class HwndMessageHandler
                 return OnNcHitTest(hwnd, lParam, ref handled);
 
             case NativeMethods.WM_NCLBUTTONDOWN:
-                // 记下按下的是哪颗按钮，并把这组消息吃掉：动作由我们自己执行。
-                // 依据：参考实现里按钮是 views::Button，点击回调直接调
-                // NativeWindow::Minimize/Maximize/Restore/Close —— 不是让系统去做。
-                // DefWindowProc 也不会替我们做：那块在系统看来是客户区。
+                // 记下按下的是哪颗按钮，并把这组消息吃掉：动作由我们自己执行 ——
+                // 返回 HT* 码之后系统不认那块是它的按钮，DefWindowProc 不会替我们做。
                 _pressedButton = CurrentHoveredButton(hwnd);
                 _delegate.SetPressedCaptionButton(_pressedButton);
                 handled = _pressedButton != CaptionButton.None;
@@ -278,8 +258,8 @@ internal sealed class HwndMessageHandler
 
             case NativeMethods.WM_NCUAHDRAWCAPTION:
             case NativeMethods.WM_NCUAHDRAWFRAME:
-                // "系统偷偷画原生标题栏"的两条私人消息。自绘标题栏时必须吃掉，
-                // 否则激活/尺寸变化时会闪一下原生标题栏。
+                // "系统偷偷画原生标题栏"的两条私人消息（没进公开头文件）。自绘标题栏时必须吃掉，
+                // 否则激活 / 尺寸变化时会闪一下原生标题栏。
                 if (CurrentFrameMode == FrameMode.CustomDrawn)
                 {
                     handled = true;
@@ -293,14 +273,13 @@ internal sealed class HwndMessageHandler
                 break;
 
             case NativeMethods.WM_SIZE:
-                // 尺寸/最大化状态变了就重摆按钮（Chromium 的 handler 也处理 WM_SIZE）。
-                // 光靠 WPF 的 StateChanged 不够稳：最大化时它不一定先于这里到。
+                // 尺寸 / 最大化状态变了就重算。光靠 WPF 的 StateChanged 不够稳：最大化时它不一定先到。
                 // ★ 不设 handled，WPF 自己要这条消息做布局。
                 Relayout();
                 break;
 
             case NativeMethods.WM_WINDOWPOSCHANGED:
-                // Chromium 也是在 WM_WINDOWPOSCHANGED 里 UpdateDwmFrame。
+                // 位置/尺寸/样式变了，DWM frame 可能失效，重设一次。
                 // ★ 绝不设 handled：WPF 自己要这条消息做布局。
                 UpdateDwmFrame();
                 Relayout();
@@ -319,8 +298,8 @@ internal sealed class HwndMessageHandler
     }
 
     /// <summary>
-    /// 对应 <c>HWNDMessageHandler::OnNCCalcSize</c>：用 frame view 给的 insets 改客户区，返回 0
-    /// （不是 WVR_REDRAW —— 返回它会整窗重绘，拖边框缩放时肉眼可见闪烁）。
+    /// 用 frame view 给的 insets 改客户区。返回 0 而不是 WVR_REDRAW —— 后者会整窗重绘，
+    /// 拖边框缩放时肉眼可见闪烁。
     /// </summary>
     private IntPtr OnNcCalcSize(IntPtr hwnd, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
@@ -346,7 +325,7 @@ internal sealed class HwndMessageHandler
         return IntPtr.Zero;
     }
 
-    /// <summary>对应 <c>HWNDMessageHandler::OnNCHitTest</c>。</summary>
+    /// <summary>WM_NCHITTEST：问 frame view，把 HT* 码回给系统。</summary>
     private IntPtr OnNcHitTest(IntPtr hwnd, IntPtr lParam, ref bool handled)
     {
         // lParam 的低/高 16 位是屏幕物理像素，且是有符号的 —— 多显示器摆在主屏左/上时坐标是负的
@@ -464,10 +443,8 @@ internal sealed class HwndMessageHandler
     }
 
     /// <summary>
-    /// 对应 <c>HWNDMessageHandler::OnGetMinMaxInfo</c>：
-    /// "Add the native frame border size to the minimum and maximum size if the view reports its size
-    /// as the client size." 窗口有 WS_THICKFRAME，系统给的 track size 是「窗口矩形」尺寸，
-    /// 而 WPF 的 MinWidth/MinHeight 是客户区尺寸 —— 不加回去，MinWidth=520 实际会少掉两边边框。
+    /// 窗口有 WS_THICKFRAME，系统给的 track size 是**窗口矩形**尺寸，而 WPF 的 MinWidth/MinHeight
+    /// 是**客户区**尺寸 —— 不把两边边框加回去，MinWidth=520 实际会少掉两边边框。
     /// </summary>
     private void OnGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
     {

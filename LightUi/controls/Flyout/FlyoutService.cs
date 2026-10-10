@@ -3,9 +3,15 @@ using LightUi.Controls.Primitives;
 namespace LightUi.Controls;
 
 /// <summary>
-/// 给任意 <see cref="ButtonBase"/> 附加 Flyout 的支持（附着属性）。
-/// 用法：<Button ui:FlyoutService.Flyout><ui:MenuFlyout>...</ui:MenuFlyout></ui:FlyoutService.Flyout></Button>
-/// 点击按钮自动弹出 Flyout，Placement / VerticalOffset / HorizontalOffset 在 Flyout 上设。
+/// 给任意 <see cref="ButtonBase"/> 挂 Flyout 的附着属性：点击按钮即弹出。
+///
+/// 用法：
+/// <code>
+/// &lt;Button ui:FlyoutService.Flyout&gt;
+///     &lt;ui:MenuFlyout&gt;…&lt;/ui:MenuFlyout&gt;
+/// &lt;/Button&gt;
+/// </code>
+/// Placement / VerticalOffset / HorizontalOffset 在 Flyout 上设。
 /// </summary>
 public static class FlyoutService
 {
@@ -29,12 +35,11 @@ public static class FlyoutService
         if (d is not ButtonBase button)
             return;
 
-        // 解除旧的 handler
+        // 换 Flyout 时先摘掉旧 handler，再挂新的
         var old = (RoutedEventHandler?)button.GetValue(ClickHandlerProperty);
         if (old != null)
             button.Click -= old;
 
-        // 安装新的 handler：点击时弹出 Flyout
         if (e.NewValue is FlyoutBase flyout)
         {
             RoutedEventHandler handler = (_, _) => flyout.ShowAt(button);

@@ -14,7 +14,6 @@
     Height="720"
     d:DataContext="{d:DesignInstance Type=vm:ShellViewModel}"
     ui:FramelessHelper.IsFrameless="True"
-    Style="{DynamicResource FramelessWindowStyle}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
@@ -60,8 +59,15 @@
                 <TextBox
                     MinWidth="120"
                     VerticalAlignment="Center"
-                    Text="你好啊" />
-                <Button VerticalAlignment="Center" Content="点击" />
+                    ui:TextBoxHelper.Placeholder="请输入内容" />
+                <PasswordBox
+                    MinWidth="120"
+                    VerticalAlignment="Center"
+                    ui:TextBoxHelper.Placeholder="请输入密码" />
+                <Button
+                    x:Name="ShowFramelessWindow"
+                    VerticalAlignment="Center"
+                    Content="点击弹窗口" />
                 <Button Content="X" Style="{DynamicResource FramelessSystemButtonStyle}" />
             </ui:SimpleStackPanel>
 

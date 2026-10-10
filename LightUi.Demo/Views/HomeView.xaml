@@ -13,7 +13,6 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <!--  9 格 brush 色板  -->
             <TextBlock Style="{StaticResource HeaderTextStyle}" Text="调色板（9 个 brush）" />
             <TextBlock
                 FontSize="12"

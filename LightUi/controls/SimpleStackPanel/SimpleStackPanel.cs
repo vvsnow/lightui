@@ -1,8 +1,16 @@
 namespace LightUi.Controls;
 
 /// <summary>
-/// 简单 StackPanel：比原生 StackPanel 多一个 <see cref="Spacing"/>（相邻元素间距）。
-/// 最小版——不处理 Stretch / 对齐，只做"垂直堆叠 + 等距"。
+/// 比原生 StackPanel 多一个 <see cref="Spacing"/> 的最小面板：只做堆叠 + 等距，不处理 Stretch / 对齐。
+///
+/// 用法：
+/// <code>
+/// &lt;ui:SimpleStackPanel Spacing="8"&gt;
+///     &lt;Button Content="A" /&gt;
+///     &lt;Button Content="B" /&gt;
+/// &lt;/ui:SimpleStackPanel&gt;
+/// </code>
+/// 横向堆叠用 Orientation="Horizontal"；间距按可见性算，Collapsed 的元素不占位。
 /// </summary>
 public class SimpleStackPanel : Panel
 {
@@ -42,10 +50,8 @@ public class SimpleStackPanel : Panel
         var count = Children.Count;
         var hasVisibleChild = false;
 
-        // 堆叠轴必须放开成无限再量每个子元素：否则子元素会被调用方的有限约束压扁
-        // （拿不到自己的自然尺寸），面板返回的 DesiredSize 偏小，内容被切。
-        // 放进固定高的 Grid 行、或嵌套在另一个 SimpleStackPanel 里时就会踩到。
-        // 交叉轴保持原约束。WPF 的 StackPanel 与参考实现都是这么做的。
+        // 堆叠轴要放开成无限再量子元素：否则会被调用方的有限约束压扁（拿不到自然尺寸），
+        // 面板报的 DesiredSize 偏小、内容被切 —— 放进固定高的 Grid 行、或嵌套同类面板时就会踩到。
         var slot = availableSize;
         if (stack)
         {
@@ -125,8 +131,7 @@ public class SimpleStackPanel : Panel
                 rect.Y += previousChildSize;
                 previousChildSize = ds.Height;
                 rect.Height = previousChildSize;
-                // 交叉轴取 max：子元素比分配到的空间大时让它溢出，
-                // 而不是被硬压到 finalSize（WPF StackPanel 与参考实现同此语义）。
+                // 交叉轴取 max：子元素比分配到的空间大时让它溢出，而不是硬压到 finalSize
                 rect.Width = Math.Max(finalSize.Width, ds.Width);
             }
             else

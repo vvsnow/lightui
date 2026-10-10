@@ -7,26 +7,14 @@
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
     </Style>
 
-    <!--
-        MenuItem 默认样式（Menu / MenuFlyout / ContextMenu 通用）：
-        - 默认：透明背景，文字继承 Foreground
-        - 悬停（IsMouseOver）/ 键盘导航（IsHighlighted）：ControlHoverBackgroundBrush 浅灰
-        - 高度由 ControlHeight 统一控制（与 Button / ListBoxItem / ComboBoxItem 同 28）
-        - Padding 8,0 跟 ListBoxItem 对齐
-        - ContentSource="Header" 让 ContentPresenter 读 MenuItem.Header 属性
-        - HorizontalContentAlignment=Stretch 显式覆盖 WPF 主题里那个会失败绑定的 Setter
-        - OverridesDefaultStyle=True 绕过 WPF 主题里的 HorizontalContentAlignment 绑定 Setter
-    -->
+    <!--  OverridesDefaultStyle=True：绕过 WPF 主题里那个会失败绑定的 HorizontalContentAlignment Setter  -->
     <Style TargetType="MenuItem">
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="Padding" Value="8,0" />
-        <!--
-            MenuItem 外层有 MenuFlyout 的 1px 边框 + 圆角包裹，视觉上比 Button 等"看起来更高"，
-            所以自身高度比 ControlHeight 小 2px（26 vs 28），保持视觉一致
-        -->
+        <!--  外层还裹着菜单的 1px 边框，视觉上会比 Button 高，所以自身比 ControlHeight 小 2px（26 vs 28）  -->
         <Setter Property="MinHeight" Value="{DynamicResource MenuItemHeight}" />
         <Setter Property="Height" Value="{DynamicResource MenuItemHeight}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -68,7 +56,7 @@
                                     FontSize="{DynamicResource TextSecondaryFontSize}"
                                     Foreground="{TemplateBinding Foreground}"
                                     Text="{TemplateBinding InputGestureText}" />
-                                <!--  子菜单箭头：只有 SubmenuHeader 角色才显示（见下方 Role 触发器）  -->
+                                <!--  只有 SubmenuHeader 角色才显示（见下方 Role 触发器）  -->
                                 <Path
                                     x:Name="SubmenuArrow"
                                     Grid.Column="3"
@@ -83,11 +71,9 @@
                         </Border>
 
                         <!--
-                            ★ 子菜单弹层。这个部件必须叫 PART_Popup —— WPF 的 MenuItem.OnApplyTemplate
-                            靠 GetTemplateChild("PART_Popup") 取它来展开子菜单；换成别的名字，
-                            所有嵌套 MenuItem / 带子项的 ContextMenu 都会永远打不开（且不报错）。
-                            背景色不能 TemplateBinding Background：MenuItem 自身是 Transparent，
-                            那样弹层会透明。这里按弹层规格单独取令牌，与本文件 ContextMenu 一致。
+                            ★ 必须叫 PART_Popup：MenuItem.OnApplyTemplate 靠 GetTemplateChild 取它来展开子菜单，
+                            改名后所有嵌套菜单永远打不开（且不报错）。
+                            背景不能 TemplateBinding Background —— MenuItem 自身是 Transparent，弹层会跟着透明。
                         -->
                         <Popup
                             x:Name="PART_Popup"
@@ -119,7 +105,7 @@
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
                         </Trigger>
 
-                        <!--  子菜单从右侧展开并显示箭头；菜单栏顶层的下拉仍走 Bottom  -->
+                        <!--  子菜单从右侧展开；菜单栏顶层的下拉仍走 Bottom  -->
                         <Trigger Property="Role" Value="SubmenuHeader">
                             <Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible" />
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Right" />
@@ -134,12 +120,10 @@
     </Style>
 
     <!--
-        Separator（菜单分隔条）：1px 浅灰横线，上下各 4px 留白
-        - 间距只由 Separator 自身的 Margin 提供。模板里再叠一层 Margin 是错的：
-        Border 会被 1px 高的槽位挤压，部分布局下直接渲染成 0，或落在半像素上变虚
-        - SnapsToDevicePixels + UseLayoutRounding：缩放不是 100% 时 1 DIP = 1.25/1.5 物理像素，
-        不对齐就会被抗锯齿糊成两行灰带（看起来"很粗"）；对齐后是一条锐利的单物理像素细线
-        - 左右 4 缩进 = ContextMenu 的 Padding，让分割线和 MenuItem 悬停底色同宽
+        间距只由 Separator 自身的 Margin 提供：模板里再叠一层 Margin 会让 Border 被 1px 高的槽位挤压，
+        部分布局下直接渲染成 0，或落在半像素上变虚。
+        SnapsToDevicePixels + UseLayoutRounding 不能省 —— 缩放非 100% 时 1 DIP = 1.25/1.5 物理像素，
+        不对齐会被抗锯齿糊成两行灰带（看起来"很粗"）。
     -->
     <Style x:Key="DefaultSeparatorStyle" TargetType="Separator">
         <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
@@ -156,24 +140,18 @@
         </Setter>
     </Style>
 
-    <!--  普通位置的 Separator 走隐式样式  -->
     <Style BasedOn="{StaticResource DefaultSeparatorStyle}" TargetType="Separator" />
 
     <!--
-        ★ 菜单里的 Separator 必须挂在这个键上（MenuItem.SeparatorStyleKey），不能只靠隐式样式：
-        Menu / MenuItem 会给每个 Separator 显式套上这个键的样式，而显式样式优先于隐式样式 ——
-        所以只有 <Style TargetType="Separator"> 时，ContextMenu / MenuFlyout / Menu 里的分割线
-        全部落回默认主题那条（Margin=0,2,0,2、左边缩进 30px、无像素对齐），改隐式样式对它们无效。
+        ★ 菜单里的 Separator 必须挂在这个键上（MenuItem.SeparatorStyleKey）：Menu / MenuItem 会给每个
+        Separator 显式套上这个键的样式，而显式样式优先于隐式样式 —— 只写隐式样式的话，
+        ContextMenu / MenuFlyout / Menu 里的分割线会全部落回默认主题那条。
     -->
     <Style
         x:Key="{x:Static MenuItem.SeparatorStyleKey}"
         BasedOn="{StaticResource DefaultSeparatorStyle}"
         TargetType="Separator" />
 
-    <!--
-        ContextMenu（右键菜单）：1px 边框 + 4 圆角 + 4 内边距，包裹 StackPanel IsItemsHost
-        TextBox/PasswordBox 等右键弹出的就是这个，所以让它走 LightUi 弹层风格
-    -->
     <Style TargetType="ContextMenu">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />

@@ -4,22 +4,14 @@
     xmlns:local="clr-namespace:LightUi.Controls">
 
     <!--
-        FontIcon 默认样式：图标字体随程序集一起打包（Assets/Fonts/SegoeIcons.TTF，
-        在 csproj 里以 Resource 打包进 dll），直接用 pack URI 引用文件，不依赖系统装没装
-        Segoe Fluent Icons。
-        - URI 里 # 后面必须是字体文件内部的家族名（这个 TTF 里就是 "Segoe Fluent Icons"），
-        且 # 前后不能有空格 —— 写成 "xxx.TTF #Segoe Fluent Icons" 会被当成系统字体名去找。
-        - 必须带程序集名（/LightUi;component/...）：样式被 Demo 这类外部程序集消费时，
-        "/Assets/..." 这种相对写法会按宿主程序集的根去解析，找不到文件。
+        图标字体随程序集打包（csproj 里以 Resource 进 dll），pack URI 直接引用，不依赖系统装没装 Segoe Fluent Icons。
+        · # 后面必须是字体文件内部的家族名（"Segoe Fluent Icons"），且 # 前后不能有空格，否则会被当成系统字体名去找
+        · 必须带程序集名（/LightUi;component/…）：外部程序集消费样式时，"/Assets/…" 会按宿主的根解析、找不到文件
     -->
     <Style TargetType="{x:Type local:FontIcon}">
         <Setter Property="FontFamily" Value="pack://application:,,,/LightUi;component/Assets/Fonts/SegoeIcons.TTF#Segoe Fluent Icons" />
         <Setter Property="FontSize" Value="{DynamicResource ControlGlyphFontSize}" />
-        <!--
-            不设 Foreground：让 FontIcon 的前景色跟随父级（按钮 / TabItem / 列表项 …）的 Foreground，
-            与同位置的文字颜色保持一致。
-            一旦 Style Setter 写了具体 brush，local value 会盖掉继承 —— TabItem 选中态改 Foreground 就传不下来了。
-        -->
+        <!--  不设 Foreground：前景色跟随父级；写了具体 brush 就成了 local value，会盖掉继承（TabItem 选中态传不下来）  -->
         <Setter Property="Text" Value="{Binding Glyph, RelativeSource={RelativeSource Self}}" />
         <Setter Property="VerticalAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Center" />

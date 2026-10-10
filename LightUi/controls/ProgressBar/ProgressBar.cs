@@ -3,24 +3,19 @@ using System.Windows.Media.Animation;
 namespace LightUi.Controls;
 
 /// <summary>
-/// 进度条（参考 ModernWpf 的简化版）。
+/// 进度条：确定态按 Value 显示、值变化时"追赶"滑动；不确定态两条指示块接力流过。
 ///
-/// 为什么继承 RangeBase 而不是 WPF 原生的 ProgressBar：
-/// styles/ProgressBar.xaml 给原生 ProgressBar 套的隐式样式，模板根元素就是本控件。
-/// 若本控件继承原生 ProgressBar，WPF 的隐式样式查找会沿基类链命中那份样式，
-/// 于是模板再次实例化本控件 —— 无限递归。继承 RangeBase 后基类链是 Control → FrameworkElement，
-/// 不会命中。（ModernWpf 的 ProgressBar 同样继承 RangeBase。）
+/// 用法：
+/// <code>
+/// &lt;ProgressBar Value="65" /&gt;
+/// &lt;ProgressBar IsIndeterminate="True" /&gt;
+/// </code>
+/// 继承 RangeBase 而不是原生 ProgressBar：styles/ProgressBar.xaml 给原生 ProgressBar 套的隐式样式，
+/// 模板根就是本控件 —— 若再继承原生 ProgressBar，隐式样式查找会沿基类链命中它自己 → 无限递归。
 ///
-/// 确定态：指示块宽度按 Value 算。值变化时让指示块从「旧右边界」滑到「新右边界」，形成「追赶」动画。
-/// 不确定态：40% / 60% 两条指示块以 2s 周期接力流过，位移随实际宽度自适应。
-/// 指示块的显隐靠「宽度归零」而不是 Opacity，免得依赖动画停止时属性值的回滚行为。
-///
-/// 动画为什么写在代码里、而不是照 ModernWpf 那样放 XAML 的 VisualState + Storyboard：
-/// ModernWpf 把位移量放在 Storyboard 关键帧的 Value 绑定上
-/// （{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.Xxx}）。
-/// 本项目里实测这种绑定不生效 —— 关键帧绑定只在故事板启动那一刻求值一次，而模板应用时
-/// ActualWidth 还是 0，四个位移量会被读成 0，指示块从此僵在 X=0；即便事后重播也没用。
-/// 位移量本来就依赖 ActualWidth，直接在代码里算好再用 BeginAnimation 驱动，可靠得多。
+/// 指示块显隐靠「宽度归零」而不是 Opacity，免得依赖动画停止时属性值的回滚行为。
+/// 动画在代码里用 BeginAnimation 驱动：位移量依赖 ActualWidth，而 XAML 关键帧的绑定只在故事板启动时
+/// 求值一次（那时 ActualWidth 还是 0），实测位移全被读成 0、指示块僵在 X=0。
 /// </summary>
 public class ProgressBar : RangeBase
 {

@@ -7,21 +7,23 @@ using System.Windows.Shell;
 namespace LightUi.Controls;
 
 /// <summary>
-/// 无边框窗口的「逻辑」那一半：**不用 WPF 的 WindowChrome**，改由自己处理非客户区
-/// （照 Electron / Chromium 的做法：自己答 <c>WM_NCCALCSIZE</c>/<c>WM_NCHITTEST</c>、自己进 DWM frame 通道）。
-/// 「样式」那一半是 <c>FramelessWindowStyle</c> + 两个按钮样式。
+/// 无边框窗口的「逻辑」那一半：不用 WPF 的 <see cref="WindowChrome"/>，自己答
+/// <c>WM_NCCALCSIZE</c> / <c>WM_NCHITTEST</c>、自己进 DWM frame 通道。
+/// 「样式」那一半是 DefaultFramelessWindowStyle（已注册为 Window 的隐式默认）+ 两个标题栏按钮样式。
 ///
-/// 用法（两步，缺一不可）：
-/// <code>&lt;Window ui:FramelessHelper.IsFrameless="True"
-///         Style="{DynamicResource FramelessWindowStyle}" /&gt;</code>
+/// 用法：
+/// <code>
+/// &lt;Window ui:FramelessHelper.IsFrameless="True" /&gt;
+/// </code>
+/// 样式不用自己写：窗口没写 Style 时本类会补上 DefaultFramelessWindowStyle；要覆盖就自己写 Style。
+/// 三个附加属性：<see cref="IsFramelessProperty"/>（开关）、<see cref="CaptionHeightProperty"/>
+/// （多高算标题栏 / 拖动区）、<see cref="CloakUntilFirstFrameProperty"/>（启动不闪）。
 ///
-/// 与 WPF 的 <see cref="WindowChrome"/> **互斥** —— 同一窗口只能挂一套。
-/// 两个都开会打架（WindowChrome 自己也要管 <c>WM_NCCALCSIZE</c>/<c>WM_NCHITTEST</c>），
-/// 所以本类挂载时若发现窗口已经挂了 WindowChrome，会打一条 Debug 警告并**让位不挂**。
+/// 与 <see cref="WindowChrome"/> 互斥：两套都要管 WM_NCCALCSIZE / WM_NCHITTEST，
+/// 已经挂了 WindowChrome 的窗口本类会让位不挂（只打一条 Debug 警告）。
 ///
-/// ★ 宿主 exe 的 DPI 感知（PerMonitorV2）**不由本库负责** —— 那是 exe 的 app.manifest 的事。
-/// 进程是 SYSTEM_AWARE 时显示缩放一变就会整窗被位图拉伸（字发糊），库里只能探测并警告，
-/// 见 <see cref="WarnIfDpiAwarenessMismatch"/>。
+/// 宿主 exe 的 DPI 感知（PerMonitorV2）不在库的职责里 —— 那是 exe 的 app.manifest 的事；
+/// 进程不是 Per-Monitor 感知时，显示缩放一变整窗会被位图拉伸（字发糊），库里只能探测并警告。
 /// </summary>
 public static class FramelessHelper
 {
@@ -72,7 +74,7 @@ public static class FramelessHelper
 
     /// <summary>
     /// 启动不闪：窗口先被 DWM 隐身（照常渲染、用户看不见），等第一帧画完（<c>ContentRendered</c>）
-    /// 才现身 —— 对应 Electron 的 <c>show:false</c> + <c>ready-to-show</c>。默认 <c>true</c>。
+    /// 才现身。默认 <c>true</c>。
     ///
     /// 关掉它就退回 WPF 原生行为：<c>Show()</c> 立刻可见，可能闪一下「无边框但内容是空的」。
     /// </summary>
@@ -181,7 +183,7 @@ public static class FramelessHelper
     private static void OnWindowMetricsChanged(object? sender, EventArgs e) =>
         RelayoutIfAttached(sender as Window);
 
-    /// <summary>尺寸 / 状态 / caption 高度变化后都重算一遍（对应移植前窗口上那几个订阅）。</summary>
+    /// <summary>尺寸 / 状态 / caption 高度变化后都重算一遍。</summary>
     private static void RelayoutIfAttached(Window? window) =>
         ( window?.GetValue(StateProperty) as State )?.Handler?.Relayout();
 
@@ -208,6 +210,10 @@ public static class FramelessHelper
         {
             return;
         }
+
+        // 补默认样式：隐式样式按精确类型匹配，命不中派生窗口（XAML 里 x:Class 声明的窗口都是派生类），
+        // 所以"不写 Style 也有样式"只能在这里做；窗口自己写了 Style 就不动。
+        ApplyDefaultStyleIfNeeded(window);
 
         var state = new State();
         var adapter = new FramelessWindowAdapter(window);
@@ -273,7 +279,7 @@ public static class FramelessHelper
         state.Handler?.Detach();
     }
 
-    /// <summary>第一帧画完了 —— 解除隐身（对应 Electron 的 ready-to-show）。</summary>
+    /// <summary>第一帧画完了 —— 解除隐身。</summary>
     private static void OnContentRendered(object? sender, EventArgs e) => Reveal((Window)sender!);
 
     private static void Reveal(Window window)
@@ -310,6 +316,25 @@ public static class FramelessHelper
     }
 
     /// <summary>
+    /// 窗口自己没写 <c>Style</c> 时补上 <c>DefaultFramelessWindowStyle</c>；用户写了就不动。
+    ///
+    /// 必须在这里补、不能只靠隐式样式：WPF 的隐式样式按元素**精确类型**匹配，
+    /// XAML 里 <c>x:Class</c> 声明的窗口都是派生类（ShellView : Window），命不中 TargetType="Window"。
+    /// </summary>
+    private static void ApplyDefaultStyleIfNeeded(Window window)
+    {
+        if (window.Style is not null)
+        {
+            return;
+        }
+
+        if (Application.Current?.TryFindResource("DefaultFramelessWindowStyle") is Style style)
+        {
+            window.Style = style;
+        }
+    }
+
+    /// <summary>
     /// 库里**改不了**进程的 DPI 感知（那是宿主 exe 的 app.manifest 的事），但可以探一下：
     /// 进程不是 Per-Monitor 感知时，显示缩放一变就会整窗被系统位图拉伸（字发糊）。
     /// 这时只打一条 Debug 警告 —— 绝不抛异常（附加属性回调里抛会毁掉整份 XAML 加载）。
@@ -330,7 +355,7 @@ public static class FramelessHelper
             Debug.WriteLine(
                 $"[LightUi] DPI 感知不一致：窗口 DPI={windowDpi}（{windowScale:0.##}x），" +
                 $"而 WPF 渲染尺度={visualScale:0.##}x。多半是宿主 exe 没有声明 PerMonitorV2 —— " +
-                "请在 exe 工程加 app.manifest（见 LightUi.VsCodeFrameTest\\app.manifest），" +
+                "请在 exe 工程加 app.manifest（见 LightUi.Demo\\app.manifest），" +
                 "否则显示缩放变化后整窗会被位图拉伸、字体发糊。");
         }
     }

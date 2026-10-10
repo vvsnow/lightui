@@ -1,15 +1,8 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--
-        ToolTip 默认样式：圆角 4 + 边框 + 8,4 内边距。
-        模板结构参考 styles/Button.xaml：Border(圆角) > ContentPresenter，
-        Padding 直接挂到 Border.Padding（最简方案），让 ContentPresenter 自适应宿主内容。
-
-        注意：
-        - ToolTip 没有 CornerRadius DP，所以圆角硬编码在模板 Border 上，不开放给用户覆写。
-          如将来需要 C# 端调节，按 ModernWpf 做法：ControlHelper.CornerRadiusProperty.AddOwner(typeof(ToolTip), ...)。
-        - 覆盖 Template 后会失去 WPF 默认 ToolTip 的 DropShadow。如果需要阴影，
-          在 Border 上加 <Border.Effect><DropShadowEffect .../></Border.Effect> 即可（这次不做）。
+        ToolTip 没有 CornerRadius DP，圆角只能硬编码在模板 Border 上。
+        覆盖 Template 会失去 WPF 默认的 DropShadow（要就自己在 Border 上加 DropShadowEffect）。
     -->
     <Style TargetType="ToolTip">
         <Setter Property="Background" Value="{DynamicResource ControlSubtleBackgroundBrush}" />

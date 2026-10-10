@@ -4,25 +4,12 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!--
-        FramelessHelper 那套的标题栏按钮样式（与旧的 SystemButtonStyle / CloseSystemButtonStyle 并列存在）。
-        
-        与旧按钮样式的唯一区别是**尺寸来源**：
-        · 旧（那套已移除）：Height 绑 {x:Static WindowHelper.CaptionHeight} —— 按钮高度 = 标题栏高度（那个耦合）；
-        · 新：宽高都是本文件自己的资源，**与 caption 高度无关**。caption 高度由 FramelessHelper
-        自己算（只用于命中判定：多高算拖动区），谁也管不着谁。
-        
-        悬停/按下**主要不在这里上色**：返回 HTMINBUTTON/HTMAXBUTTON/HTCLOSE 之后那块是非客户区，
-        WPF 输入栈不参与、IsMouseOver 恒为 false；真正的悬停色写在 FramelessWindowStyle 的模板触发器里
-        （读 FramelessHelper.HoveredCaptionButton / PressedCaptionButton）。
-        下面那两个 IsMouseOver / IsPressed 触发器只作**兜底**：布局完成前命中会回落到 WPF 输入
-        （那时按钮就是普通 WPF 按钮），有它们才不至于点了没反馈。
-        
-        ★ 刻意**不 BasedOn 旧的 SystemButtonStyle**（虽然 setter 同源）：
-        1）实测过，跨字典的 {StaticResource} 在合并进来的子字典里**搜不到父级**，
-        `BasedOn="{StaticResource SystemButtonStyle}"` 会在启动时抛
-        「无法找到名为 SystemButtonStyle 的资源」（合并顺序也无法解决）；
-        2）旧那套（WindowHelper + LightUiWindowStyle）已经移除，
-        各留各的才不会一起断。
+        尺寸是样式自己的资源，**与 caption 高度无关** —— caption 高度只用于命中判定（多高算拖动区）。
+        悬停/按下主要不在这里上色：返回 HT* 之后那块是非客户区，IsMouseOver 恒为 false，
+        真正的悬停色在 DefaultFramelessWindowStyle 的模板触发器里；下面那两个只作**兜底**
+        （布局完成前命中会回落到 WPF 输入，那时按钮就是普通 WPF 按钮）。
+        ★ 刻意不 BasedOn 任何按钮样式：跨字典的 {StaticResource} 在合并进来的子字典里搜不到，
+        启动会抛「无法找到名为 … 的资源」（合并顺序也解决不了）—— 所以这里自带全套 setter。
     -->
 
     <sys:Double x:Key="FramelessCaptionButtonWidth">46</sys:Double>
@@ -31,32 +18,20 @@
     <Style x:Key="FramelessSystemButtonStyle" TargetType="Button">
         <Setter Property="Width" Value="{DynamicResource FramelessCaptionButtonWidth}" />
         <Setter Property="Height" Value="{DynamicResource FramelessCaptionButtonHeight}" />
-        <!--  基类按钮样式可能把 MinHeight 设成控件高度，不归零的话将来会被顶高  -->
         <Setter Property="MinHeight" Value="0" />
-        <!--
-            必须显式给前景色：FontIcon 的隐式样式**故意不设** Foreground，靠继承"按钮"的 Foreground；
-            而本样式是自带的（没 BasedOn DefaultButtonStyle），不写这条，按钮就落在
-            Control.Foreground 的默认值上（黑）—— 深色主题下黑底黑字，看不见。
-            必须用 DynamicResource：切主题时才会跟着重求值。
-        -->
+        <!--  必须显式给前景色：FontIcon 不设 Foreground、靠继承，本样式又不 BasedOn，不写就落到默认黑 —— 深色主题看不见  -->
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Padding" Value="0" />
-        <!--  标题栏按钮用标准箭头光标，不是普通按钮的手型  -->
         <Setter Property="Cursor" Value="Arrow" />
-        <!--  标题栏按钮不该抢焦点、进 Tab 顺序  -->
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Focusable" Value="False" />
-        <!--
-            命中与点击由 FramelessHelper 自己判（返回 HT* 码），不需要 WindowChrome 放行输入；
-            留着 True 反而会让「逃生出口」那一判在按钮上多嘴。
-        -->
+        <!--  命中由 FramelessHelper 判（返回 HT* 码）；留着 True 会让「逃生出口」那一判在按钮上多嘴  -->
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <!--  没有圆角、没有边框，就一个方块 + 居中的字形  -->
                     <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
                         <ContentPresenter
                             Margin="{TemplateBinding Padding}"
@@ -80,11 +55,7 @@
         </Setter>
     </Style>
 
-    <!--
-        关闭键：尺寸与其它两颗**一致**（不再加宽 6），只有配色不同。
-        BasedOn 是**同文件**的（能解析），Style.Triggers 的优先级也高于模板触发器，
-        所以兜底路径下红底白字生效；正常路径下由窗口模板的触发器按 PressedCaptionButton 上色。
-    -->
+    <!--  关闭键：尺寸与其它两颗一致，只有配色不同。BasedOn 是同文件的（能解析）  -->
     <Style
         x:Key="FramelessCloseButtonStyle"
         BasedOn="{StaticResource FramelessSystemButtonStyle}"

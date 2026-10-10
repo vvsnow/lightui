@@ -3,13 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <!--  DropDownButton 默认样式：右侧加一个小三角  -->
     <Style TargetType="{x:Type local:DropDownButton}">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
-        <!--  高度由 ControlHeight 统一控制；左右 12 给文字留出与边框的距离（右侧箭头列另有自身 Margin）  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
         <Setter Property="Cursor" Value="Hand" />

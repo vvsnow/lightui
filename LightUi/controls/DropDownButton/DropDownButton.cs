@@ -3,8 +3,16 @@ using LightUi.Controls.Primitives;
 namespace LightUi.Controls;
 
 /// <summary>
-/// 点击后弹出附带 Flyout 的按钮（替代原生 Button + 手写 Popup）。
-/// 用法：&lt;ui:DropDownButton&gt;&lt;ui:DropDownButton.Flyout&gt;...&lt;/ui:DropDownButton.Flyout&gt;&lt;/ui:DropDownButton&gt;
+/// 点击后弹出附带 Flyout 的按钮（省掉原生 Button + 手写 Popup）。
+///
+/// 用法：
+/// <code>
+/// &lt;ui:DropDownButton Content="打开"&gt;
+///     &lt;ui:DropDownButton.Flyout&gt;
+///         &lt;ui:Flyout&gt;…&lt;/ui:Flyout&gt;
+///     &lt;/ui:DropDownButton.Flyout&gt;
+/// &lt;/ui:DropDownButton&gt;
+/// </code>
 /// </summary>
 public class DropDownButton : Button
 {

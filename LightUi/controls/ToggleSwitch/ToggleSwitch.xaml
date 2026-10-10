@@ -3,15 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <!--
-        ToggleSwitch 默认样式（方案 B）：
-        - 不画外层 Grid，改用横向 StackPanel：[Toggle pill] [Label]
-        - Label 在开关右边，状态变化时 OffContent / OnContent 二选一显示
-        - 整体宽度由内容决定（Track 固定 36×18 + Label 8px gap + 文字宽度）
-        - 不写 Width / Height 默认值，由 demo 自己按需覆盖
-        - 文字用 TextBlock.FontSize / TextBlock.Foreground（attached property），
-        避开项目 XAML 环境不允许 ContentPresenter.Foreground / .FontSize 属性的限制
-    -->
+    <!--  文字走 TextBlock.FontSize / TextBlock.Foreground：项目 XAML 环境不允许 ContentPresenter.Foreground / .FontSize  -->
 
     <Style TargetType="{x:Type local:ToggleSwitch}">
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
@@ -23,7 +15,6 @@
                 <ControlTemplate TargetType="{x:Type local:ToggleSwitch}">
                     <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
 
-                        <!--  Track + Thumb：开关本体（36×18 固定大小）  -->
                         <Border
                             x:Name="Track"
                             Width="36"
@@ -42,7 +33,6 @@
                                 Fill="{DynamicResource ToggleSwitchThumbBrush}" />
                         </Border>
 
-                        <!--  OffContent：折叠态默认显示，开关右侧 6px 间距  -->
                         <ContentPresenter
                             x:Name="OffContentPresenter"
                             Margin="6,0,2,0"
@@ -51,7 +41,6 @@
                             TextBlock.FontSize="{DynamicResource ControlFontSize}"
                             TextBlock.Foreground="{DynamicResource TextPrimaryBrush}" />
 
-                        <!--  OnContent：默认隐藏，选中态显示在同一位置  -->
                         <ContentPresenter
                             x:Name="OnContentPresenter"
                             Margin="6,0,2,0"

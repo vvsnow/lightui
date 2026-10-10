@@ -3,20 +3,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <!--  TextBox 最小样式  -->
     <Style TargetType="TextBox">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
-        <!--  TextBox 需要 Padding 给文字留出与边框的距离；垂直由 ControlHeight 管  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Height" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="4,0" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}" />
-        <!--  自带默认右键菜单（覆盖 WPF 内置的，走 LightUi 样式）  -->
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -54,13 +51,36 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer
-                            x:Name="PART_ContentHost"
-                            Margin="{TemplateBinding Padding}"
-                            VerticalAlignment="Center"
-                            Foreground="{TemplateBinding Foreground}" />
+                        <Grid>
+                            <!--
+                                内容宿主不写 Margin：TextBox 会把 Padding 推给宿主，宿主模板再把它变成 presenter 的
+                                margin —— 再叠一层就缩进两次（实测 10 DIP，标准 WPF 是 6 DIP）。
+                            -->
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}" />
+                            <!--
+                                占位符叠在内容之上，IsHitTestVisible=False 让点击穿透到文本框。
+                                默认可见，有内容时由下面的 HasText 触发器收起；
+                                左边距 = Padding + 2（TextBoxView 自带的那 2px），和打进去的文字同一条竖线。
+                            -->
+                            <TextBlock
+                                x:Name="PART_Placeholder"
+                                Margin="{TemplateBinding Padding}"
+                                Padding="2,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource TextSecondaryBrush}"
+                                IsHitTestVisible="False"
+                                Text="{TemplateBinding local:TextBoxHelper.Placeholder}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <!--  有内容 → 收起占位符（HasText 是 TextBoxHelper 在代码里维护的只读附加属性）  -->
+                        <Trigger Property="local:TextBoxHelper.HasText" Value="True">
+                            <Setter TargetName="PART_Placeholder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>
@@ -73,7 +93,6 @@
         </Setter>
     </Style>
 
-    <!--  PasswordBox 套用 TextBox 视觉，只换 PART 模板名（保留默认 PasswordChar 等）  -->
     <Style TargetType="PasswordBox">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
@@ -84,7 +103,6 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="SelectionBrush" Value="{DynamicResource AccentBrush}" />
-        <!--  自带默认右键菜单（覆盖 WPF 内置的，走 LightUi 样式）  -->
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -122,13 +140,28 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer
-                            x:Name="PART_ContentHost"
-                            Margin="{TemplateBinding Padding}"
-                            VerticalAlignment="Center"
-                            Foreground="{TemplateBinding Foreground}" />
+                        <Grid>
+                            <!--  内容宿主不写 Margin，理由见 TextBox 模板里那段注释  -->
+                            <ScrollViewer
+                                x:Name="PART_ContentHost"
+                                VerticalAlignment="Center"
+                                Foreground="{TemplateBinding Foreground}" />
+                            <!--  同 TextBox：左边距也是 Padding + 2；HasText 对 PasswordBox 同样成立（读的是 Password）  -->
+                            <TextBlock
+                                x:Name="PART_Placeholder"
+                                Margin="{TemplateBinding Padding}"
+                                Padding="2,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Foreground="{DynamicResource TextSecondaryBrush}"
+                                IsHitTestVisible="False"
+                                Text="{TemplateBinding local:TextBoxHelper.Placeholder}" />
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="local:TextBoxHelper.HasText" Value="True">
+                            <Setter TargetName="PART_Placeholder" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                         </Trigger>

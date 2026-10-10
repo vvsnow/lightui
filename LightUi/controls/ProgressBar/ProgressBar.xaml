@@ -4,13 +4,9 @@
     xmlns:local="clr-namespace:LightUi.Controls">
 
     <!--
-        ProgressBar（自定义控件）默认样式（参考 ModernWpf 的简化版）。
-        用户平时写的是原生 <ProgressBar />，由 styles/ProgressBar.xaml 把它套进本控件；
-        本文件才是真正的可视逻辑。
-
-        这里只搭静态视觉树，动画全部在 ProgressBar.cs 里用 BeginAnimation 驱动 ——
-        因为位移量依赖 ActualWidth（宽度自适应），放在 XAML 关键帧的 Value 绑定上实测不生效。
-        指示块的显隐靠「宽度归零」而不是 Opacity，所以模板里没有任何视觉状态。
+        本文件才是可视逻辑（styles/ProgressBar.xaml 只是把原生 ProgressBar 套进来的壳）。
+        只搭静态视觉树：动画在 ProgressBar.cs 里用 BeginAnimation 驱动 —— 位移量依赖 ActualWidth，
+        放在 XAML 关键帧的绑定上实测不生效；指示块显隐靠"宽度归零"而不是 Opacity，所以模板里没有视觉状态。
     -->
 
     <Style TargetType="{x:Type local:ProgressBar}">
@@ -30,7 +26,6 @@
                 <ControlTemplate TargetType="{x:Type local:ProgressBar}">
                     <Grid SnapsToDevicePixels="True">
 
-                        <!--  轨道  -->
                         <Border
                             x:Name="ProgressBarRoot"
                             Background="{TemplateBinding Background}"
@@ -41,7 +36,7 @@
                             <!--  裁剪宿主：Clip 由代码按实际尺寸 + 圆角写入，挡住滑出轨道的部分  -->
                             <Grid x:Name="TrackClip">
 
-                                <!--  确定态指示块：宽度由代码写，HorizontalAlignment=Left 从左侧生长  -->
+                                <!--  确定态指示块：宽度由代码写，从左侧生长  -->
                                 <Border
                                     x:Name="DeterminateProgressBarIndicator"
                                     HorizontalAlignment="Left"
@@ -52,7 +47,6 @@
                                     </Border.RenderTransform>
                                 </Border>
 
-                                <!--  不确定态指示块 1（40% 宽）  -->
                                 <Border
                                     x:Name="IndeterminateProgressBarIndicator"
                                     HorizontalAlignment="Left"
@@ -63,7 +57,6 @@
                                     </Border.RenderTransform>
                                 </Border>
 
-                                <!--  不确定态指示块 2（60% 宽）  -->
                                 <Border
                                     x:Name="IndeterminateProgressBarIndicator2"
                                     HorizontalAlignment="Left"

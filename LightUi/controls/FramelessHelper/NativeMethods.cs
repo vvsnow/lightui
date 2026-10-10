@@ -3,10 +3,7 @@ using System.Runtime.InteropServices;
 namespace LightUi.Controls.Frameless;
 
 /// <summary>
-/// Win32 的常量、结构体和 P/Invoke，集中一处。
-///
-/// 对应 Chromium 里散落的 <c>ui/views/win/*</c> + <c>ui/base/win/hwnd_metrics.cc</c> 用到的那些定义；
-/// 这里只是把用得到的部分收拢起来，值都用 <c>Winuser.h</c> / <c>Dwmapi.h</c> 的原始编号。
+/// Win32 的常量、结构体和 P/Invoke，集中一处。值都用 <c>Winuser.h</c> / <c>Dwmapi.h</c> 的原始编号。
 /// </summary>
 internal static class NativeMethods
 {
@@ -32,7 +29,7 @@ internal static class NativeMethods
     public const int WM_DWMCOMPOSITIONCHANGED = 0x031E;
 
     // 下面两条是「系统偷偷画原生标题栏」的私人消息（没进公开头文件）。
-    // Chromium 专门吃掉它们，否则窗口在激活/尺寸变化时会闪一下原生标题栏。
+    // 自绘标题栏时必须吃掉，否则窗口在激活 / 尺寸变化时会闪一下原生标题栏。
     public const int WM_NCUAHDRAWCAPTION = 0x00AE;
     public const int WM_NCUAHDRAWFRAME = 0x00AF;
 
@@ -70,7 +67,7 @@ internal static class NativeMethods
     /// <summary>边框额外追加的宽度（像素）；与 <c>SM_CXSIZEFRAME</c> 相加就是那圈「不可见边框」。</summary>
     public const int SM_CXPADDEDBORDER = 92;
 
-    /// <summary>标题栏高度（像素）；<c>WinFrameView.TitlebarMaximizedVisualHeight()</c> 读它。</summary>
+    /// <summary>标题栏高度（像素）。</summary>
     public const int SM_CYCAPTION = 4;
 
     /// <summary><c>MonitorFromWindow</c> 的标志：取离窗口最近的那块显示器。本工程未用到。</summary>

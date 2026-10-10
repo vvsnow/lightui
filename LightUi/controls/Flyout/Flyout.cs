@@ -5,8 +5,17 @@ using System.Windows.Markup;
 namespace LightUi.Controls;
 
 /// <summary>
-/// 轻量弹出层，承载任意 <see cref="Content"/>。依附到某个 FrameworkElement 上弹出。
-/// 用法：&lt;ui:DropDownButton.Flyout&gt;&lt;ui:Flyout&gt;...&lt;/ui:Flyout&gt;&lt;/ui:DropDownButton.Flyout&gt;
+/// 轻量弹出层，承载任意 <see cref="Content"/>；挂在 DropDownButton.Flyout 或
+/// FlyoutService.Flyout 上，不单独显示。
+///
+/// 用法：
+/// <code>
+/// &lt;ui:DropDownButton.Flyout&gt;
+///     &lt;ui:Flyout Placement="Bottom"&gt;
+///         &lt;TextBlock Text="内容" /&gt;
+///     &lt;/ui:Flyout&gt;
+/// &lt;/ui:DropDownButton.Flyout&gt;
+/// </code>
 /// </summary>
 [ContentProperty(nameof(Content))]
 public class Flyout : FlyoutBase
