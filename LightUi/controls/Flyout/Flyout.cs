@@ -38,7 +38,7 @@ public class Flyout : FlyoutBase
         return new ContentControl
         {
             Content = Content,
-            Style = (Style)Application.Current.TryFindResource("LightUiFlyoutPresenterStyle")
+            Style = (Style)Application.Current.TryFindResource("DefaultFlyoutPresenterStyle")
                        ?? new Style(typeof(ContentControl)),
         };
     }

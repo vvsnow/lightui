@@ -26,6 +26,7 @@ internal class Bootstrapper : BootstrapperBase
         container.PerRequest<ButtonsViewModel>();
         container.PerRequest<CommonControlsViewModel>();
         container.PerRequest<ExtendedControlsViewModel>();
+        container.PerRequest<FlyoutViewModel>();
 
         container.PerRequest<ThemeViewModel>();
     }

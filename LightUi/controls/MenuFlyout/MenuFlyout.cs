@@ -49,7 +49,7 @@ public class MenuFlyout : FlyoutBase
             StaysOpen = false,
             Focusable = true,
         };
-        presenter.Style = (Style)Application.Current.TryFindResource("LightUiMenuFlyoutPresenterStyle")
+        presenter.Style = (Style)Application.Current.TryFindResource("DefaultMenuFlyoutPresenterStyle")
                           ?? new Style(typeof(MenuFlyoutPresenter));
         return presenter;
     }

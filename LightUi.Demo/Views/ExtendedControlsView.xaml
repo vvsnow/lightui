@@ -18,7 +18,7 @@
                 FontSize="22"
                 FontWeight="SemiBold"
                 Text="扩展控件（ui:*）" />
-            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="扩展控件：ToggleSwitch / FontIcon / SimpleStackPanel / HyperlinkButton / Flyout" />
+            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="扩展控件：ToggleSwitch / FontIcon / SimpleStackPanel / HyperlinkButton" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
@@ -119,55 +119,6 @@
                         <Button Content="Item2" Style="{DynamicResource AccentButtonStyle}" />
                         <Button Content="Item3" Style="{DynamicResource AccentButtonStyle}" />
 
-                    </ui:SimpleStackPanel>
-                </ui:SimpleStackPanel>
-            </Border>
-
-            <Border Style="{StaticResource ContainerStyle}">
-                <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout（依附弹出）" />
-                    <ui:DropDownButton Content="点击我弹 Flyout">
-                        <ui:DropDownButton.Flyout>
-                            <ui:Flyout>
-                                <ui:SimpleStackPanel Width="260" Spacing="8">
-                                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout 内容" />
-                                    <TextBlock
-                                        Foreground="{DynamicResource TextSecondaryBrush}"
-                                        Text="Flyout 是依附控件的弹出层，可以承载任意 XAML 内容。"
-                                        TextWrapping="Wrap" />
-                                </ui:SimpleStackPanel>
-                            </ui:Flyout>
-                        </ui:DropDownButton.Flyout>
-                    </ui:DropDownButton>
-                </ui:SimpleStackPanel>
-            </Border>
-
-            <Border Style="{StaticResource ContainerStyle}">
-                <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Button + Flyout" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                        <Button Content="普通按钮 挂 Flyout">
-                            <ui:FlyoutService.Flyout>
-                                <ui:Flyout>
-                                    <Border Padding="12">
-                                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                                            <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
-                                            <Button Content="普通按钮" />
-                                        </ui:SimpleStackPanel>
-                                    </Border>
-                                </ui:Flyout>
-                            </ui:FlyoutService.Flyout>
-                        </Button>
-                        <Button Content="普通 Button 挂 MenuFlyout">
-                            <ui:FlyoutService.Flyout>
-                                <ui:MenuFlyout>
-                                    <MenuItem Header="选项 1" />
-                                    <MenuItem Header="选项 2" />
-                                    <Separator />
-                                    <MenuItem Header="更多…" />
-                                </ui:MenuFlyout>
-                            </ui:FlyoutService.Flyout>
-                        </Button>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>

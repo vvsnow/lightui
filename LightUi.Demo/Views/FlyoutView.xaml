@@ -1,0 +1,189 @@
+<UserControl
+    x:Class="LightUi.Demo.Views.FlyoutView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cal="http://caliburnmicro.com"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:LightUi.Demo.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lightui.com/2019"
+    xmlns:vm="clr-namespace:LightUi.Demo.ViewModels"
+    d:DataContext="{d:DesignInstance Type=vm:FlyoutViewModel}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+
+    <ScrollViewer Padding="22" VerticalScrollBarVisibility="Auto">
+
+        <ui:SimpleStackPanel Spacing="12">
+
+            <TextBlock
+                FontSize="22"
+                FontWeight="SemiBold"
+                Text="Flyout 控件" />
+            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="Flyout / MenuFlyout / DropDownButton / FlyoutService" />
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="DropDownButton" />
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <ui:DropDownButton Content="新建">
+                            <ui:DropDownButton.Flyout>
+                                <ui:MenuFlyout>
+                                    <MenuItem x:Name="NewFile" cal:Message.Attach="NewFile">
+                                        <MenuItem.Header>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
+                                                <ui:FontIcon FontSize="14" Glyph="&#xE8A5;" />
+                                                <TextBlock VerticalAlignment="Center" Text="新建文件" />
+                                            </ui:SimpleStackPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <MenuItem.Header>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
+                                                <ui:FontIcon FontSize="14" Glyph="&#xE7C3;" />
+                                                <TextBlock VerticalAlignment="Center" Text="新建项目" />
+                                            </ui:SimpleStackPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem>
+                                        <MenuItem.Header>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
+                                                <ui:FontIcon FontSize="14" Glyph="&#xE710;" />
+                                                <TextBlock VerticalAlignment="Center" Text="从模板新建…" />
+                                            </ui:SimpleStackPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                </ui:MenuFlyout>
+                            </ui:DropDownButton.Flyout>
+                        </ui:DropDownButton>
+                        <ui:DropDownButton Content="操作">
+                            <ui:DropDownButton.Flyout>
+                                <ui:MenuFlyout>
+                                    <MenuItem>
+                                        <MenuItem.Header>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
+                                                <ui:FontIcon FontSize="14" Glyph="&#xE8C8;" />
+                                                <TextBlock VerticalAlignment="Center" Text="复制" />
+                                            </ui:SimpleStackPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <MenuItem>
+                                        <MenuItem.Header>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
+                                                <ui:FontIcon FontSize="14" Glyph="&#xE77F;" />
+                                                <TextBlock VerticalAlignment="Center" Text="粘贴" />
+                                            </ui:SimpleStackPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem>
+                                        <MenuItem.Header>
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
+                                                <ui:FontIcon FontSize="14" Glyph="&#xE74D;" />
+                                                <TextBlock VerticalAlignment="Center" Text="删除" />
+                                            </ui:SimpleStackPanel>
+                                        </MenuItem.Header>
+                                    </MenuItem>
+                                </ui:MenuFlyout>
+                            </ui:DropDownButton.Flyout>
+                        </ui:DropDownButton>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout（依附弹出）" />
+                    <ui:DropDownButton Content="点击我弹 Flyout">
+                        <ui:DropDownButton.Flyout>
+                            <ui:Flyout>
+                                <ui:SimpleStackPanel Width="260" Spacing="8">
+                                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout 内容" />
+                                    <TextBlock
+                                        Foreground="{DynamicResource TextSecondaryBrush}"
+                                        Text="Flyout 是依附控件的弹出层，可以承载任意 XAML 内容。"
+                                        TextWrapping="Wrap" />
+                                </ui:SimpleStackPanel>
+                            </ui:Flyout>
+                        </ui:DropDownButton.Flyout>
+                    </ui:DropDownButton>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Button + Flyout" />
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="普通按钮 挂 Flyout">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout>
+                                    <Border Padding="12">
+                                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                                            <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
+                                            <Button Content="普通按钮" />
+                                        </ui:SimpleStackPanel>
+                                    </Border>
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                        <Button Content="普通 Button 挂 MenuFlyout">
+                            <ui:FlyoutService.Flyout>
+                                <ui:MenuFlyout>
+                                    <MenuItem Header="选项 1" />
+                                    <MenuItem Header="选项 2" />
+                                    <Separator />
+                                    <MenuItem Header="更多…" />
+                                </ui:MenuFlyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Placement（四个方向）" />
+                    <TextBlock
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="四个方向与宿主之间都留 2px 缝（FlyoutBase.PlacementGap）；这里用 Button + FlyoutService，因为 DropDownButton 会把 Placement 强制成 Bottom。"
+                        TextWrapping="Wrap" />
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                        <Button Content="向上弹">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout Placement="Top">
+                                    <TextBlock Text="Placement = Top" />
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                        <Button Content="向下弹">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout Placement="Bottom">
+                                    <TextBlock Text="Placement = Bottom" />
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                        <Button Content="向左弹">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout Placement="Left">
+                                    <TextBlock Text="Placement = Left" />
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                        <Button Content="向右弹">
+                            <ui:FlyoutService.Flyout>
+                                <ui:Flyout Placement="Right">
+                                    <TextBlock Text="Placement = Right" />
+                                </ui:Flyout>
+                            </ui:FlyoutService.Flyout>
+                        </Button>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+        </ui:SimpleStackPanel>
+
+    </ScrollViewer>
+
+</UserControl>

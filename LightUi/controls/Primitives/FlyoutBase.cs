@@ -22,13 +22,16 @@ public abstract class FlyoutBase : DependencyObject
         set => SetValue(PlacementProperty, value);
     }
 
-    /// <summary>沿放置方向的偏移（px）。默认 2，让弹层和 anchor 之间留一点呼吸。</summary>
+    /// <summary>
+    /// 额外的纵向偏移（DIP，正 = 往下），与 Placement 无关。
+    /// 默认 0 —— 与宿主之间那条缝由 ShowAt 按 Placement 补，见 PlacementGap。
+    /// </summary>
     public static readonly DependencyProperty VerticalOffsetProperty =
         DependencyProperty.Register(
             nameof(VerticalOffset),
             typeof(double),
             typeof(FlyoutBase),
-            new PropertyMetadata(2.0));
+            new PropertyMetadata(0.0));
 
     public double VerticalOffset
     {
@@ -36,7 +39,10 @@ public abstract class FlyoutBase : DependencyObject
         set => SetValue(VerticalOffsetProperty, value);
     }
 
-    /// <summary>垂直于放置方向的偏移（px）。默认 0。</summary>
+    /// <summary>
+    /// 额外的横向偏移（DIP，正 = 往右），与 Placement 无关。
+    /// 默认 0 —— 与宿主之间那条缝由 ShowAt 按 Placement 补，见 PlacementGap。
+    /// </summary>
     public static readonly DependencyProperty HorizontalOffsetProperty =
         DependencyProperty.Register(
             nameof(HorizontalOffset),
@@ -86,10 +92,16 @@ public abstract class FlyoutBase : DependencyObject
     private Popup? _popup;
     private FrameworkElement? _presenter;
 
+    /// <summary>弹层与宿主之间沿放置方向的固定缝（DIP）。想调间距就改这一个数。</summary>
+    private const double PlacementGap = 2;
+
     /// <summary>在指定 anchor 控件旁弹出 Flyout。</summary>
     public void ShowAt(FrameworkElement anchor)
     {
+        // WPF 的 VerticalOffset / HorizontalOffset 只认屏幕方向（正 = 下 / 右），
+        // 所以「沿放置方向的缝」要在这里换算：Top / Left 取负，否则不是留缝而是压住宿主。
         (double offsetV, double offsetH) = GetPopupOffsets();
+
         // 一次性：创建 presenter 与（如果是 Flyout 的）外层 Popup
         if (_presenter is null)
         {
@@ -109,8 +121,8 @@ public abstract class FlyoutBase : DependencyObject
                     Child = _presenter,
                     PlacementTarget = anchor,
                     Placement = (PlacementMode)MapPlacement(Placement),
-                    VerticalOffset = VerticalOffset,
-                    HorizontalOffset = HorizontalOffset,
+                    VerticalOffset = offsetV,
+                    HorizontalOffset = offsetH,
                     StaysOpen = false,
                     AllowsTransparency = true,
                 };
@@ -124,8 +136,8 @@ public abstract class FlyoutBase : DependencyObject
         {
             cm2.PlacementTarget = anchor;
             cm2.Placement = (PlacementMode)MapPlacement(Placement);
-            cm2.VerticalOffset = VerticalOffset;
-            cm2.HorizontalOffset = HorizontalOffset;
+            cm2.VerticalOffset = offsetV;
+            cm2.HorizontalOffset = offsetH;
             IsOpen = true;
             cm2.IsOpen = true;
         }
@@ -133,8 +145,8 @@ public abstract class FlyoutBase : DependencyObject
         {
             p.PlacementTarget = anchor;
             p.Placement = (PlacementMode)MapPlacement(Placement);
-            p.VerticalOffset = VerticalOffset;
-            p.HorizontalOffset = HorizontalOffset;
+            p.VerticalOffset = offsetV;
+            p.HorizontalOffset = offsetH;
             IsOpen = true;
             p.IsOpen = true;
         }
@@ -169,6 +181,17 @@ public abstract class FlyoutBase : DependencyObject
 
     /// <summary>子类返回承载 Flyout 内容的根 FrameworkElement（Flyout = 任意 Content；MenuFlyout = ContextMenu）。</summary>
     protected abstract FrameworkElement CreatePresenter();
+
+    /// <summary>
+    /// 合成本次弹出该用的 Popup 偏移 = 沿放置方向的固定缝 + 用户设的屏幕方向偏移。
+    /// </summary>
+    private (double Vertical, double Horizontal) GetPopupOffsets() => Placement switch
+    {
+        FlyoutPlacementMode.Top => (-PlacementGap + VerticalOffset, HorizontalOffset),
+        FlyoutPlacementMode.Left => (VerticalOffset, -PlacementGap + HorizontalOffset),
+        FlyoutPlacementMode.Right => (VerticalOffset, PlacementGap + HorizontalOffset),
+        _ => (PlacementGap + VerticalOffset, HorizontalOffset),   // Bottom
+    };
 
     private static PlacementMode MapPlacement(FlyoutPlacementMode m) => m switch
     {

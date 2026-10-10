@@ -18,6 +18,7 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         ButtonsViewModel buttonsViewModel,
         CommonControlsViewModel commonControlsViewModel,
         ExtendedControlsViewModel extendedControlViewModel,
+        FlyoutViewModel flyoutViewModel,
         ThemeViewModel themeViewModel)
     {
         this.windowManager = windowManager;
@@ -26,6 +27,7 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         NavItems.Add(new NavItem("Buttons", buttonsViewModel));
         NavItems.Add(new NavItem("Common Controls", commonControlsViewModel));
         NavItems.Add(new NavItem("Extended Control", extendedControlViewModel));
+        NavItems.Add(new NavItem("Flyout 控件", flyoutViewModel));
 
         ThemeViewModel = themeViewModel;
     }

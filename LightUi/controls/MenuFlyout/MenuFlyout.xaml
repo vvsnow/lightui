@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <Style x:Key="LightUiMenuFlyoutPresenterStyle" TargetType="{x:Type local:MenuFlyoutPresenter}">
+    <Style x:Key="DefaultMenuFlyoutPresenterStyle" TargetType="{x:Type local:MenuFlyoutPresenter}">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
