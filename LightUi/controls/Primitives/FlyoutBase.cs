@@ -16,6 +16,16 @@ public abstract class FlyoutBase : DependencyObject
             typeof(FlyoutBase),
             new PropertyMetadata(FlyoutPlacementMode.Bottom));
 
+    /// <summary>
+    /// 关闭弹层的命令，给**弹层内容里**的按钮用：
+    /// <code>
+    /// &lt;Button Content="关闭" Command="{x:Static ui:FlyoutBase.CloseCommand}" /&gt;
+    /// </code>
+    /// 内容里拿不到 Flyout 实例（presenter 与 Popup 都是代码 new 的、不在逻辑树上，DataContext 也不继承），
+    /// 所以命令绑定挂在 presenter 上，按钮的路由会一路冒到它 —— 不用 code-behind、也不用 x:Name。
+    /// </summary>
+    public static readonly RoutedCommand CloseCommand = new("CloseFlyout", typeof(FlyoutBase));
+
     public FlyoutPlacementMode Placement
     {
         get => (FlyoutPlacementMode)GetValue(PlacementProperty);
@@ -74,6 +84,11 @@ public abstract class FlyoutBase : DependencyObject
         if (d is not FlyoutBase self)
             return;
 
+        if (!(bool)e.NewValue)
+        {
+            self.DetachEscHook();
+        }
+
         // MenuFlyout：presenter 是 ContextMenu（MenuBase），直接同步到 ContextMenu.IsOpen
         // （它自带 Popup + OnMenuItemClicked 自动关闭 + LightDismiss）
         if (self._presenter is Controls.MenuFlyoutPresenter cm)
@@ -91,6 +106,7 @@ public abstract class FlyoutBase : DependencyObject
 
     private Popup? _popup;
     private FrameworkElement? _presenter;
+    private Window? _escHookWindow;
 
     /// <summary>弹层与宿主之间沿放置方向的固定缝（DIP）。想调间距就改这一个数。</summary>
     private const double PlacementGap = 2;
@@ -106,6 +122,13 @@ public abstract class FlyoutBase : DependencyObject
         if (_presenter is null)
         {
             _presenter = CreatePresenter();
+
+            // 「关闭」命令：绑定挂在 presenter 上（Flyout 与 MenuFlyout 共用这条）
+            // CanExecute 必须显式给 true —— 不给的话命令默认 CanExecute=false，按钮会渲染成灰的
+            _presenter.CommandBindings.Add(new CommandBinding(
+                CloseCommand,
+                (_, _) => Hide(),
+                (_, e) => e.CanExecute = true));
 
             if (_presenter is Controls.MenuFlyoutPresenter cm)
             {
@@ -150,6 +173,48 @@ public abstract class FlyoutBase : DependencyObject
             IsOpen = true;
             p.IsOpen = true;
         }
+
+        AttachEscHook(anchor);
+    }
+
+    /// <summary>
+    /// Esc 关闭。Esc 是发给**焦点元素**的，弹层自己收不到键盘事件（它的 Popup 只捕获鼠标），
+    /// 所以挂在锚点所在的窗口上：打开时挂、关掉时摘。
+    /// MenuFlyout 那条走 ContextMenu（自带 Esc 处理），这里挂上也无害。
+    /// </summary>
+    private void AttachEscHook(FrameworkElement anchor)
+    {
+        Window? window = Window.GetWindow(anchor);
+        if (window is null || ReferenceEquals(window, _escHookWindow))
+        {
+            return;
+        }
+
+        DetachEscHook();
+        _escHookWindow = window;
+        window.PreviewKeyDown += OnPreviewKeyDown;
+    }
+
+    private void DetachEscHook()
+    {
+        if (_escHookWindow is null)
+        {
+            return;
+        }
+
+        _escHookWindow.PreviewKeyDown -= OnPreviewKeyDown;
+        _escHookWindow = null;
+    }
+
+    private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key != Key.Escape)
+        {
+            return;
+        }
+
+        Hide();
+        e.Handled = true;   // 别让 Esc 继续往外冒（比如顺手把宿主对话框也关了）
     }
 
     public void Hide() => IsOpen = false;

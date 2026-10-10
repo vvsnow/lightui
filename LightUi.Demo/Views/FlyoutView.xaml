@@ -105,6 +105,9 @@
                                         Foreground="{DynamicResource TextSecondaryBrush}"
                                         Text="Flyout 是依附控件的弹出层，可以承载任意 XAML 内容。"
                                         TextWrapping="Wrap" />
+                                    <ui:SimpleStackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                        <Button Command="{x:Static ui:FlyoutBase.CloseCommand}" Content="关闭弹出" />
+                                    </ui:SimpleStackPanel>
                                 </ui:SimpleStackPanel>
                             </ui:Flyout>
                         </ui:DropDownButton.Flyout>
@@ -122,7 +125,7 @@
                                     <Border Padding="12">
                                         <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                                             <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
-                                            <Button Content="普通按钮" />
+                                            <Button Command="{x:Static ui:FlyoutBase.CloseCommand}" Content="关闭弹出" />
                                         </ui:SimpleStackPanel>
                                     </Border>
                                 </ui:Flyout>
