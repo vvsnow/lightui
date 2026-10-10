@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Interop;
 
 namespace LightUi.VsCodeFrameTest.Native;
@@ -247,8 +248,35 @@ internal sealed class HwndMessageHandler
 
     #region 消息分发
 
+    /// <summary>[临时诊断] 把关键消息写一行到 %TEMP%\vsct-msgtrace.txt。排查完就删。</summary>
+    private static void Trace(string s)
+    {
+        try
+        {
+            System.IO.File.AppendAllText(
+                System.IO.Path.Combine(System.IO.Path.GetTempPath(), "vsct-msgtrace.txt"),
+                $"{Environment.TickCount64} {s}{Environment.NewLine}");
+        }
+        catch
+        {
+        }
+    }
+
     private IntPtr FilterMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
     {
+        // [临时诊断] 右键标题栏的消息轨迹 —— 不改行为、不设 handled。排查完就删。
+        switch (msg)
+        {
+            case 0x00A4: Trace($"WM_NCRBUTTONDOWN hit={(long)wParam}"); break;
+            case 0x00A5: Trace($"WM_NCRBUTTONUP hit={(long)wParam}"); break;
+            case 0x0204: Trace("WM_RBUTTONDOWN"); break;
+            case 0x0205: Trace("WM_RBUTTONUP"); break;
+            case 0x007B: Trace("WM_CONTEXTMENU"); break;
+            case 0x0112: Trace($"WM_SYSCOMMAND cmd=0x{((long)wParam & 0xFFF0L):X4}"); break;
+            case 0x00A1: Trace($"WM_NCLBUTTONDOWN hit={(long)wParam}"); break;
+            case 0x00A2: Trace($"WM_NCLBUTTONUP hit={(long)wParam}"); break;
+        }
+
         switch (msg)
         {
             case NativeMethods.WM_NCCALCSIZE:
@@ -286,6 +314,20 @@ internal sealed class HwndMessageHandler
             case NativeMethods.WM_NCMOUSELEAVE:
                 _pressedButton = CaptionButton.None;
                 UpdateHoverFromCursor(hwnd);
+                break;
+
+            case NativeMethods.WM_NCRBUTTONUP:
+                // 标题栏右键 → 自己弹系统菜单。
+                //
+                // 实测（2026-10-10）：系统确实把 WM_NCRBUTTONUP(HTCAPTION) 送到了这里（消息轨迹里有），
+                // 我们也没设 handled、让它继续往下走，可菜单就是不弹 —— 而同一个菜单 Alt+Space 能弹、
+                // SC_MINIMIZE/MAXIMIZE/RESTORE 也都能执行。既然这一段没人做，就自己做。
+                if ((long)wParam == NativeMethods.HTCAPTION && ShowSystemMenu(hwnd, lParam))
+                {
+                    // 防重：万一哪天真有别人也弹，别冒出两个菜单
+                    handled = true;
+                }
+
                 break;
 
             case NativeMethods.WM_NCUAHDRAWCAPTION:
@@ -364,8 +406,8 @@ internal sealed class HwndMessageHandler
         // lParam 的低/高 16 位是屏幕物理像素，且是有符号的 —— 多显示器摆在主屏左/上时坐标是负的
         long packed = (long)lParam;
         var screenPointPx = new Point(
-            unchecked((short)(packed & 0xFFFF)),
-            unchecked((short)((packed >> 16) & 0xFFFF)));
+            unchecked((short)( packed & 0xFFFF )),
+            unchecked((short)( ( packed >> 16 ) & 0xFFFF )));
 
         if (!NativeMethods.GetWindowRect(hwnd, out NativeMethods.RECT windowRect))
         {
@@ -376,12 +418,12 @@ internal sealed class HwndMessageHandler
 
         double scale = _delegate.DpiScale;
         var windowPointDip = new Point(
-            (screenPointPx.X - windowRect.Left) / scale,
-            (screenPointPx.Y - windowRect.Top) / scale);
+            ( screenPointPx.X - windowRect.Left ) / scale,
+            ( screenPointPx.Y - windowRect.Top ) / scale);
 
         var windowSizeDip = new Size(
-            (windowRect.Right - windowRect.Left) / scale,
-            (windowRect.Bottom - windowRect.Top) / scale);
+            ( windowRect.Right - windowRect.Left ) / scale,
+            ( windowRect.Bottom - windowRect.Top ) / scale);
 
         int code = _frameView.NonClientHitTest(hwnd, windowPointDip, windowSizeDip);
         _delegate.RecordHitTest(screenPointPx, code);
@@ -408,6 +450,42 @@ internal sealed class HwndMessageHandler
     }
 
     /// <summary>
+    /// 在右键点弹出系统菜单，选中的命令回送给窗口。
+    ///
+    /// 用 <c>TPM_RETURNCMD</c> 拿返回值再 <c>PostMessage(WM_SYSCOMMAND)</c>：这样不用自己处理
+    /// <c>WM_COMMAND</c>，命令走的也是和 <c>DefWindowProc</c> 同一条下发路径 ——
+    /// 所以「还原 / 移动 / 大小 / 最小化 / 最大化 / 关闭」这些都不用手写。
+    /// </summary>
+    private static bool ShowSystemMenu(IntPtr hwnd, IntPtr lParam)
+    {
+        IntPtr menu = NativeMethods.GetSystemMenu(hwnd, revert: false);
+        if (menu == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        // 右键点的屏幕坐标就在 lParam 里：低 16 位 x、高 16 位 y，且都是有符号的
+        long packed = (long)lParam;
+        int x = unchecked((short)(packed & 0xFFFF));
+        int y = unchecked((short)((packed >> 16) & 0xFFFF));
+
+        int command = NativeMethods.TrackPopupMenuEx(
+            menu,
+            NativeMethods.TPM_RETURNCMD | NativeMethods.TPM_RIGHTBUTTON,
+            x,
+            y,
+            hwnd,
+            IntPtr.Zero);
+
+        if (command != 0)
+        {
+            NativeMethods.PostMessage(hwnd, NativeMethods.WM_SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
+        }
+
+        return true;
+    }
+
+    /// <summary>
     /// 鼠标离开非客户区。这里**不能**盲目清掉悬停：我们给标题栏返回的是非客户区 HT 码，
     /// 而系统认为那块是客户区，于是刚设上的悬停会被一条 WM_NCMOUSELEAVE 立刻清掉。
     /// 所以按当前真实光标位置重新判一次。
@@ -429,12 +507,12 @@ internal sealed class HwndMessageHandler
 
         double scale = _delegate.DpiScale;
         var windowPointDip = new Point(
-            (cursor.X - windowRect.Left) / scale,
-            (cursor.Y - windowRect.Top) / scale);
+            ( cursor.X - windowRect.Left ) / scale,
+            ( cursor.Y - windowRect.Top ) / scale);
 
         var windowSizeDip = new Size(
-            (windowRect.Right - windowRect.Left) / scale,
-            (windowRect.Bottom - windowRect.Top) / scale);
+            ( windowRect.Right - windowRect.Left ) / scale,
+            ( windowRect.Bottom - windowRect.Top ) / scale);
 
         bool inside = windowPointDip.X >= 0 && windowPointDip.Y >= 0
                       && windowPointDip.X <= windowSizeDip.Width
@@ -454,8 +532,8 @@ internal sealed class HwndMessageHandler
 
         double scale = _delegate.DpiScale;
         return new Point(
-            (cursor.X - windowRect.Left) / scale,
-            (cursor.Y - windowRect.Top) / scale);
+            ( cursor.X - windowRect.Left ) / scale,
+            ( cursor.Y - windowRect.Top ) / scale);
     }
 
     /// <summary>
@@ -495,7 +573,7 @@ internal sealed class HwndMessageHandler
 internal interface IHwndMessageHandlerDelegate
 {
     /// <summary>四个标题栏按钮挂在哪（对应容器 <c>AddChildView</c> 的宿主）。</summary>
-    System.Windows.Controls.Canvas CaptionButtonHost { get; }
+    Canvas CaptionButtonHost { get; }
 
     double DpiScale { get; }
 

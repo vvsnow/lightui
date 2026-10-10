@@ -1,3 +1,5 @@
+using LightUi.VsCodeFrameTest.Native;
+
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -5,8 +7,6 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shell;
 using System.Windows.Threading;
-
-using LightUi.VsCodeFrameTest.Native;
 
 namespace LightUi.VsCodeFrameTest;
 
@@ -57,7 +57,7 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
     private static void OnTitlebarOverlayHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         // 改高度要重摆：标题栏行高和四个按钮的高度都来自 TitlebarHeight()
-        (d as NativeFrameWindow)?._handler?.Relayout();
+        ( d as NativeFrameWindow )?._handler?.Relayout();
     }
 
     #endregion
@@ -343,7 +343,7 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
         foreach (WinCaptionButton button in container.Buttons)
         {
             Rect b = button.Bounds;
-            parts.Add($"{(button.IsShown ? "" : "(隐藏)")}{button.Kind}={b.Left:F0},{b.Top:F0} {b.Width:F0}x{b.Height:F0}");
+            parts.Add($"{( button.IsShown ? "" : "(隐藏)" )}{button.Kind}={b.Left:F0},{b.Top:F0} {b.Width:F0}x{b.Height:F0}");
         }
 
         return string.Join("  ", parts);
@@ -372,7 +372,7 @@ public class NativeFrameWindow : Window, IHwndMessageHandlerDelegate
         }
 
         double scale = VisualTreeHelper.GetDpi(this).DpiScaleX;
-        return new Size((rect.Right - rect.Left) / scale, (rect.Bottom - rect.Top) / scale);
+        return new Size(( rect.Right - rect.Left ) / scale, ( rect.Bottom - rect.Top ) / scale);
     }
 
     /// <summary>

@@ -20,10 +20,12 @@ internal static class NativeMethods
     public const int WM_NCLBUTTONDOWN = 0x00A1;
     public const int WM_NCLBUTTONUP = 0x00A2;
     public const int WM_NCLBUTTONDBLCLK = 0x00A3;
+    public const int WM_NCRBUTTONUP = 0x00A5;
     public const int WM_NCMOUSELEAVE = 0x02A2;
     public const int WM_SIZE = 0x0005;
     public const int WM_GETMINMAXINFO = 0x0024;
     public const int WM_WINDOWPOSCHANGED = 0x0047;
+    public const int WM_SYSCOMMAND = 0x0112;
     public const int WM_DPICHANGED = 0x02E0;
     public const int WM_SETTINGCHANGE = 0x001A;
     public const int WM_THEMECHANGED = 0x031A;
@@ -111,6 +113,16 @@ internal static class NativeMethods
 
     /// <summary>不激活窗口。</summary>
     public const uint SWP_NOACTIVATE = 0x0010;
+
+    #endregion
+
+    #region TrackPopupMenuEx 标志
+
+    /// <summary>选中的命令当返回值给我（不给我发 WM_COMMAND）。</summary>
+    public const uint TPM_RETURNCMD = 0x0100;
+
+    /// <summary>左右键都响应。</summary>
+    public const uint TPM_RIGHTBUTTON = 0x0002;
 
     #endregion
 
@@ -209,6 +221,16 @@ internal static class NativeMethods
 
     [DllImport("dwmapi.dll")]
     public static extern int DwmGetWindowAttribute(IntPtr hwnd, int attribute, out int value, int size);
+
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetSystemMenu(IntPtr hwnd, bool revert);
+
+    [DllImport("user32.dll")]
+    public static extern int TrackPopupMenuEx(
+        IntPtr menu, uint flags, int x, int y, IntPtr hwnd, IntPtr parameters);
+
+    [DllImport("user32.dll")]
+    public static extern bool PostMessage(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam);
 
     #endregion
 }

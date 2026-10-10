@@ -19,7 +19,7 @@ internal static class WindowFrameUtil
     /// · 容器整体贴在客户区右缘，所以**加宽是往左长**：右缘位置不变（距窗口右缘 54.4 DIP），左缘一路左移。
     ///   60 宽时最大化按钮会横跨到系统"最小化格"里 → 那部分预期不弹 Snap（正好可以拿来做对照实验）。
     /// </summary>
-    public const int KWindowsCaptionButtonWidth = 45;
+    public const int KWindowsCaptionButtonWidth = 46;
 
     /// <summary>非最大化时标题栏按钮的高度（DIP）。（对应 kWindowsCaptionButtonHeightRestored）</summary>
     public const int KWindowsCaptionButtonHeightRestored = 29;
