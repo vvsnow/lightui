@@ -17,7 +17,6 @@
         <ResourceDictionary Source="/LightUi;component/styles/Menu.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/ToolTip.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/ProgressBar.xaml" />
-        <ResourceDictionary Source="/LightUi;component/styles/Window.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/Expander.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TabItem.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TabControl.xaml" />

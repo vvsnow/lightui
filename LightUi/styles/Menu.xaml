@@ -28,6 +28,7 @@
             所以自身高度比 ControlHeight 小 2px（26 vs 28），保持视觉一致
         -->
         <Setter Property="MinHeight" Value="{DynamicResource MenuItemHeight}" />
+        <Setter Property="Height" Value="{DynamicResource MenuItemHeight}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Template">

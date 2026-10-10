@@ -44,25 +44,27 @@
         </DockPanel>
 
         <Grid Grid.Column="1">
-            
+
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
-            
+
             <ui:SimpleStackPanel
                 Height="{Binding Path=(ui:FramelessHelper.CaptionHeight), Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
+                Spacing="10"
                 WindowChrome.IsHitTestVisibleInChrome="True">
                 <TextBox
                     MinWidth="120"
                     VerticalAlignment="Center"
                     Text="你好啊" />
-                <Button Content="点击" />
+                <Button VerticalAlignment="Center" Content="点击" />
+                <Button Content="X" Style="{DynamicResource FramelessSystemButtonStyle}" />
             </ui:SimpleStackPanel>
-            
+
             <ContentControl x:Name="ActiveItem" Grid.Row="1" />
         </Grid>
 

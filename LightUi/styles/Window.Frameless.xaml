@@ -7,7 +7,7 @@
         无边框窗口的「样式」那一半 —— 逻辑在 controls/FramelessHelper/（自己处理非客户区，不用 WindowChrome）。
         用法：Style="{DynamicResource FramelessWindowStyle}" + ui:FramelessHelper.IsFrameless="True"。
 
-        与 LightUiWindowStyle（旧的那套）四处不同：
+        与 LightUiWindowStyle（旧的那套，现已移除）四处不同：
         · 悬停/按下**不由 IsMouseOver 驱动**：返回 HT* 之后那块是非客户区，WPF 输入栈根本不参与，
           颜色全靠 FramelessHelper.HoveredCaptionButton / PressedCaptionButton 这两个只读附加属性；
         · 按钮尺寸来自 FramelessSystemButtonStyle（46×30），**与 caption 高度无关**；
@@ -17,7 +17,7 @@
           现在逻辑层只管命中 —— 所以元素必须真的 IsVisible=false，命中判定才会跳过它）。
 
         ★ 刻意**不注册隐式样式**：合并集里只能有一个 <Style TargetType="Window"/>，
-          旧的 LightUiWindowStyle 已经占了那条（Window.xaml 末尾），再来一个会互相顶掉。
+          旧的 LightUiWindowStyle 当初占了那条（Window.xaml，现已移除），再来一个会互相顶掉。
           所以这套必须显式引用。
 
         ★ caption（标题栏）的视觉与**行高**完全由你自己的内容决定 —— 本样式只负责右上角那条按钮。

@@ -8,6 +8,7 @@
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <!--  高度由 ControlHeight 统一控制；左右 12 给文字/图标留出与边框的距离  -->
         <Setter Property="MinHeight" Value="{DynamicResource ControlHeight}" />
+        <Setter Property="Height" Value="{DynamicResource ControlHeight}" />
         <Setter Property="Padding" Value="{DynamicResource ControlPaddingHorizontal}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />

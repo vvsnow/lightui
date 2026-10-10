@@ -7,7 +7,7 @@
         FramelessHelper 那套的标题栏按钮样式（与旧的 SystemButtonStyle / CloseSystemButtonStyle 并列存在）。
         
         与旧按钮样式的唯一区别是**尺寸来源**：
-        · 旧：Height 绑 {x:Static WindowHelper.CaptionHeight} —— 按钮高度 = 标题栏高度（那个耦合）；
+        · 旧（那套已移除）：Height 绑 {x:Static WindowHelper.CaptionHeight} —— 按钮高度 = 标题栏高度（那个耦合）；
         · 新：宽高都是本文件自己的资源，**与 caption 高度无关**。caption 高度由 FramelessHelper
         自己算（只用于命中判定：多高算拖动区），谁也管不着谁。
         
@@ -21,7 +21,7 @@
         1）实测过，跨字典的 {StaticResource} 在合并进来的子字典里**搜不到父级**，
         `BasedOn="{StaticResource SystemButtonStyle}"` 会在启动时抛
         「无法找到名为 SystemButtonStyle 的资源」（合并顺序也无法解决）；
-        2）旧那套（WindowHelper + LightUiWindowStyle）将来会随迁移完成退役，
+        2）旧那套（WindowHelper + LightUiWindowStyle）已经移除，
         各留各的才不会一起断。
     -->
 

@@ -15,7 +15,7 @@ namespace LightUi.Controls;
 /// <code>&lt;Window ui:FramelessHelper.IsFrameless="True"
 ///         Style="{DynamicResource FramelessWindowStyle}" /&gt;</code>
 ///
-/// 与旧的 <see cref="WindowHelper"/> 的关系：**并存但互斥** —— 同一窗口只能挂一套。
+/// 与 WPF 的 <see cref="WindowChrome"/> **互斥** —— 同一窗口只能挂一套。
 /// 两个都开会打架（WindowChrome 自己也要管 <c>WM_NCCALCSIZE</c>/<c>WM_NCHITTEST</c>），
 /// 所以本类挂载时若发现窗口已经挂了 WindowChrome，会打一条 Debug 警告并**让位不挂**。
 ///
@@ -192,12 +192,12 @@ public static class FramelessHelper
             return;
         }
 
-        // 互斥：窗口上已经有 WindowChrome（旧 WindowHelper 挂的）就别插手 ——
+        // 互斥：窗口上已经有 WindowChrome 就别插手 ——
         // 两套都要管 WM_NCCALCSIZE / WM_NCHITTEST，同时生效结果不可预期。
         if (WindowChrome.GetWindowChrome(window) is not null)
         {
             Debug.WriteLine(
-                "[LightUi] FramelessHelper 放弃挂载：这个窗口已经挂了 WindowChrome（WindowHelper）。" +
+                "[LightUi] FramelessHelper 放弃挂载：这个窗口已经挂了 WindowChrome。" +
                 "无边框逻辑同一窗口只能选一套。");
             return;
         }
