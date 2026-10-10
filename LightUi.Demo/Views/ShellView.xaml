@@ -13,8 +13,9 @@
     Width="1080"
     Height="720"
     d:DataContext="{d:DesignInstance Type=vm:ShellViewModel}"
-    ui:WindowHelper.IsFrameless="True"
-    Style="{DynamicResource LightUiWindowStyle}"
+    ui:FramelessHelper.IsFrameless="True"
+    ui:WindowHelper.IsFrameless="False"
+    Style="{DynamicResource FramelessWindowStyle}"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 

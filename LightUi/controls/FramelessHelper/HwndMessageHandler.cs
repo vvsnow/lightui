@@ -1,9 +1,8 @@
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Interop;
 
-namespace LightUi.VsCodeFrameTest.Native;
+namespace LightUi.Controls.Frameless;
 
 /// <summary>
 /// 窗口过程那一层。对应 Chromium <c>ui/views/win/hwnd_message_handler.cc</c> 的 <c>HWNDMessageHandler</c>：
@@ -22,8 +21,8 @@ internal sealed class HwndMessageHandler
         CustomDrawn,
     }
 
-    private readonly IHwndMessageHandlerDelegate _delegate;
-    private readonly WinFrameView _frameView;
+    private readonly IFramelessWindowHost _delegate;
+    private readonly FrameView _frameView;
 
     private HwndSource? _source;
 
@@ -37,16 +36,16 @@ internal sealed class HwndMessageHandler
 
     private CaptionButton _pressedButton = CaptionButton.None;
 
-    public HwndMessageHandler(IHwndMessageHandlerDelegate messageDelegate)
+    public HwndMessageHandler(IFramelessWindowHost messageDelegate)
     {
         _delegate = messageDelegate;
-        _frameView = new WinFrameView(new WinCaptionButtonContainer(messageDelegate.CaptionButtonHost), messageDelegate);
+        _frameView = new FrameView(messageDelegate);
     }
 
     /// <summary>Electron 的窗口自绘标题栏，对应 <c>FrameMode::CUSTOM_DRAWN</c>。</summary>
     public FrameMode CurrentFrameMode => FrameMode.CustomDrawn;
 
-    public WinFrameView FrameView => _frameView;
+    public FrameView FrameView => _frameView;
 
     public IntPtr Hwnd => _hwnd;
 
@@ -76,15 +75,11 @@ internal sealed class HwndMessageHandler
         // 就是那个时刻（WPF 这时还没调 ShowWindow）。
         ForceFrameRecompute();
 
-        // ★ 启动「一眼都不闪」的最后一块：先把窗口隐身。
-        //
-        // 对应 Electron 的 show:false —— 窗口建好了、也渲染得了，但用户看不见。
-        // 实测（2026-10-09，独立实验）：被 cloak 的窗口 WPF 照常渲染，ContentRendered
-        // 正常触发；解除隐身到屏幕出现成品只差约 15ms，不是再等一次首帧。
-        //
-        // 必须赶在窗口第一次上屏之前 —— SourceInitialized 就是那个时刻
-        // （实测此刻 IsWindowVisible 还是 False），所以连「空白一帧」都不会露。
-        SetCloaked(true);
+        // 隐身（启动不闪）**不在这里做**：那是可选项，由 FramelessHelper 按
+        // CloakUntilFirstFrame 决定要不要挂完立刻 SetCloaked(true)、ContentRendered 时解除。
+        // 本方法只管"窗口过程该做的事"。
+        // （实测过：cloak 必须赶在窗口第一次上屏之前设 —— SourceInitialized 正是那个时刻，
+        //   此刻 IsWindowVisible 还是 False，所以连"空白一帧"都不会露。）
 
         Relayout();
     }
@@ -123,7 +118,12 @@ internal sealed class HwndMessageHandler
         _hwnd = IntPtr.Zero;
     }
 
-    /// <summary>同步窗口状态 + 重新摆按钮 + 刷新外观。窗口尺寸/状态/DPI 变化后都要来一次。</summary>
+    /// <summary>
+    /// 同步窗口状态 + 按当前光标刷新悬停。窗口尺寸/状态/DPI 变化后都要来一次。
+    ///
+    /// 按钮的**摆位与尺寸不在这里了** —— 那是样式的事（旧实现的 LayoutCaptionButtons /
+    /// UpdateButtons / SetButtonSize / ApplyVisualState 整块删掉）；本方法也**不往任何元素上写高度**。
+    /// </summary>
     public void Relayout()
     {
         if (_hwnd == IntPtr.Zero)
@@ -133,28 +133,16 @@ internal sealed class HwndMessageHandler
 
         SyncWindowState();
 
-        _delegate.SetTitlebarHeight(_frameView.TitlebarHeight(_hwnd));
-
-        _frameView.LayoutCaptionButtons(_hwnd, _delegate.ClientWidthDip);
-        _frameView.CaptionButtons.UpdateButtons(
-            _delegate.IsMinimizable,
-            _delegate.IsMaximizable,
-            WinFrameView.IsMaximized(_hwnd),
-            _delegate.IsClosable);
-
-        // 布局完再摆一次：UpdateButtons 会改可见性，可见性影响排版
-        _frameView.LayoutCaptionButtons(_hwnd, _delegate.ClientWidthDip);
-
-        _frameView.CaptionButtons.ApplyVisualState(
-            _frameView.HitTestCaptionButton(_hwnd, CurrentCursorWindowPointDip()),
-            _pressedButton);
+        // 状态变化后按钮可能换了可见性（最大化↔还原由样式触发器管），
+        // 悬停也按当前真实光标重判一次，免得光标没动却留下过期的 hover。
+        _delegate.SetHoveredCaptionButton(CurrentHoveredButton(_hwnd));
     }
 
     private void SyncWindowState()
     {
         _frameView.DpiScale = _delegate.DpiScale;
         _frameView.CanResize = _delegate.CanResize;
-        _frameView.TitlebarOverlayHeight = _delegate.TitlebarOverlayHeight;
+        _frameView.CaptionHeight = _delegate.CaptionHeight;
         // 是否最大化 / 全屏**不缓存**：由 frame view 直接问操作系统
         // （对应 Electron 的 frame()->IsMaximized()），这样任何时候读都是对的。
     }
@@ -200,16 +188,10 @@ internal sealed class HwndMessageHandler
 
         _lastDwmFrameInsets = insets;
 
-        // 记下 HRESULT：这一步是「能不能收到 WM_NCHITTEST」的开关，失败就没必要往下猜了
-        DwmFrameCallCount++;
-        DwmFrameResult = NativeMethods.DwmExtendFrameIntoClientArea(_hwnd, ref insets);
+        // 返回值不看：这一步是「能不能收到 WM_NCHITTEST」的开关，失败就没必要往下猜了。
+        // 排查时把 0 之外的 HRESULT 打出来即可 —— 库内不留诊断字段。
+        NativeMethods.DwmExtendFrameIntoClientArea(_hwnd, ref insets);
     }
-
-    /// <summary>诊断：UpdateDwmFrame 调了几次、DWM 返回什么。</summary>
-    public int DwmFrameCallCount { get; private set; }
-
-    /// <summary>诊断：DwmExtendFrameIntoClientArea 的 HRESULT（0 = S_OK）。</summary>
-    public int DwmFrameResult { get; private set; }
 
     #endregion
 
@@ -230,19 +212,8 @@ internal sealed class HwndMessageHandler
         }
 
         int value = cloaked ? 1 : 0;
-        CloakResult = NativeMethods.DwmSetWindowAttribute(
-            _hwnd, NativeMethods.DWMWA_CLOAK, ref value, sizeof(int));
+        NativeMethods.DwmSetWindowAttribute(_hwnd, NativeMethods.DWMWA_CLOAK, ref value, sizeof(int));
     }
-
-    /// <summary>诊断：最近一次 DWM cloak 调用的 HRESULT（0 = S_OK）。</summary>
-    public int CloakResult { get; private set; } = int.MinValue;
-
-    /// <summary>诊断：隐身调用结果。</summary>
-    public string CloakReport => CloakResult == int.MinValue
-        ? "还没调用过"
-        : CloakResult == 0
-            ? "DWM cloak 调用成功"
-            : $"失败 HRESULT=0x{CloakResult:X8}";
 
     #endregion
 
@@ -264,7 +235,7 @@ internal sealed class HwndMessageHandler
                 // NativeWindow::Minimize/Maximize/Restore/Close —— 不是让系统去做。
                 // DefWindowProc 也不会替我们做：那块在系统看来是客户区。
                 _pressedButton = CurrentHoveredButton(hwnd);
-                _frameView.CaptionButtons.ApplyVisualState(_pressedButton, _pressedButton);
+                _delegate.SetPressedCaptionButton(_pressedButton);
                 handled = _pressedButton != CaptionButton.None;
                 break;
 
@@ -278,6 +249,7 @@ internal sealed class HwndMessageHandler
                     }
 
                     _pressedButton = CaptionButton.None;
+                    _delegate.SetPressedCaptionButton(CaptionButton.None);
                     handled = true;
                 }
 
@@ -286,6 +258,7 @@ internal sealed class HwndMessageHandler
 
             case NativeMethods.WM_NCMOUSELEAVE:
                 _pressedButton = CaptionButton.None;
+                _delegate.SetPressedCaptionButton(CaptionButton.None);
                 UpdateHoverFromCursor(hwnd);
                 break;
 
@@ -398,20 +371,21 @@ internal sealed class HwndMessageHandler
             ( windowRect.Right - windowRect.Left ) / scale,
             ( windowRect.Bottom - windowRect.Top ) / scale);
 
-        int code = _frameView.NonClientHitTest(hwnd, windowPointDip, windowSizeDip);
-        _delegate.RecordHitTest(screenPointPx, code);
+        int code = _frameView.NonClientHitTest(hwnd, screenPointPx, windowPointDip, windowSizeDip);
 
-        // 悬停外观：命中的是哪个按钮
+        // 悬停外观：命中的是哪个按钮。写成宿主上的两个只读附加属性、由样式触发器呈现 ——
+        // 返回 HT* 之后那块是非客户区，WPF 输入栈不参与，Button.IsMouseOver 恒为 false。
         CaptionButton hovered = code switch
         {
             NativeMethods.HTMINBUTTON => CaptionButton.Minimize,
-            NativeMethods.HTMAXBUTTON => WinFrameView.IsMaximized(hwnd) ? CaptionButton.Restore : CaptionButton.Maximize,
+            // 最大化/还原是同一个按钮元素（样式按 WindowState 换字形与命令），所以按当前状态报身份：
+            // 已最大化报 Restore —— 动作按身份派发，报 Maximize 的话"点还原"会变成空操作。
+            NativeMethods.HTMAXBUTTON => FrameView.IsMaximized(hwnd) ? CaptionButton.Restore : CaptionButton.Maximize,
             NativeMethods.HTCLOSE => CaptionButton.Close,
             _ => CaptionButton.None,
         };
 
         _delegate.SetHoveredCaptionButton(hovered);
-        _frameView.CaptionButtons.ApplyVisualState(hovered, _pressedButton);
 
         if (code == NativeMethods.HTNotHandled)
         {
@@ -465,48 +439,28 @@ internal sealed class HwndMessageHandler
     /// </summary>
     private void UpdateHoverFromCursor(IntPtr hwnd)
     {
-        CaptionButton button = CurrentHoveredButton(hwnd);
-        _delegate.SetHoveredCaptionButton(button);
-        _frameView.CaptionButtons.ApplyVisualState(button, _pressedButton);
+        _delegate.SetHoveredCaptionButton(CurrentHoveredButton(hwnd));
     }
 
+    /// <summary>
+    /// 光标当前在哪颗按钮上。判定交给宿主（按模板里三个 Button 的**实测尺寸**算），
+    /// 这里只负责「光标在不在窗口上」这一道 —— 不在就明说 None。
+    /// </summary>
     private CaptionButton CurrentHoveredButton(IntPtr hwnd)
-    {
-        if (!NativeMethods.GetWindowRect(hwnd, out NativeMethods.RECT windowRect)
-            || !NativeMethods.GetCursorPos(out NativeMethods.POINT cursor))
-        {
-            return CaptionButton.None;
-        }
-
-        double scale = _delegate.DpiScale;
-        var windowPointDip = new Point(
-            ( cursor.X - windowRect.Left ) / scale,
-            ( cursor.Y - windowRect.Top ) / scale);
-
-        var windowSizeDip = new Size(
-            ( windowRect.Right - windowRect.Left ) / scale,
-            ( windowRect.Bottom - windowRect.Top ) / scale);
-
-        bool inside = windowPointDip.X >= 0 && windowPointDip.Y >= 0
-                      && windowPointDip.X <= windowSizeDip.Width
-                      && windowPointDip.Y <= windowSizeDip.Height;
-
-        return inside ? _frameView.HitTestCaptionButton(hwnd, windowPointDip) : CaptionButton.None;
-    }
-
-    private Point CurrentCursorWindowPointDip()
     {
         if (_hwnd == IntPtr.Zero
             || !NativeMethods.GetWindowRect(_hwnd, out NativeMethods.RECT windowRect)
             || !NativeMethods.GetCursorPos(out NativeMethods.POINT cursor))
         {
-            return new Point(double.NegativeInfinity, double.NegativeInfinity);
+            return CaptionButton.None;
         }
 
-        double scale = _delegate.DpiScale;
-        return new Point(
-            ( cursor.X - windowRect.Left ) / scale,
-            ( cursor.Y - windowRect.Top ) / scale);
+        bool inside = cursor.X >= windowRect.Left && cursor.X <= windowRect.Right
+                      && cursor.Y >= windowRect.Top && cursor.Y <= windowRect.Bottom;
+
+        return inside
+            ? _delegate.HitTestCaptionButtonAt(new Point(cursor.X, cursor.Y))
+            : CaptionButton.None;
     }
 
     /// <summary>
@@ -518,7 +472,7 @@ internal sealed class HwndMessageHandler
     private void OnGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
     {
         var info = Marshal.PtrToStructure<MINMAXINFO>(lParam);
-        int frame = WinFrameView.GetFrameThicknessFromWindowPx(hwnd);
+        int frame = FrameView.GetFrameThicknessFromWindowPx(hwnd);
 
         info.PtMinTrackSize.X += frame * 2;
         info.PtMinTrackSize.Y += frame * 2;
@@ -540,51 +494,3 @@ internal sealed class HwndMessageHandler
     #endregion
 }
 
-/// <summary>
-/// 对应 Chromium 的 <c>HWNDMessageHandlerDelegate</c>：窗口过程需要从宿主窗口问到的东西。
-/// </summary>
-internal interface IHwndMessageHandlerDelegate
-{
-    /// <summary>四个标题栏按钮挂在哪（对应容器 <c>AddChildView</c> 的宿主）。</summary>
-    Canvas CaptionButtonHost { get; }
-
-    double DpiScale { get; }
-
-    /// <summary>客户区宽度（DIP）—— 对应 <c>WinFrameView::LayoutCaptionButtons()</c> 里的 <c>width()</c>。</summary>
-    double ClientWidthDip { get; }
-
-    bool IsMinimizable { get; }
-
-    bool IsMaximizable { get; }
-
-    bool IsClosable { get; }
-
-    bool CanResize { get; }
-
-    /// <summary>对应 Electron <c>window()->titlebar_overlay_height()</c>；0 = 用默认高度。</summary>
-    int TitlebarOverlayHeight { get; }
-
-    /// <summary>对应 <c>GetDwmFrameInsetsInPixels</c>；本工程返回全 0（同 Electron）。</summary>
-    NativeMethods.MARGINS GetDwmFrameInsetsInPixels();
-
-    /// <summary>
-    /// 点击标题栏按钮时要执行的动作。对应 Electron 里按钮回调直接调的
-    /// <c>NativeWindow::Minimize() / Maximize() / Restore() / Close()</c>。
-    /// </summary>
-    void PerformCaptionButtonAction(CaptionButton button);
-
-    void SetHoveredCaptionButton(CaptionButton button);
-
-    /// <summary>
-    /// 这个客户区坐标点上是不是有"标了逃生出口"的元素（对应参考里
-    /// <c>window_-&gt;NonClientHitTest(point)</c> 那一步：先问内容区）。
-    /// 为真则返回 HTCLIENT（交给 WPF），否则标题栏条带按 HTCAPTION 当拖动区。
-    /// </summary>
-    bool IsInteractiveCaptionElementAt(Point clientPointDip);
-
-    /// <summary>把算出来的标题栏高度告诉宿主，好让标题栏那一行的行高跟按钮条一致。</summary>
-    void SetTitlebarHeight(double heightDip);
-
-    /// <summary>诊断用：记一条命中测试的踪迹。</summary>
-    void RecordHitTest(Point screenPointPx, int hitCode);
-}

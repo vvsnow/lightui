@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace LightUi.VsCodeFrameTest.Native;
+namespace LightUi.Controls.Frameless;
 
 /// <summary>
 /// Win32 的常量、结构体和 P/Invoke，集中一处。

@@ -1,0 +1,167 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:LightUi.Controls">
+
+    <!--
+        无边框窗口的「样式」那一半 —— 逻辑在 controls/FramelessHelper/（自己处理非客户区，不用 WindowChrome）。
+        用法：Style="{DynamicResource FramelessWindowStyle}" + ui:FramelessHelper.IsFrameless="True"。
+
+        与 LightUiWindowStyle（旧的那套）四处不同：
+        · 悬停/按下**不由 IsMouseOver 驱动**：返回 HT* 之后那块是非客户区，WPF 输入栈根本不参与，
+          颜色全靠 FramelessHelper.HoveredCaptionButton / PressedCaptionButton 这两个只读附加属性；
+        · 按钮尺寸来自 FramelessSystemButtonStyle（46×30），**与 caption 高度无关**；
+        · **没有**「最大化时 Padding=6」那条 —— 最大化的内缩由 WM_NCCALCSIZE 的 insets 处理，
+          这里再补一次会把内容推两次；
+        · 按钮的可见性由本文件的 ResizeMode 触发器管（旧实现的逻辑层替它做了这件事，
+          现在逻辑层只管命中 —— 所以元素必须真的 IsVisible=false，命中判定才会跳过它）。
+
+        ★ 刻意**不注册隐式样式**：合并集里只能有一个 <Style TargetType="Window"/>，
+          旧的 LightUiWindowStyle 已经占了那条（Window.xaml 末尾），再来一个会互相顶掉。
+          所以这套必须显式引用。
+
+        ★ caption（标题栏）的视觉与**行高**完全由你自己的内容决定 —— 本样式只负责右上角那条按钮。
+          FramelessHelper 也不往任何元素上写高度：它算出来的 caption 高度只用于命中判定
+          （「多高算拖动区」，见 ui:FramelessHelper.CaptionHeight）。
+    -->
+
+    <Style x:Key="FramelessWindowStyle" TargetType="Window">
+        <Setter Property="Background" Value="{DynamicResource PageBackgroundBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
+        <Setter Property="FontFamily" Value="Segoe UI, Microsoft YaHei UI" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Window">
+                    <!--  AdornerDecorator 不能省：整个窗口里唯一保证存在的 AdornerLayer  -->
+                    <Border
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Grid>
+
+                            <AdornerDecorator>
+                                <ContentPresenter />
+                            </AdornerDecorator>
+
+                            <!--  三颗按钮贴右上角，和 Windows 11 自己的标题栏按钮一致  -->
+                            <StackPanel
+                                x:Name="CaptionButtons"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{TemplateBinding Background}"
+                                Orientation="Horizontal"
+                                Visibility="Collapsed">
+
+                                <Button
+                                    x:Name="PART_MinimizeButton"
+                                    Command="{x:Static SystemCommands.MinimizeWindowCommand}"
+                                    Style="{DynamicResource FramelessSystemButtonStyle}">
+                                    <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE738;" />
+                                </Button>
+
+                                <Button
+                                    x:Name="PART_MaximizeButton"
+                                    Command="{x:Static SystemCommands.MaximizeWindowCommand}"
+                                    Style="{DynamicResource FramelessSystemButtonStyle}">
+                                    <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE71A;" />
+                                </Button>
+
+                                <!--
+                                    关闭键的 FontIcon 额外绑一次按钮的 Foreground：悬停时触发器会把按钮
+                                    Foreground 改成白色（红底白字），而 FontIcon 自己的样式里定义了
+                                    Foreground，会挡住继承 —— 不显式绑就跟不上。
+                                -->
+                                <Button
+                                    x:Name="PART_CloseButton"
+                                    Command="{x:Static SystemCommands.CloseWindowCommand}"
+                                    Style="{DynamicResource FramelessCloseButtonStyle}">
+                                    <local:FontIcon
+                                        FontSize="{DynamicResource CaptionGlyphFontSize}"
+                                        Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                        Glyph="&#xE711;" />
+                                </Button>
+
+                            </StackPanel>
+
+                        </Grid>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+
+                        <Trigger Property="local:FramelessHelper.IsFrameless" Value="True">
+                            <Setter TargetName="CaptionButtons" Property="Visibility" Value="Visible" />
+                        </Trigger>
+
+                        <!--
+                            悬停 / 按下。写在这里而不是按钮样式里：ControlTemplate 的触发器以
+                            **模板父级（这个 Window）**为对象，而那两个附加属性正是写在窗口上的。
+                        -->
+
+                        <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Minimize">
+                            <Setter TargetName="PART_MinimizeButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Maximize">
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
+                        </Trigger>
+                        <!--  最大化后同一颗按钮的身份变成「还原」（命中判定按 IsZoomed 报），配色一样  -->
+                        <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Restore">
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="local:FramelessHelper.HoveredCaptionButton" Value="Close">
+                            <Setter TargetName="PART_CloseButton" Property="Background" Value="{DynamicResource SystemCloseHoverBrush}" />
+                            <Setter TargetName="PART_CloseButton" Property="Foreground" Value="{DynamicResource SystemCloseForegroundBrush}" />
+                        </Trigger>
+
+                        <!--  按下写在悬停之后：两个同时为真时按下赢（后声明的覆盖先声明的）  -->
+                        <Trigger Property="local:FramelessHelper.PressedCaptionButton" Value="Minimize">
+                            <Setter TargetName="PART_MinimizeButton" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="local:FramelessHelper.PressedCaptionButton" Value="Maximize">
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="local:FramelessHelper.PressedCaptionButton" Value="Restore">
+                            <Setter TargetName="PART_MaximizeButton" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="local:FramelessHelper.PressedCaptionButton" Value="Close">
+                            <Setter TargetName="PART_CloseButton" Property="Background" Value="{DynamicResource SystemClosePressedBrush}" />
+                            <Setter TargetName="PART_CloseButton" Property="Foreground" Value="{DynamicResource SystemCloseForegroundBrush}" />
+                        </Trigger>
+
+                        <!--
+                            最大化后：这颗按钮的语义从「最大化」变成「还原」——
+                            命令换成 Restore，字形也换（同一颗按钮元素，命中码恒为 HTMAXBUTTON）。
+                            字形直接换 Content：这样就不用给 FontIcon 写内联样式
+                            （写了会丢掉 FontIcon.xaml 里那份带打包字体的隐式样式）。
+                        -->
+                        <Trigger Property="WindowState" Value="Maximized">
+                            <Setter TargetName="PART_MaximizeButton" Property="Command" Value="{x:Static SystemCommands.RestoreWindowCommand}" />
+                            <Setter TargetName="PART_MaximizeButton" Property="Content">
+                                <Setter.Value>
+                                    <local:FontIcon FontSize="{DynamicResource CaptionGlyphFontSize}" Glyph="&#xE923;" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+
+                        <!--
+                            按 ResizeMode 收起按钮。这件事必须由样式做：命中判定要求元素真的
+                            IsVisible=false 才会跳过它 —— 逻辑层现在不再替样式隐藏按钮了。
+                        -->
+                        <Trigger Property="ResizeMode" Value="NoResize">
+                            <Setter TargetName="PART_MinimizeButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_MaximizeButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="ResizeMode" Value="CanMinimize">
+                            <Setter TargetName="PART_MaximizeButton" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

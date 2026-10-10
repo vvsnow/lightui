@@ -1,4 +1,4 @@
-namespace LightUi.VsCodeFrameTest;
+namespace LightUi.Controls;
 
 /// <summary>
 /// 标题栏按钮的身份。对应 Electron 的 <c>ViewID</c>：<c>VIEW_ID_MINIMIZE_BUTTON</c> /

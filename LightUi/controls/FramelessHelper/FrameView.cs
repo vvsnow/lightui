@@ -1,9 +1,9 @@
 using System.Windows;
 
-namespace LightUi.VsCodeFrameTest.Native;
+namespace LightUi.Controls.Frameless;
 
 /// <summary>
-/// 窗口框架：边框厚度、客户区内缩、标题栏按钮摆位、非客户区命中判定。
+/// 窗口框架：边框厚度、客户区内缩、caption 高度、非客户区命中判定。
 ///
 /// 逐条对应 Electron <c>shell/browser/ui/views/win_frame_view.cc</c>（以及它自己注明抄自的
 /// Chrome <c>glass_browser_frame_view.cc</c> / <c>browser_desktop_window_tree_host_win.cc</c>）。
@@ -11,7 +11,7 @@ namespace LightUi.VsCodeFrameTest.Native;
 ///
 /// <para>单位：布局与命中判定用 DIP（和 views 一致）；给 WM_NCCALCSIZE 的客户区内缩用物理像素。</para>
 /// </summary>
-internal sealed class WinFrameView
+internal sealed class FrameView
 {
     /// <summary>Electron <c>FramelessView::kResizeInsideBoundsSize</c>（frameless_view.h:33）：顶部那条内部缩放带的宽度（DIP）。</summary>
     private const int ResizeInsideBoundsSize = 5;
@@ -19,21 +19,17 @@ internal sealed class WinFrameView
     /// <summary>Electron <c>kResizeAreaCornerSize</c>（frameless_view.cc:19）。</summary>
     private const int ResizeAreaCornerSize = 16;
 
-    private readonly WinCaptionButtonContainer _container;
-
     /// <summary>
     /// 宿主窗口（对应参考里的 <c>window_</c>）。frame view 看不到 WPF 视觉树，
-    /// "这点上有没有可交互元素"只能问宿主 —— 对应 <c>window_-&gt;NonClientHitTest(point)</c> 那一步。
+    /// "这点落在哪个按钮上""这点上有没有可交互元素"只能问宿主 —— 对应
+    /// <c>window_-&gt;NonClientHitTest(point)</c> 那一步。
     /// </summary>
-    private readonly IHwndMessageHandlerDelegate _window;
+    private readonly IFramelessWindowHost _window;
 
-    public WinFrameView(WinCaptionButtonContainer container, IHwndMessageHandlerDelegate window)
+    public FrameView(IFramelessWindowHost window)
     {
-        _container = container;
         _window = window;
     }
-
-    public WinCaptionButtonContainer CaptionButtons => _container;
 
     #region 窗口状态
 
@@ -53,8 +49,8 @@ internal sealed class WinFrameView
     /// <summary>Electron: <c>frame()->IsFullscreen()</c>。本工程不支持全屏，恒 false。</summary>
     public static bool IsFullscreen(IntPtr hwnd) => false;
 
-    /// <summary>Electron: <c>window()->titlebar_overlay_height()</c>（本工程留 0 = 用默认标题栏高度）</summary>
-    public int TitlebarOverlayHeight { get; set; }
+    /// <summary>自定义 caption 高度（DIP）。0 = 按系统度量算。**与系统按钮高度无关** —— 按钮尺寸归样式。</summary>
+    public double CaptionHeight { get; set; }
 
     /// <summary>Electron: <c>frame()->widget_delegate()->CanResize()</c></summary>
     public bool CanResize { get; set; } = true;
@@ -108,29 +104,33 @@ internal sealed class WinFrameView
     public int TitlebarMaximizedVisualHeight(IntPtr hwnd) => GetSystemMetricsDip(hwnd, NativeMethods.SM_CYCAPTION);
 
     /// <summary>
-    /// Electron <c>WinFrameView::TitlebarHeight(int custom_height)</c>：
-    /// <code>if (frame()->IsFullscreen() &amp;&amp; !IsMaximized()) return 0;
-    /// int height = TitlebarMaximizedVisualHeight() + FrameTopBorderThickness(false) - WindowTopY();
-    /// if (custom_height > TitlebarMaximizedVisualHeight()) height = custom_height - WindowTopY();
-    /// return height;</code>
+    /// caption 条带高度（DIP）—— 只决定「多高算标题栏 / 拖动区」。
+    ///
+    /// 与移植前相比有<b>两处不同，这就是解耦</b>：
+    /// <list type="bullet">
+    /// <item>与系统按钮高度<b>无关</b>：按钮尺寸由样式给，这里不再参与摆位、也不再往下传任何高度；</item>
+    /// <item><see cref="CaptionHeight"/> 显式给了正数就<b>原样采用</b>，不再做 Electron 那句
+    /// <c>−WindowTopY</c> 修正，也没有「必须比 SM_CYCAPTION 高」的限制。</item>
+    /// </list>
+    ///
+    /// 默认（<see cref="CaptionHeight"/> = 0）仍按 Electron <c>WinFrameView::TitlebarHeight(int)</c> 的公式算：
+    /// <code>SM_CYCAPTION + FrameTopBorderThickness(false) - WindowTopY()</code>（本机 125% 下 23 + 7 − 1 = 29 DIP）。
     /// </summary>
-    public int TitlebarHeight(IntPtr hwnd)
+    public int CaptionStripHeight(IntPtr hwnd)
     {
         if (IsFullscreen(hwnd) && !IsMaximized(hwnd))
         {
             return 0;
         }
 
-        int height = TitlebarMaximizedVisualHeight(hwnd)
-                     + FrameTopBorderThickness(hwnd, false)
-                     - WindowTopY(hwnd);
-
-        if (TitlebarOverlayHeight > TitlebarMaximizedVisualHeight(hwnd))
+        if (CaptionHeight > 0)
         {
-            height = TitlebarOverlayHeight - WindowTopY(hwnd);
+            return (int)Math.Round(CaptionHeight);
         }
 
-        return height;
+        return TitlebarMaximizedVisualHeight(hwnd)
+               + FrameTopBorderThickness(hwnd, false)
+               - WindowTopY(hwnd);
     }
 
     /// <summary>
@@ -176,39 +176,14 @@ internal sealed class WinFrameView
 
     #endregion
 
-    #region 布局
-
-    /// <summary>
-    /// Electron <c>WinFrameView::LayoutCaptionButtons()</c>：
-    /// <code>caption_button_container_->SetBounds(width() - preferred_size.width(), WindowTopY(),
-    ///     variable_width, height);   // variable_width 非最大化时 = preferred - 1
-    /// caption_button_container_->SetButtonSize(gfx::Size(0, height));</code>
-    /// 那句 <c>- 1</c> 的注释："Without insets, the resize hit targets are inside the frame,
-    /// and a 1px margin is needed to click and drag next to the button container."
-    ///
-    /// <c>width()</c> 这边取**客户区宽度**：客户区右缘就是可见边框内沿，按钮贴它才和系统槽位对齐。
-    /// </summary>
-    public void LayoutCaptionButtons(IntPtr hwnd, double clientWidthDip)
-    {
-        Size preferred = _container.CalculatePreferredSize();
-        int height = TitlebarHeight(hwnd);
-
-        bool maximized = IsMaximized(hwnd);
-        double width = maximized ? preferred.Width : preferred.Width - 1;
-
-        var bounds = new Rect(clientWidthDip - preferred.Width, WindowTopY(hwnd), width, height);
-        _container.Layout(bounds);
-
-        _container.SetButtonSize(new Size(0, height));
-        _container.Layout(bounds);
-    }
-
-    #endregion
+    // 这里原先有一个「布局」区（LayoutCaptionButtons）：自己算按钮矩形、按客户区宽度贴右摆位、
+    // 再把同一个高度塞给每个按钮当高度（就是那个「caption 高度 = 按钮高度」的耦合）。
+    // 现在**整块没有了** —— 按钮是样式模板里的元素，位置与尺寸归样式；本类只管几何与命中。
 
     #region 非客户区命中判定（对应 WinFrameView::NonClientHitTest）
 
     /// <summary>
-    /// 分支顺序照源码：**先按钮容器 → 再排除系统按钮区 → 再缩放边 → 最后基类**。
+    /// 分支顺序：**先标题栏按钮 → 再排除系统按钮区 → 再缩放边 → 最后基类**（第 ① 步的实现换成「问元素」，顺序不变）。
     /// 返回 <see cref="NativeMethods.HTNotHandled"/> 表示不接管。
     ///
     /// 注意源码里缩放边只处理**顶部**：<c>GetHTComponentForFrame(point,
@@ -218,17 +193,24 @@ internal sealed class WinFrameView
     /// HTLEFT/HTBOTTOM/HTBOTTOMLEFT…（见 <c>ResizingBorderHitTest</c> 的注释：
     /// "With insets, side/bottom resize targets sit outside the frame and are handled by WM_NCHITTEST"）。
     /// </summary>
-    public int NonClientHitTest(IntPtr hwnd, Point windowPointDip, Size windowSizeDip)
+    public int NonClientHitTest(IntPtr hwnd, Point screenPointPx, Point windowPointDip, Size windowSizeDip)
     {
-        // ① 按钮容器
-        Point containerPoint = ToContainerPoint(hwnd, windowPointDip);
-        if (_container.HitTestPoint(containerPoint))
+        // ① 标题栏按钮。**必须最先判**：右上角那块同时落在「系统按钮区」与「顶部缩放带」里，
+        //    让按钮先答，否则贴右的按钮会被当成缩放边框。
+        //    按钮是样式模板里的元素，命中按它们的**实测尺寸**算 —— 这里不再自己算矩形。
+        CaptionButton hitButton = _window.HitTestCaptionButtonAt(screenPointPx);
+        switch (hitButton)
         {
-            int result = _container.NonClientHitTest(containerPoint);
-            if (result != NativeMethods.HTNotHandled)
-            {
-                return result;
-            }
+            case CaptionButton.Minimize:
+                return NativeMethods.HTMINBUTTON;
+
+            case CaptionButton.Maximize:
+            case CaptionButton.Restore:
+                // 恢复键与最大化键在系统看来是同一个槽位
+                return NativeMethods.HTMAXBUTTON;
+
+            case CaptionButton.Close:
+                return NativeMethods.HTCLOSE;
         }
 
         // ② 客户区之外（左/右/下那圈不可见边框）**不归我们判**，把意见交回给系统。
@@ -272,14 +254,15 @@ internal sealed class WinFrameView
         }
 
         // ⑤ 基类 FramelessView::NonClientHitTest 的等价物。
-        //    containerPoint 就是客户区坐标（容器的坐标原点与客户区一致），所以这里可以直接用它判高度。
-        if (containerPoint.Y < TitlebarHeight(hwnd))
+        //    clientPoint 就是客户区坐标（客户区原点即 WPF 根的坐标原点），所以这里可以直接用它判高度。
+        Point clientPoint = ToClientPoint(hwnd, windowPointDip);
+        if (clientPoint.Y < CaptionStripHeight(hwnd))
         {
-            // 标题栏条带：这点上有"标了逃生出口"的 WPF 元素就交回 WPF（HTCLIENT），
+            // caption 条带：这点上有"标了逃生出口"的 WPF 元素就交回 WPF（HTCLIENT），
             // 否则当拖动区（HTCAPTION）—— 对应参考里 NonClientHitTest 开头那一步
             // window_->NonClientHitTest(point)：先问内容区，内容说是它的就返回 HTCLIENT。
             // 不这么做的话，放进标题栏的控件会"点不动"，一点就变成拖窗口。
-            return _window.IsInteractiveCaptionElementAt(containerPoint)
+            return _window.IsInteractiveCaptionElementAt(clientPoint)
                 ? NativeMethods.HTCLIENT
                 : NativeMethods.HTCAPTION;
         }
@@ -363,18 +346,14 @@ internal sealed class WinFrameView
         return true;
     }
 
-    /// <summary>窗口坐标 → 容器坐标：减掉客户区相对窗口矩形的那圈内缩（顶部内缩为 0）。</summary>
-    public Point ToContainerPoint(IntPtr hwnd, Point windowPointDip)
+    /// <summary>窗口坐标 → 客户区坐标：减掉客户区相对窗口矩形的那圈内缩（顶部内缩为 0）。</summary>
+    public Point ToClientPoint(IntPtr hwnd, Point windowPointDip)
     {
         Thickness insets = GetClientAreaInsetsPx(hwnd);
         return new Point(
             windowPointDip.X - (insets.Left / DpiScale),
             windowPointDip.Y - (insets.Top / DpiScale));
     }
-
-    /// <summary>点落在哪个按钮上（驱动悬停视觉）。传窗口坐标（DIP）。</summary>
-    public CaptionButton HitTestCaptionButton(IntPtr hwnd, Point windowPointDip)
-        => _container.HitTestButton(ToContainerPoint(hwnd, windowPointDip));
 
     #endregion
 

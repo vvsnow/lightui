@@ -31,6 +31,10 @@
         <ResourceDictionary Source="/LightUi;component/controls/ToggleSwitch/ToggleSwitch.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/ProgressBar/ProgressBar.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/FontIcon/FontIcon.xaml" />
+
+        <!--  无边框（FramelessHelper）那套样式：自带按钮样式，不依赖上面任何一份字典  -->
+        <ResourceDictionary Source="/LightUi;component/styles/Button.Frameless.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/Window.Frameless.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
