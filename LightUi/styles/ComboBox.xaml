@@ -95,7 +95,7 @@
                             Margin="0,0,10,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
-                            Data="M0,3 L5,7 L10,3"
+                            Data="{DynamicResource ChevronDownGeometry}"
                             IsHitTestVisible="False"
                             Stretch="Uniform"
                             Stroke="{TemplateBinding Foreground}"

@@ -1,4 +1,7 @@
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!--  模板只支持 ExpandDirection=Down：其它方向会渲染异常（模板是 2 行 Grid）  -->
     <sys:Double x:Key="ExpanderHeaderHeight">50</sys:Double>
@@ -89,7 +92,7 @@
                                                     Margin="8,0,8,0"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Center"
-                                                    Data="M0,3 L5,7 L10,3"
+                                                    Data="{DynamicResource ChevronDownGeometry}"
                                                     RenderTransformOrigin="0.5,0.5"
                                                     Stretch="Uniform"
                                                     Stroke="{TemplateBinding Foreground}"

@@ -41,7 +41,7 @@
                                 Margin="8,0,10,0"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Data="M0,3 L5,7 L10,3"
+                                Data="{DynamicResource ChevronDownGeometry}"
                                 Stretch="Uniform"
                                 Stroke="{TemplateBinding Foreground}"
                                 StrokeEndLineCap="Round"

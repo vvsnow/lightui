@@ -24,23 +24,20 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <DockPanel LastChildFill="True">
 
-            <ContentControl x:Name="ThemeViewModel" DockPanel.Dock="Bottom" />
 
-            <ListBox
-                Margin="6"
-                Padding="0"
-                Background="Transparent"
-                BorderThickness="0"
-                DisplayMemberPath="Title"
-                DockPanel.Dock="Top"
-                ItemsSource="{Binding NavItems, Mode=OneWay}"
-                SelectedValue="{Binding ActiveItem}"
-                SelectedValuePath="ViewModel"
-                WindowChrome.IsHitTestVisibleInChrome="True" />
+        <ListBox
+            Margin="6"
+            Padding="0"
+            Background="Transparent"
+            BorderThickness="0"
+            DisplayMemberPath="Title"
+            DockPanel.Dock="Top"
+            ItemsSource="{Binding NavItems, Mode=OneWay}"
+            SelectedValue="{Binding ActiveItem}"
+            SelectedValuePath="ViewModel"
+            WindowChrome.IsHitTestVisibleInChrome="True" />
 
-        </DockPanel>
 
         <Grid Grid.Column="1">
 
@@ -51,24 +48,12 @@
 
             <ui:SimpleStackPanel
                 Height="{Binding Path=(ui:FramelessHelper.CaptionHeight), Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"
-                HorizontalAlignment="Left"
+                Margin="0,0,138,0"
+                HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
-                Spacing="10"
                 WindowChrome.IsHitTestVisibleInChrome="True">
-                <TextBox
-                    MinWidth="120"
-                    VerticalAlignment="Center"
-                    ui:TextBoxHelper.Placeholder="请输入内容" />
-                <PasswordBox
-                    MinWidth="120"
-                    VerticalAlignment="Center"
-                    ui:TextBoxHelper.Placeholder="请输入密码" />
-                <Button
-                    x:Name="ShowFramelessWindow"
-                    VerticalAlignment="Center"
-                    Content="点击弹窗口" />
-                <Button Content="X" Style="{DynamicResource FramelessSystemButtonStyle}" />
+                <Button Style="{StaticResource ThemeButtonStyle}" x:Name="ToggleTheme"/>
             </ui:SimpleStackPanel>
 
             <ContentControl x:Name="ActiveItem" Grid.Row="1" />

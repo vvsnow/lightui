@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 
 using LightUi.Demo.Models;
-using LightUi.Demo.ViewModels.Sections;
+using LightUi.Demo.ViewModels.Pages;
 
 namespace LightUi.Demo.ViewModels;
 
@@ -9,7 +9,6 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 {
     private readonly IWindowManager windowManager;
 
-    public ThemeViewModel ThemeViewModel { get; }
     public List<NavItem> NavItems { get; } = [];
 
     public ShellViewModel(
@@ -19,7 +18,7 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         CommonControlsViewModel commonControlsViewModel,
         ExtendedControlsViewModel extendedControlViewModel,
         FlyoutViewModel flyoutViewModel,
-        ThemeViewModel themeViewModel)
+        FramelessHelperViewModel framelessHelperViewModel)
     {
         this.windowManager = windowManager;
 
@@ -27,17 +26,19 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         NavItems.Add(new NavItem("Buttons", buttonsViewModel));
         NavItems.Add(new NavItem("Common Controls", commonControlsViewModel));
         NavItems.Add(new NavItem("Extended Control", extendedControlViewModel));
-        NavItems.Add(new NavItem("Flyout 控件", flyoutViewModel));
+        NavItems.Add(new NavItem("Flyout Control", flyoutViewModel));
+        NavItems.Add(new NavItem("Frameless Helper", framelessHelperViewModel));
 
-        ThemeViewModel = themeViewModel;
     }
 
-    /// <summary>弹一个 XAML 声明的无边框子窗口：它没写 Style，样式由 FramelessHelper 挂载时补上。</summary>
-    public void ShowFramelessWindow()
+    public void ToggleTheme()
     {
-        // 每次弹新的：复用已关闭的 Screen 会带着旧的生命周期状态
-        _ = windowManager.ShowWindowAsync(new FramelessWindowViewModel());
+        ThemeManager.ApplyTheme(
+            ThemeManager.Current.CurrentTheme == ApplicationTheme.Dark
+                ? ApplicationTheme.Light
+                : ApplicationTheme.Dark);
     }
+
 
     protected override void OnViewLoaded(object view)
     {

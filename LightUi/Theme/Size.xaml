@@ -56,4 +56,10 @@
     <!--  所有 IsEnabled=False 触发器共用这一个值，避免各 Style 散写  -->
     <sys:Double x:Key="DisabledOpacity">0.5</sys:Double>
 
+
+    <!--  ─────────  形状  ─────────  -->
+
+    <!--  V 形箭头（ChevronDown）几何：DropDownButton / ComboBox / Expander 三处共用  -->
+    <StreamGeometry x:Key="ChevronDownGeometry">M0,3 L5,7 L10,3</StreamGeometry>
+
 </ResourceDictionary>

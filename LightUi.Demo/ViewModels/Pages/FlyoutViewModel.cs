@@ -2,7 +2,7 @@ using Caliburn.Micro;
 
 using System.Diagnostics;
 
-namespace LightUi.Demo.ViewModels;
+namespace LightUi.Demo.ViewModels.Pages;
 
 internal class FlyoutViewModel : Screen
 {

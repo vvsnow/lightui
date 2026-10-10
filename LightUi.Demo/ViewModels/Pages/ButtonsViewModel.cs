@@ -1,6 +1,6 @@
 using Caliburn.Micro;
 
-namespace LightUi.Demo.ViewModels;
+namespace LightUi.Demo.ViewModels.Pages;
 
 internal class ButtonsViewModel : Screen
 {

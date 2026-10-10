@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 
 using LightUi.Demo.ViewModels;
-using LightUi.Demo.ViewModels.Sections;
+using LightUi.Demo.ViewModels.Pages;
 
 using System.Windows;
 
@@ -27,8 +27,7 @@ internal class Bootstrapper : BootstrapperBase
         container.PerRequest<CommonControlsViewModel>();
         container.PerRequest<ExtendedControlsViewModel>();
         container.PerRequest<FlyoutViewModel>();
-
-        container.PerRequest<ThemeViewModel>();
+        container.PerRequest<FramelessHelperViewModel>();
     }
 
     protected override void BuildUp(object instance)

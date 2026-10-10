@@ -9,12 +9,25 @@ namespace LightUi;
 /// ThemeManager.ApplyAccentColor(Colors.Orange);   // 可选：自定义强调色
 /// ThemeManager.CurrentThemeChanged += (_, t) =&gt; { };
 /// </code>
+/// 静态 API 都没变；另外 <see cref="CurrentTheme"/> 是只读 DP，XAML 里可以直接绑：
+/// <code>
+/// &lt;DataTrigger Binding="{Binding Source={x:Static ui:ThemeManager.Current}, Path=CurrentTheme}" Value="Dark"&gt;
+/// </code>
 /// 必须写顶层键：Light / Dark 挂在三层字典深处（Application.Resources → ControlsResources.xaml →
 /// Theme/ThemeResources.xaml），而 WPF 只在资源链顶层变更时才让全树 DynamicResource 失效重求值 ——
 /// 改嵌套层会值变了而界面不重绘。不监听 UISettings、不探测 HighContrast。
 /// </summary>
-public static class ThemeManager
+public class ThemeManager : DependencyObject
 {
+    /// <summary>
+    /// 唯一实例。要绑定的状态（<see cref="CurrentTheme"/>）是 DP，而 DP 的值存在实例上，所以得有这么一个实例。
+    /// </summary>
+    public static ThemeManager Current { get; } = new ThemeManager();
+
+    private ThemeManager()
+    {
+    }
+
     private static readonly Dictionary<ApplicationTheme, Uri> _themeSources = new()
     {
         [ApplicationTheme.Light] = new Uri("/LightUi;component/Theme/Light.xaml", UriKind.Relative),
@@ -28,8 +41,23 @@ public static class ThemeManager
     /// <summary>YIQ 分界点：亮于此值配黑字，暗于此值配白字。调高会让更多中亮色落入白字分支。</summary>
     private const double BrightnessCrossover = 180;
 
-    /// <summary>当前实际生效的主题。</summary>
-    public static ApplicationTheme CurrentTheme { get; private set; } = ApplicationTheme.Light;
+    private static readonly DependencyPropertyKey CurrentThemeKey =
+        DependencyProperty.RegisterReadOnly(
+            nameof(CurrentTheme),
+            typeof(ApplicationTheme),
+            typeof(ThemeManager),
+            new PropertyMetadata(ApplicationTheme.Light));
+
+    /// <summary>
+    /// 当前实际生效的主题。**只读 DP**：给绑定 / 触发器消费（切主题时自动通知），
+    /// 要改只能走 <see cref="ApplyTheme"/>。
+    /// XAML 用法：<c>Binding="{Binding Source={x:Static ui:ThemeManager.Current}, Path=CurrentTheme}"</c>。
+    /// </summary>
+    public static readonly DependencyProperty CurrentThemeProperty = CurrentThemeKey.DependencyProperty;
+
+    public ApplicationTheme CurrentTheme => (ApplicationTheme)GetValue(CurrentThemeProperty);
+
+    private void SetCurrentTheme(ApplicationTheme theme) => SetValue(CurrentThemeKey, theme);
 
     /// <summary>主题切换完成时触发。</summary>
     public static event EventHandler<ApplicationTheme>? CurrentThemeChanged;
@@ -63,7 +91,7 @@ public static class ThemeManager
             WriteAccent(target, custom);
         }
 
-        CurrentTheme = theme;
+        Current.SetCurrentTheme(theme);
         CurrentThemeChanged?.Invoke(null, theme);
     }
 
@@ -81,7 +109,7 @@ public static class ThemeManager
 
         // 要的就是当前主题自带的色 → 等价于"重置"：主题那套 hover / pressed / 前景色是手写值，
         // 公式推导不出一样的结果，不做这个判断的话"再应用一次"会变成可见改动。
-        if (TryGetThemeAccent(CurrentTheme, out var themeAccent) && themeAccent == accent)
+        if (TryGetThemeAccent(Current.CurrentTheme, out var themeAccent) && themeAccent == accent)
         {
             ResetAccentColor();
             return;
@@ -117,7 +145,7 @@ public static class ThemeManager
         _customAccent = null;
 
         var target = Application.Current?.Resources;
-        if (target is null || !_themeSources.TryGetValue(CurrentTheme, out var source))
+        if (target is null || !_themeSources.TryGetValue(Current.CurrentTheme, out var source))
             return;
 
         var palette = new ResourceDictionary { Source = source };
