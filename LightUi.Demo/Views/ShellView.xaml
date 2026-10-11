@@ -53,7 +53,7 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 WindowChrome.IsHitTestVisibleInChrome="True">
-                <Button Style="{StaticResource ThemeButtonStyle}" x:Name="ToggleTheme"/>
+                <Button x:Name="ToggleTheme" Style="{StaticResource ThemeButtonStyle}" />
             </ui:SimpleStackPanel>
 
             <ContentControl x:Name="ActiveItem" Grid.Row="1" />

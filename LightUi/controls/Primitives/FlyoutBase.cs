@@ -1,3 +1,5 @@
+using System.Windows.Data;
+
 namespace LightUi.Controls.Primitives;
 
 /// <summary>
@@ -7,7 +9,8 @@ namespace LightUi.Controls.Primitives;
 /// 两种承载策略：Flyout 的 presenter 作 <see cref="Popup.Child"/>，由外层 Popup 管显示与 LightDismiss；
 /// MenuFlyout 的 presenter 自己是 ContextMenu（自带 Popup、不能有父级），所以绕开外层 Popup 直接操作它。
 /// </summary>
-public abstract class FlyoutBase : DependencyObject
+// 继承 FrameworkElement（而非 DependencyObject）：让只认 FE 的机制（如 Caliburn 的 cal:Message.Attach）能作用到 Flyout 上
+public abstract class FlyoutBase : FrameworkElement
 {
     public static readonly DependencyProperty PlacementProperty =
         DependencyProperty.Register(
@@ -114,6 +117,16 @@ public abstract class FlyoutBase : DependencyObject
     /// <summary>在指定 anchor 控件旁弹出 Flyout。</summary>
     public void ShowAt(FrameworkElement anchor)
     {
+        // Flyout 只是附加属性的值、不在元素树上，DataContext 继承不过来 —— 从 anchor 接一个绑定过来。
+        // 不接的话 IsOpen 上的绑定会静默失效：Flyout 自己是 FE（= governing element），引擎读它自己的 DataContext，而那是 null。
+        // 只在没设过的时候接 —— 免得每次 ShowAt 都覆盖掉用户自己写的 DataContext。
+        if (ReadLocalValue(FrameworkElement.DataContextProperty) == DependencyProperty.UnsetValue)
+        {
+            SetBinding(
+                FrameworkElement.DataContextProperty,
+                new Binding(nameof(FrameworkElement.DataContext)) { Source = anchor });
+        }
+
         // WPF 的 VerticalOffset / HorizontalOffset 只认屏幕方向（正 = 下 / 右），
         // 所以「沿放置方向的缝」要在这里换算：Top / Left 取负，否则不是留缝而是压住宿主。
         (double offsetV, double offsetH) = GetPopupOffsets();

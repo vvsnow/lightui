@@ -10,8 +10,8 @@
     <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F8F8F8" />
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF" />
     <SolidColorBrush x:Key="ControlSubtleBackgroundBrush" Color="#F2F2F2" />
-    <SolidColorBrush x:Key="ControlHoverBackgroundBrush" Color="#F3F3F3" />
-    <SolidColorBrush x:Key="ControlSelectedBackgroundBrush" Color="#E9E9E9" />
+    <SolidColorBrush x:Key="ControlHoverBackgroundBrush" Color="#EEEEEE" />
+    <SolidColorBrush x:Key="ControlSelectedBackgroundBrush" Color="#E5E5E5" />
 
     <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1F1F1F" />
     <SolidColorBrush x:Key="TextSecondaryBrush" Color="#6B6B6B" />

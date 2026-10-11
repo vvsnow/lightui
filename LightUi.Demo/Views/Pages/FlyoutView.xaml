@@ -121,11 +121,17 @@
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
                         <Button Content="普通按钮 挂 Flyout">
                             <ui:FlyoutService.Flyout>
-                                <ui:Flyout>
+                                <ui:Flyout IsOpen="{Binding IsFlyout, Mode=TwoWay}">
                                     <Border Padding="12">
-                                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                                            <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
-                                            <Button Command="{x:Static ui:FlyoutBase.CloseCommand}" Content="关闭弹出" />
+                                        <ui:SimpleStackPanel Spacing="12">
+                                            <TextBlock Text="{Binding IsFlyout, Mode=OneWay}" />
+                                            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                                                <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
+                                                <Button
+                                                    cal:Message.Attach="CloseFlyout"
+                                                    Command="{x:Static ui:FlyoutBase.CloseCommand}"
+                                                    Content="关闭弹出" />
+                                            </ui:SimpleStackPanel>
                                         </ui:SimpleStackPanel>
                                     </Border>
                                 </ui:Flyout>
