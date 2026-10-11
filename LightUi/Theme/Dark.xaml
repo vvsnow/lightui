@@ -32,4 +32,12 @@
     <SolidColorBrush x:Key="SystemClosePressedBrush" Color="#BF2A1E" />
     <SolidColorBrush x:Key="SystemCloseForegroundBrush" Color="#FFFFFF" />
 
+    <!--  弹层阴影：整个 Effect 放主题里（不放模板），切主题时颜色 / 模糊 / 浓度都能各自调；深色主题用黑，浅灰在深底上会变成发光边  -->
+    <DropShadowEffect
+        x:Key="FlyoutShadowEffect"
+        BlurRadius="8"
+        Color="#000000"
+        Direction="270"
+        Opacity="0.6" />
+
 </ResourceDictionary>

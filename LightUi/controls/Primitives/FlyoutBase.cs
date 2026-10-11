@@ -114,6 +114,14 @@ public abstract class FlyoutBase : FrameworkElement
     /// <summary>弹层与宿主之间沿放置方向的固定缝（DIP）。想调间距就改这一个数。</summary>
     private const double PlacementGap = 2;
 
+    /// <summary>
+    /// presenter 里留给阴影的空间（样式表的 FlyoutShadowRoom，两个 presenter 模板都拿它当 Border 的 Margin）。
+    /// 可见面板在 presenter 里四边各内缩这么多，所以两个轴都要补，见 <see cref="GetPopupOffsets"/>。
+    /// 读资源键而不是 presenter 的 Padding：MenuFlyout 的 Padding 是菜单项自己的内边距，语义不同。
+    /// </summary>
+    private static Thickness ShadowRoom =>
+        Application.Current?.TryFindResource("FlyoutShadowRoom") as Thickness? ?? default;
+
     /// <summary>在指定 anchor 控件旁弹出 Flyout。</summary>
     public void ShowAt(FrameworkElement anchor)
     {
@@ -126,10 +134,6 @@ public abstract class FlyoutBase : FrameworkElement
                 FrameworkElement.DataContextProperty,
                 new Binding(nameof(FrameworkElement.DataContext)) { Source = anchor });
         }
-
-        // WPF 的 VerticalOffset / HorizontalOffset 只认屏幕方向（正 = 下 / 右），
-        // 所以「沿放置方向的缝」要在这里换算：Top / Left 取负，否则不是留缝而是压住宿主。
-        (double offsetV, double offsetH) = GetPopupOffsets();
 
         // 一次性：创建 presenter 与（如果是 Flyout 的）外层 Popup
         if (_presenter is null)
@@ -157,8 +161,8 @@ public abstract class FlyoutBase : FrameworkElement
                     Child = _presenter,
                     PlacementTarget = anchor,
                     Placement = (PlacementMode)MapPlacement(Placement),
-                    VerticalOffset = offsetV,
-                    HorizontalOffset = offsetH,
+                    VerticalOffset = 0,   // 真实偏移在下面每次 ShowAt 时覆盖 —— 那时 presenter 已建好，才读得到阴影预留
+                    HorizontalOffset = 0,
                     StaysOpen = false,
                     AllowsTransparency = true,
                 };
@@ -166,6 +170,11 @@ public abstract class FlyoutBase : FrameworkElement
                 _popup.Closed += OnPopupClosed;
             }
         }
+
+        // WPF 的 VerticalOffset / HorizontalOffset 只认屏幕方向（正 = 下 / 右），
+        // 所以「沿放置方向的缝」要在这里换算：Top / Left 取负，否则不是留缝而是压住宿主。
+        // 放在 presenter 创建之后 —— 阴影预留要从样式资源里读。
+        (double offsetV, double offsetH) = GetPopupOffsets();
 
         // 每次 ShowAt：更新 Placement / Offset 后打开
         if (_presenter is Controls.MenuFlyoutPresenter cm2)
@@ -261,15 +270,33 @@ public abstract class FlyoutBase : FrameworkElement
     protected abstract FrameworkElement CreatePresenter();
 
     /// <summary>
-    /// 合成本次弹出该用的 Popup 偏移 = 沿放置方向的固定缝 + 用户设的屏幕方向偏移。
+    /// 合成本次弹出该用的 Popup 偏移 = 沿放置方向的缝 + 阴影预留补偿 + 用户设的屏幕方向偏移。
+    /// 面板在 presenter 里四边各内缩一个预留量，所以要补两次：沿放置方向补「朝锚点那一侧」（否则缝变宽），
+    /// 垂直于它补「决定对齐的那一侧」（否则错位 —— Bottom / Top 是左对齐，Left / Right 是顶对齐）。
     /// </summary>
-    private (double Vertical, double Horizontal) GetPopupOffsets() => Placement switch
+    private (double Vertical, double Horizontal) GetPopupOffsets()
     {
-        FlyoutPlacementMode.Top => (-PlacementGap + VerticalOffset, HorizontalOffset),
-        FlyoutPlacementMode.Left => (VerticalOffset, -PlacementGap + HorizontalOffset),
-        FlyoutPlacementMode.Right => (VerticalOffset, PlacementGap + HorizontalOffset),
-        _ => (PlacementGap + VerticalOffset, HorizontalOffset),   // Bottom
-    };
+        Thickness room = ShadowRoom;
+
+        // along = 朝锚点那一侧的缩进；cross = 决定另一个轴对齐的那一侧
+        (double along, double cross) = Placement switch
+        {
+            FlyoutPlacementMode.Top => (room.Bottom, room.Left),
+            FlyoutPlacementMode.Left => (room.Right, room.Top),
+            FlyoutPlacementMode.Right => (room.Left, room.Top),
+            _ => (room.Top, room.Left),                      // Bottom
+        };
+
+        double gap = PlacementGap - along;                   // 可以是负数：面板内缩多少，popup 就朝锚点退多少
+
+        return Placement switch
+        {
+            FlyoutPlacementMode.Top => (-gap + VerticalOffset, -cross + HorizontalOffset),
+            FlyoutPlacementMode.Left => (-cross + VerticalOffset, -gap + HorizontalOffset),
+            FlyoutPlacementMode.Right => (-cross + VerticalOffset, gap + HorizontalOffset),
+            _ => (gap + VerticalOffset, -cross + HorizontalOffset),   // Bottom
+        };
+    }
 
     private static PlacementMode MapPlacement(FlyoutPlacementMode m) => m switch
     {

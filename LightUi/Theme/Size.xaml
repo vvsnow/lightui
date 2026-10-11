@@ -22,6 +22,9 @@
     <Thickness x:Key="ControlBorderThickness">1</Thickness>
     <Thickness x:Key="ControlPaddingHorizontal">12,0</Thickness>
 
+    <!--  弹层阴影预留：两个 presenter 模板拿它当 Border 的 Margin，FlyoutBase 按同一个数反向补偿定位 —— 改这一个数，两边一起变  -->
+    <Thickness x:Key="FlyoutShadowRoom">12</Thickness>
+
     <!--  滚动条厚度：垂直条的 Width/MinWidth 与水平条的 Height/MinHeight 共用这一个值  -->
     <sys:Double x:Key="ScrollBarThickness">12</sys:Double>
 

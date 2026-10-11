@@ -99,7 +99,10 @@
                     <ui:DropDownButton Content="点击我弹 Flyout">
                         <ui:DropDownButton.Flyout>
                             <ui:Flyout>
-                                <ui:SimpleStackPanel Width="260" Spacing="8">
+                                <ui:SimpleStackPanel
+                                    Width="260"
+                                    Margin="10"
+                                    Spacing="8">
                                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Flyout 内容" />
                                     <TextBlock
                                         Foreground="{DynamicResource TextSecondaryBrush}"
@@ -162,28 +165,28 @@
                         <Button Content="向上弹">
                             <ui:FlyoutService.Flyout>
                                 <ui:Flyout Placement="Top">
-                                    <TextBlock Text="Placement = Top" />
+                                    <TextBlock Margin="10" Text="Placement = Top" />
                                 </ui:Flyout>
                             </ui:FlyoutService.Flyout>
                         </Button>
                         <Button Content="向下弹">
                             <ui:FlyoutService.Flyout>
                                 <ui:Flyout Placement="Bottom">
-                                    <TextBlock Text="Placement = Bottom" />
+                                    <TextBlock Margin="10" Text="Placement = Bottom" />
                                 </ui:Flyout>
                             </ui:FlyoutService.Flyout>
                         </Button>
                         <Button Content="向左弹">
                             <ui:FlyoutService.Flyout>
                                 <ui:Flyout Placement="Left">
-                                    <TextBlock Text="Placement = Left" />
+                                    <TextBlock Margin="10" Text="Placement = Left" />
                                 </ui:Flyout>
                             </ui:FlyoutService.Flyout>
                         </Button>
                         <Button Content="向右弹">
                             <ui:FlyoutService.Flyout>
                                 <ui:Flyout Placement="Right">
-                                    <TextBlock Text="Placement = Right" />
+                                    <TextBlock Margin="10" Text="Placement = Right" />
                                 </ui:Flyout>
                             </ui:FlyoutService.Flyout>
                         </Button>

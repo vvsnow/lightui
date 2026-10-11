@@ -7,17 +7,21 @@
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
-        <Setter Property="Padding" Value="4" />
+        <!--  Padding 在这里专指「给阴影留的空间」：模板把它当 Border 的 Margin 用  -->
+        <Setter Property="Padding" Value="{DynamicResource FlyoutShadowRoom}" />
         <Setter Property="MinWidth" Value="160" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:MenuFlyoutPresenter}">
+                    <!--  内边距 4 是菜单自己的默认（不让使用者加）；Padding 属性已被"阴影预留"占用，所以这里写字面量  -->
                     <Border
-                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Padding}"
+                        Padding="4"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{DynamicResource OverlayCornerRadius}">
+                        CornerRadius="{DynamicResource OverlayCornerRadius}"
+                        Effect="{DynamicResource FlyoutShadowEffect}">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </ControlTemplate>

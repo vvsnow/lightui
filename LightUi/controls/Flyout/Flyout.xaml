@@ -4,19 +4,20 @@
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
-        <Setter Property="Padding" Value="12" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
+        <!--  Padding 在这里专指「给阴影留的空间」：模板把它当 Border 的 Margin 用；内容的内边距由使用者自己设  -->
+        <Setter Property="Padding" Value="{DynamicResource FlyoutShadowRoom}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ContentControl">
                     <Border
-                        Padding="{TemplateBinding Padding}"
+                        Margin="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource OverlayCornerRadius}"
-                        Effect="{x:Null}"
+                        Effect="{DynamicResource FlyoutShadowEffect}"
                         SnapsToDevicePixels="True">
                         <ContentPresenter />
                     </Border>
