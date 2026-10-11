@@ -36,8 +36,8 @@
     <DropShadowEffect
         x:Key="FlyoutShadowEffect"
         BlurRadius="8"
-        Color="#000000"
         Direction="270"
-        Opacity="0.6" />
+        Opacity="0.6"
+        Color="#131313" />
 
 </ResourceDictionary>

@@ -127,7 +127,7 @@
                                 <ui:Flyout IsOpen="{Binding IsFlyout, Mode=TwoWay}">
                                     <Border Padding="12">
                                         <ui:SimpleStackPanel Spacing="12">
-                                            <TextBlock Text="{Binding IsFlyout, Mode=OneWay}" />
+                                            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="{Binding Status}" />
                                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                                                 <Button Content="主题按钮" Style="{StaticResource AccentButtonStyle}" />
                                                 <Button

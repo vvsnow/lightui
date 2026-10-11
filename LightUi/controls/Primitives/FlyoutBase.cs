@@ -166,7 +166,6 @@ public abstract class FlyoutBase : FrameworkElement
                     StaysOpen = false,
                     AllowsTransparency = true,
                 };
-                _popup.AddHandler(Popup.MouseLeaveEvent, new MouseEventHandler(OnPopupMouseLeave));
                 _popup.Closed += OnPopupClosed;
             }
         }
@@ -240,8 +239,6 @@ public abstract class FlyoutBase : FrameworkElement
     }
 
     public void Hide() => IsOpen = false;
-
-    private void OnPopupMouseLeave(object sender, MouseEventArgs e) { /* 预留 API 兼容扩展点 */ }
 
     /// <summary>Popup 因 StaysOpen=false 被点外部关掉时把 IsOpen 同步回 false，
     /// 否则它会一直停在 true，依赖它的地方（如 DropDownButton 的弹层状态）会失真。</summary>

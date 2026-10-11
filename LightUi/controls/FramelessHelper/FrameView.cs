@@ -192,10 +192,16 @@ internal sealed class FrameView
         // ③ 系统按钮区上不显示缩放光标：Win8 之后系统按钮几乎顶在右上角，
         //    不排除的话悬停在按钮上会变成缩放光标。
         //    顶部再内缩 1px（物理像素），因为按钮正上方有一条 1px 的缝会让缩放边框"露出来"。
+        //
+        // ★ 踩过的坑：这里必须回 HTCAPTION，不能像原来那样交回系统。
+        //   系统按「三颗键」预留按钮区，比我们实际画的宽（CanMinimize 只画两颗、NoResize 只画一颗），
+        //   多出来那格交回系统会拿到 HTCLIENT —— 表现就是「收起的那颗键左边一格拖不动窗口」（实测死带宽度正好一个按钮）。
+        //   HTCAPTION 同样是箭头，本步骤「别在系统按钮上露缩放光标」的目的照样满足。
         if (TryGetSystemCaptionButtonBoundsDip(hwnd, out Rect systemButtons)
             && systemButtons.Contains(windowPointDip))
         {
-            return NativeMethods.HTNotHandled;
+            // return NativeMethods.HTNotHandled;
+            return NativeMethods.HTCAPTION;
         }
 
         // ④ 顶部那条内部缩放带。左右下已经在 ② 交出去了，**只有顶部需要我们自己判** ——

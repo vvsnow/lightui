@@ -24,8 +24,6 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-
-
         <ListBox
             Margin="6"
             Padding="0"
@@ -37,7 +35,6 @@
             SelectedValue="{Binding ActiveItem}"
             SelectedValuePath="ViewModel"
             WindowChrome.IsHitTestVisibleInChrome="True" />
-
 
         <Grid Grid.Column="1">
 
