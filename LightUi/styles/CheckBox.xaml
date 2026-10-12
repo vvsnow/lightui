@@ -5,6 +5,7 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
@@ -17,7 +18,8 @@
                             Background="{DynamicResource ControlBackgroundBrush}"
                             BorderBrush="{DynamicResource BorderBrush}"
                             BorderThickness="{DynamicResource ControlBorderThickness}"
-                            CornerRadius="{DynamicResource ControlCornerRadius}">
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            SnapsToDevicePixels="True">
                             <Path
                                 x:Name="Check"
                                 Width="11"
@@ -56,10 +58,11 @@
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
-                    <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal" SnapsToDevicePixels="True">
                         <Grid
                             Width="16"
                             Height="16"

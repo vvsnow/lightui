@@ -10,6 +10,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <Setter Property="Padding" Value="8,4" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FontSize" Value="{DynamicResource TextSecondaryFontSize}" />
         <Setter Property="Template">
             <Setter.Value>

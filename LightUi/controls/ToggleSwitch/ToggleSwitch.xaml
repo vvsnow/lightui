@@ -10,10 +10,14 @@
         <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ToggleSwitch}">
-                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                    <StackPanel
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        SnapsToDevicePixels="True">
 
                         <Border
                             x:Name="Track"

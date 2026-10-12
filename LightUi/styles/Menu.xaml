@@ -5,6 +5,7 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
     </Style>
 
     <!--  OverridesDefaultStyle=True：绕过 WPF 主题里那个会失败绑定的 HorizontalContentAlignment Setter  -->
@@ -19,10 +20,11 @@
         <Setter Property="Height" Value="{DynamicResource MenuItemHeight}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuItem">
-                    <Grid>
+                    <Grid SnapsToDevicePixels="True">
                         <Border
                             x:Name="Bd"
                             Padding="{TemplateBinding Padding}"

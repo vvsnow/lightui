@@ -9,6 +9,7 @@
         · 必须带程序集名（/LightUi;component/…）：外部程序集消费样式时，"/Assets/…" 会按宿主的根解析、找不到文件
     -->
     <Style TargetType="{x:Type local:FontIcon}">
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FontFamily" Value="pack://application:,,,/LightUi;component/Assets/Fonts/SegoeIcons.TTF#Segoe Fluent Icons" />
         <Setter Property="FontSize" Value="{DynamicResource ControlGlyphFontSize}" />
         <!--  不设 Foreground：前景色跟随父级；写了具体 brush 就成了 local value，会盖掉继承（TabItem 选中态传不下来）  -->

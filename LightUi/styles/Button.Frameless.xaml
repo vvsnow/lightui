@@ -27,6 +27,7 @@
         <Setter Property="Cursor" Value="Arrow" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Focusable" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <!--  命中由 FramelessHelper 判（返回 HT* 码）；留着 True 会让「逃生出口」那一判在按钮上多嘴  -->
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="False" />
         <Setter Property="Template">

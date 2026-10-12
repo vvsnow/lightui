@@ -19,6 +19,7 @@
         <Setter Property="Maximum" Value="100" />
         <Setter Property="MinHeight" Value="6" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="VerticalAlignment" Value="Center" />
 
         <Setter Property="Template">
@@ -31,7 +32,8 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}">
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            SnapsToDevicePixels="True">
 
                             <!--  裁剪宿主：Clip 由代码按实际尺寸 + 圆角写入，挡住滑出轨道的部分  -->
                             <Grid x:Name="TrackClip">

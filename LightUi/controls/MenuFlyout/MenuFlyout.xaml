@@ -6,6 +6,7 @@
     <Style x:Key="DefaultMenuFlyoutPresenterStyle" TargetType="{x:Type local:MenuFlyoutPresenter}">
         <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="BorderThickness" Value="{DynamicResource ControlBorderThickness}" />
         <!--  Padding 在这里专指「给阴影留的空间」：模板把它当 Border 的 Margin 用  -->
         <Setter Property="Padding" Value="{DynamicResource FlyoutShadowRoom}" />
@@ -21,7 +22,8 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource OverlayCornerRadius}"
-                        Effect="{DynamicResource FlyoutShadowEffect}">
+                        Effect="{DynamicResource FlyoutShadowEffect}"
+                        SnapsToDevicePixels="True">
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" />
                     </Border>
                 </ControlTemplate>

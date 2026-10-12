@@ -35,6 +35,7 @@
                                     DockPanel.Dock="Top">
                                     <TabPanel
                                         x:Name="HeaderPanel"
+                                        VerticalAlignment="Center"
                                         Background="Transparent"
                                         IsItemsHost="True" />
                                 </Border>
