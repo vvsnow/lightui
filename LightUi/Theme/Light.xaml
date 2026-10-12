@@ -9,7 +9,7 @@
 
     <SolidColorBrush x:Key="PageBackgroundBrush" Color="#F8F8F8" />
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="ControlSubtleBackgroundBrush" Color="#F2F2F2" />
+    <SolidColorBrush x:Key="ControlSubtleBackgroundBrush" Color="#F5F5F5" />
     <SolidColorBrush x:Key="ControlHoverBackgroundBrush" Color="#EEEEEE" />
     <SolidColorBrush x:Key="ControlSelectedBackgroundBrush" Color="#E5E5E5" />
 
