@@ -201,7 +201,12 @@ internal sealed class FrameView
             && systemButtons.Contains(windowPointDip))
         {
             // return NativeMethods.HTNotHandled;
-            return NativeMethods.HTCAPTION;
+            // ★ 预留区比我们画的宽出来的那一条，同样要先问逃生出口：
+            //   用户放进标题栏的控件（如主题按钮）贴着系统按钮放时正好压在这条上，
+            //   一律回 HTCAPTION 会把它变成非客户区 —— 表现是"贴近系统按钮那一小条移上去没反应"。
+            return _window.IsInteractiveCaptionElementAt(ToClientPoint(hwnd, windowPointDip))
+                ? NativeMethods.HTCLIENT
+                : NativeMethods.HTCAPTION;
         }
 
         // ④ 顶部那条内部缩放带。左右下已经在 ② 交出去了，**只有顶部需要我们自己判** ——
@@ -215,7 +220,11 @@ internal sealed class FrameView
             CanResize);
         if (component != NativeMethods.HTNotHandled)
         {
-            return component;
+            // 逃生出口同样优先：控件顶到标题栏最上面这 5 DIP 时，别把它的鼠标消息当成缩放边吃掉
+            // —— 否则那条控件"移上去变缩放光标、按下去变成拉窗口"。
+            return _window.IsInteractiveCaptionElementAt(ToClientPoint(hwnd, windowPointDip))
+                ? NativeMethods.HTCLIENT
+                : component;
         }
 
         // ⑤ caption 条带。

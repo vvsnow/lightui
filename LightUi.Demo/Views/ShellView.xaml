@@ -43,7 +43,7 @@
             </Grid.RowDefinitions>
 
             <ui:SimpleStackPanel
-                Margin="0,0,147,0"
+                Margin="0,0,138,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
