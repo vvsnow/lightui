@@ -26,9 +26,7 @@
 
         <ListBox
             Margin="6"
-            Padding="0"
             Background="Transparent"
-            BorderThickness="0"
             DisplayMemberPath="Title"
             DockPanel.Dock="Top"
             ItemsSource="{Binding NavItems, Mode=OneWay}"

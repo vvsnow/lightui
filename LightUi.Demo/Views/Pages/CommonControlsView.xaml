@@ -86,32 +86,30 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ListBox（水果列表）" />
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <ListBox
-                            MaxHeight="140"
-                            BorderThickness="1"
-                            ItemsSource="{Binding FruitItems}"
-                            SelectedItem="{Binding SelectedFruit}" />
+                    <ui:SimpleStackPanel Spacing="10">
 
                         <ui:SimpleStackPanel
-                            Grid.Column="1"
-                            Margin="12,0,0,0"
+                            Grid.Column="0"
+                            Orientation="Horizontal"
                             Spacing="4">
                             <TextBlock
+                                VerticalAlignment="Center"
                                 FontSize="12"
                                 Foreground="{DynamicResource TextSecondaryBrush}"
                                 Text="当前选中" />
                             <TextBlock
+                                VerticalAlignment="Center"
                                 FontSize="16"
-                                FontWeight="SemiBold"
-                                Text="{Binding SelectedFruit}" />
+                                Text="{Binding SelectedFruit, Mode=OneWay}" />
                         </ui:SimpleStackPanel>
-                    </Grid>
+
+                        <ListBox
+                            Grid.Column="1"
+                            MinHeight="40"
+                            MaxHeight="140"
+                            ItemsSource="{Binding FruitItems}"
+                            SelectedItem="{Binding SelectedFruit}" />
+                    </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
 
@@ -167,26 +165,35 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="TabControl" />
-                    <TabControl Padding="6" BorderThickness="0">
+                    <TabControl BorderThickness="0">
                         <TabItem>
                             <TabItem.Header>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                                    <ui:FontIcon Glyph="&#xE700;" />
+                                    <ui:FontIcon
+                                        VerticalAlignment="Center"
+                                        Foreground="DarkOrange"
+                                        Glyph="&#xE700;" />
                                     <TextBlock VerticalAlignment="Center" Text="选项 A" />
                                 </ui:SimpleStackPanel>
                             </TabItem.Header>
-                            <Border>
+                            <Border Margin="0,8">
                                 <TextBlock Text="这是选项 A 的内容。点其它 tab 切到这里。" />
                             </Border>
                         </TabItem>
                         <TabItem Header="选项 B" IsSelected="True">
-                            <TextBlock Text="这是选项 B 的内容。IsSelected=True 初始化时就是选中态 —— 只有选中那个有选中外观。" />
+                            <Border Margin="0,8">
+                                <TextBlock Text="这是选项 B 的内容。IsSelected=True 初始化时就是选中态 —— 只有选中那个有选中外观。" />
+                            </Border>
                         </TabItem>
                         <TabItem Header="选项 C">
-                            <TextBlock Text="这是选项 C 的内容。" />
+                            <Border Margin="0,8">
+                                <TextBlock Text="这是选项 C 的内容。" />
+                            </Border>
                         </TabItem>
                         <TabItem Header="Disabled" IsEnabled="False">
-                            <TextBlock Text="不可用" />
+                            <Border Margin="0,8">
+                                <TextBlock Text="不可用" />
+                            </Border>
                         </TabItem>
                     </TabControl>
                 </ui:SimpleStackPanel>

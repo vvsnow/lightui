@@ -10,11 +10,13 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Padding" Value="0" />
 
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabControl">
                     <Border
+                        Margin="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -43,9 +45,7 @@
                             </StackPanel>
 
                             <!--  内容区：WPF 必需 PART_SelectedContentHost + ContentSource="SelectedContent"  -->
-                            <Border Margin="1.5,10,1.5,1.5">
-                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
-                            </Border>
+                            <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" />
                         </DockPanel>
                     </Border>
                 </ControlTemplate>
