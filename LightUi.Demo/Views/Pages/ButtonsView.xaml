@@ -9,7 +9,7 @@
     xmlns:ui="http://schemas.lightui.com/2019"
     xmlns:vm="clr-namespace:LightUi.Demo.ViewModels.Pages"
     d:DataContext="{d:DesignInstance Type=vm:ButtonsViewModel}"
-    d:DesignHeight="900"
+    d:DesignHeight="1200"
     d:DesignWidth="600"
     mc:Ignorable="d">
 
@@ -17,17 +17,13 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock
-                FontSize="22"
-                FontWeight="SemiBold"
-                Foreground="{DynamicResource TextPrimaryBrush}"
-                Text="按钮类控件" />
-            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="Button / RepeatButton / ToggleButton / HyperlinkButton" />
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Buttons" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Button / RepeatButton / ToggleButton / ui:HyperlinkButton" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="Button" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <Button Content="普通按钮" />
                         <Button Content="Primary" Style="{StaticResource AccentButtonStyle}" />
                         <Button Content="Disabled" IsEnabled="False" />
@@ -44,7 +40,7 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="RepeatButton（按住连续）" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <RepeatButton
                             cal:Message.Attach="Increase"
                             Delay="200"
@@ -68,7 +64,7 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToggleButton" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <ToggleButton Content="未选中" />
                         <ToggleButton Content="已选中" IsChecked="True" />
                         <ToggleButton Content="Disabled" IsEnabled="False" />

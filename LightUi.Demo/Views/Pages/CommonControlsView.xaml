@@ -8,7 +8,7 @@
     xmlns:ui="http://schemas.lightui.com/2019"
     xmlns:vm="clr-namespace:LightUi.Demo.ViewModels.Pages"
     d:DataContext="{d:DesignInstance Type=vm:CommonControlsViewModel}"
-    d:DesignHeight="1500"
+    d:DesignHeight="1200"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
@@ -16,17 +16,13 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock
-                FontSize="22"
-                FontWeight="SemiBold"
-                Foreground="{DynamicResource TextPrimaryBrush}"
-                Text="内置 WPF 控件" />
-            <TextBlock Text="被 LightUi styles/ 重新样式化过的常见控件" />
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Common Controls" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander — WPF controls restyled by LightUi" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="CheckBox" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <CheckBox Content="未选中" />
                         <CheckBox Content="已选中" IsChecked="True" />
                         <CheckBox Content="Disabled" IsEnabled="False" />
@@ -37,7 +33,7 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="RadioButton（一组）" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <RadioButton Content="选项 A" GroupName="g1" />
                         <RadioButton
                             Content="选项 B"
@@ -52,12 +48,12 @@
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="TextBox / PasswordBox" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBox Width="200" Text="普通文本" />
+                        <TextBox Width="200" ui:TextBoxHelper.Placeholder="普通文本" />
+                        <PasswordBox Width="200" ui:TextBoxHelper.Placeholder="密码" />
                         <TextBox
                             Width="200"
                             IsEnabled="False"
                             Text="Disabled" />
-                        <PasswordBox Width="200" Password="placeholder" />
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
@@ -86,7 +82,7 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ListBox（水果列表）" />
-                    <ui:SimpleStackPanel Spacing="10">
+                    <ui:SimpleStackPanel Spacing="12">
 
                         <ui:SimpleStackPanel
                             Grid.Column="0"
@@ -114,7 +110,7 @@
             </Border>
 
             <Border Style="{StaticResource ContainerStyle}">
-                <ui:SimpleStackPanel Spacing="8">
+                <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ProgressBar" />
                     <TextBlock
                         FontSize="12"
@@ -137,7 +133,7 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToolTip（hover 触发）" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <Button
                             Content="tooltip 左"
                             ToolTip="这是左边的 tooltip"

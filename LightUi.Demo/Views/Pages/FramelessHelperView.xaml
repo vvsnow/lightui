@@ -6,12 +6,31 @@
     xmlns:local="clr-namespace:LightUi.Demo.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lightui.com/2019"
-    d:DesignHeight="450"
+    d:DesignHeight="1200"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Border Style="{StaticResource ContainerStyle}">
-        <ui:SimpleStackPanel Spacing="10">
-            <Button x:Name="ShowFramelessWindow" Content="打开FramelessWindow" />
+    <ScrollViewer Padding="20" VerticalScrollBarVisibility="Auto">
+
+        <ui:SimpleStackPanel Spacing="12">
+
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Frameless Helper" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Opens a real frameless window — drag, 8-way resize, Snap, custom caption buttons" />
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="无边框窗口" />
+
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                        <Button x:Name="ShowFramelessWindow" Content="打开FramelessWindow" />
+                    </ui:SimpleStackPanel>
+
+                </ui:SimpleStackPanel>
+
+            </Border>
+
         </ui:SimpleStackPanel>
-    </Border>
+
+    </ScrollViewer>
+
 </UserControl>

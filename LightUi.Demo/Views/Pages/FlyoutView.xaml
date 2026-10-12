@@ -9,7 +9,7 @@
     xmlns:ui="http://schemas.lightui.com/2019"
     xmlns:vm="clr-namespace:LightUi.Demo.ViewModels.Pages"
     d:DataContext="{d:DesignInstance Type=vm:FlyoutViewModel}"
-    d:DesignHeight="450"
+    d:DesignHeight="1200"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
@@ -17,16 +17,13 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock
-                FontSize="22"
-                FontWeight="SemiBold"
-                Text="Flyout 控件" />
-            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="Flyout / MenuFlyout / DropDownButton / FlyoutService" />
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Flyout Control" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="ui:Flyout / ui:MenuFlyout (MenuItem inside) / ui:DropDownButton / ui:FlyoutService" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="DropDownButton" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <ui:DropDownButton Content="新建">
                             <ui:DropDownButton.Flyout>
                                 <ui:MenuFlyout>
@@ -161,7 +158,7 @@
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="四个方向与宿主之间都留 2px 缝（FlyoutBase.PlacementGap）；这里用 Button + FlyoutService，因为 DropDownButton 会把 Placement 强制成 Bottom。"
                         TextWrapping="Wrap" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <Button Content="向上弹">
                             <ui:FlyoutService.Flyout>
                                 <ui:Flyout Placement="Top">

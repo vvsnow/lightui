@@ -12,6 +12,18 @@
         <Setter Property="CornerRadius" Value="{DynamicResource ContainerCornerRadius}" />
     </Style>
 
+    <!--  页面开头的标题区：大标题 + 一行副标题，各页面统一从这里取  -->
+    <Style x:Key="PageTitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+    </Style>
+
+    <Style x:Key="PageSubtitleStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{DynamicResource TextSecondaryFontSize}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
+    </Style>
+
     <Style
         x:Key="ThemeButtonStyle"
         BasedOn="{StaticResource FramelessSystemButtonStyle}"

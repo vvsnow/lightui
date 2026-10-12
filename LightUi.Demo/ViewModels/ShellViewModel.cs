@@ -23,11 +23,11 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         this.windowManager = windowManager;
 
         NavItems.Add(new NavItem("Home", homeViewModel));
-        NavItems.Add(new NavItem("Buttons", buttonsViewModel));
-        NavItems.Add(new NavItem("Common Controls", commonControlsViewModel));
+        NavItems.Add(new NavItem("Button", buttonsViewModel));
+        NavItems.Add(new NavItem("Common Control", commonControlsViewModel));
         NavItems.Add(new NavItem("Extended Control", extendedControlViewModel));
         NavItems.Add(new NavItem("Flyout Control", flyoutViewModel));
-        NavItems.Add(new NavItem("Frameless Helper", framelessHelperViewModel));
+        NavItems.Add(new NavItem("Frameless Window", framelessHelperViewModel));
 
     }
 

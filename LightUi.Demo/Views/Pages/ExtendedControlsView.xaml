@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:LightUi.Demo.Views.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lightui.com/2019"
-    d:DesignHeight="450"
+    d:DesignHeight="1200"
     d:DesignWidth="800"
     mc:Ignorable="d">
 
@@ -14,35 +14,26 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock
-                FontSize="22"
-                FontWeight="SemiBold"
-                Text="扩展控件（ui:*）" />
-            <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" Text="扩展控件：ToggleSwitch / FontIcon / SimpleStackPanel / HyperlinkButton" />
+            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Extended Control" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="ui:ToggleSwitch / ui:FontIcon / ui:SimpleStackPanel" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ToggleSwitch" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="20">
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:ToggleSwitch
-                                IsChecked="False"
-                                OffContent="关闭"
-                                OnContent="打开" />
-                        </ui:SimpleStackPanel>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:ToggleSwitch
-                                IsChecked="True"
-                                OffContent="关闭"
-                                OnContent="打开" />
-                        </ui:SimpleStackPanel>
-                        <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                            <ui:ToggleSwitch
-                                IsChecked="True"
-                                IsEnabled="False"
-                                OffContent="关闭"
-                                OnContent="打开" />
-                        </ui:SimpleStackPanel>
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                        <ui:ToggleSwitch
+                            IsChecked="False"
+                            OffContent="关闭"
+                            OnContent="打开" />
+                        <ui:ToggleSwitch
+                            IsChecked="True"
+                            OffContent="关闭"
+                            OnContent="打开" />
+                        <ui:ToggleSwitch
+                            IsChecked="True"
+                            IsEnabled="False"
+                            OffContent="关闭"
+                            OnContent="打开" />
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
@@ -50,7 +41,7 @@
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="FontIcon（Segoe Fluent Icons）" />
-                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="16">
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <ui:SimpleStackPanel Spacing="4">
                             <ui:FontIcon FontSize="18" Glyph="&#xE710;" />
                             <TextBlock

@@ -15,15 +15,17 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
-                    <!--  Cursor 设在 Bd 而不是 TabItem：模板里的 presenter 是 ContentSource="Header"，
-                          所以 Content 仍然是 TabItem 的逻辑子元素（只是被 TabControl 拿去显示了）。
-                          设在 TabItem 上会顺着属性继承把整个 content 区也变成手形  -->
+                    <!--
+                        Cursor 设在 Bd 而不是 TabItem：模板里的 presenter 是 ContentSource="Header"，
+                        所以 Content 仍然是 TabItem 的逻辑子元素（只是被 TabControl 拿去显示了）。
+                        设在 TabItem 上会顺着属性继承把整个 content 区也变成手形
+                    -->
                     <Border
                         x:Name="Bd"
-                        Cursor="Hand"
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
                         CornerRadius="{DynamicResource ControlCornerRadius}"
+                        Cursor="Hand"
                         SnapsToDevicePixels="True">
                         <ContentPresenter
                             HorizontalAlignment="Center"
