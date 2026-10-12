@@ -13,6 +13,7 @@
     Width="1080"
     Height="720"
     d:DataContext="{d:DesignInstance Type=vm:ShellViewModel}"
+    ui:FramelessHelper.CaptionHeight="100"
     ui:FramelessHelper.IsFrameless="True"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
@@ -42,8 +43,7 @@
             </Grid.RowDefinitions>
 
             <ui:SimpleStackPanel
-                Height="{Binding Path=(ui:FramelessHelper.CaptionHeight), Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"
-                Margin="0,0,138,0"
+                Margin="0,0,147,0"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
