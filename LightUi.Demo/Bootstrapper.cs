@@ -28,6 +28,7 @@ internal class Bootstrapper : BootstrapperBase
         container.PerRequest<ExtendedControlsViewModel>();
         container.PerRequest<FlyoutViewModel>();
         container.PerRequest<FramelessHelperViewModel>();
+        container.PerRequest<VersionViewModel>();
     }
 
     protected override void BuildUp(object instance)

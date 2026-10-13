@@ -48,14 +48,24 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <ui:SimpleStackPanel
-                Margin="0,0,138,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                WindowChrome.IsHitTestVisibleInChrome="True">
-                <Button x:Name="ToggleTheme" Style="{StaticResource ThemeButtonStyle}" />
-            </ui:SimpleStackPanel>
+            <Grid Grid.Row="0" Margin="22,0,138,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+
+
+                <ui:SimpleStackPanel
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    WindowChrome.IsHitTestVisibleInChrome="True">
+                    <Button cal:Message.Attach="ToggleTheme" Style="{StaticResource ThemeButtonStyle}" />
+                </ui:SimpleStackPanel>
+
+            </Grid>
 
             <ContentControl x:Name="ActiveItem" Grid.Row="1" />
 

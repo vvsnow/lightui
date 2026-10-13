@@ -18,7 +18,8 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         CommonControlsViewModel commonControlsViewModel,
         ExtendedControlsViewModel extendedControlViewModel,
         FlyoutViewModel flyoutViewModel,
-        FramelessHelperViewModel framelessHelperViewModel)
+        FramelessHelperViewModel framelessHelperViewModel,
+        VersionViewModel versionViewModel)
     {
         this.windowManager = windowManager;
 
@@ -28,6 +29,7 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         NavItems.Add(new NavItem("Extended Control", extendedControlViewModel));
         NavItems.Add(new NavItem("Flyout Control", flyoutViewModel));
         NavItems.Add(new NavItem("Frameless Window", framelessHelperViewModel));
+        NavItems.Add(new NavItem("Version Information", versionViewModel));
 
     }
 
@@ -45,4 +47,6 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
         base.OnViewLoaded(view);
         ActiveItem = NavItems.First().ViewModel;
     }
+
+
 }
