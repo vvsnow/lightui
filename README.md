@@ -162,13 +162,17 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 
 ### 2.4 图标字体
 
-`FontIcon` 的字体随程序集打包（`Assets/Fonts/SegoeIcons.TTF`，csproj 里以 `Resource` 进 dll），用 pack URI 引用：
+`FontIcon` 用**系统自带**的图标字体，不随包分发。`Segoe Fluent Icons` 是微软字体，其内嵌许可明确写着 "Any other use is prohibited" —— 打进 NuGet 包属于再分发，有法律风险。
+
+默认 `FontFamily` 是一条回退链：
 
 ```
-pack://application:,,,/LightUi;component/Assets/Fonts/SegoeIcons.TTF#Segoe Fluent Icons
+Segoe Fluent Icons, Segoe MDL2 Assets
 ```
 
-`#` 后面必须是**字体文件内部的家族名**，且 `#` 前后不能有空格；必须带程序集名，否则外部程序集消费时会按宿主的根去解析、找不到文件。
+Win11 有前者、Win10 有后者，两代都覆盖。库和 Demo 用到的 19 个码点在**两个字体里都存在**（实测），回退不会出现豆腐块；两代之间只有个别字形的绘制细节不同。
+
+想换成别的图标字体，覆盖 `FontIcon` 样式里的 `FontFamily` 即可。
 
 ## 三、无边框窗口
 
@@ -587,12 +591,12 @@ public void ShowFramelessDialog()
 | 属性 | 类型 | 默认 | 说明 |
 |---|---|---|---|
 | `Glyph` | `string` | `""` | 字形，就是字体里的一个私有区码点 |
-| `FontFamily` | — | pack URI 指向打包字体 | 一般不用改 |
+| `FontFamily` | — | `Segoe Fluent Icons, Segoe MDL2 Assets` | 系统字体回退链，不随包分发 |
 | `FontSize` | — | `ControlGlyphFontSize`(14) | |
 | `Foreground` | — | **不设**，跟随父级 | 默认样式刻意不写 `Foreground`：写了具体 brush 就成了 local value，会盖掉继承（比如 `TabItem` 选中态传不下来） |
 | 对齐 | — | 水平垂直都居中 | `VerticalAlignment` / `HorizontalAlignment` 都是 `Center` |
 
-字体随程序集打包，所以**在任何机器上都能正常显示**，不要求系统装了 Segoe Fluent Icons。
+字体取系统自带的：Win11 走 `Segoe Fluent Icons`，Win10 回退到 `Segoe MDL2 Assets`。用到的码点两代都有，不会出豆腐块。
 
 库和 Demo 里用到的码点（名称以 Demo 自己标的为准）：
 
@@ -613,7 +617,7 @@ public void ShowFramelessDialog()
 | `E8C6` / `E8C8` / `E77F` / `E8B3` | 剪切 / 复制 / 粘贴 / 全选（`TextBox` 右键菜单） |
 | `E8A5` / `E7C3` | 新建文件 / 新建项目（`DropDownButton` 示例） |
 
-想知道某个码点长什么样、或者找别的图标，用系统自带的字符映射表（`charmap.exe`）选字体 **Segoe Fluent Icons** 查。
+想知道某个码点长什么样、或者找别的图标，用系统自带的字符映射表（`charmap.exe`）选字体 **Segoe Fluent Icons** 查（Win10 上选 **Segoe MDL2 Assets**）。
 
 ### 6.3 `ui:SimpleStackPanel`
 

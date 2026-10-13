@@ -40,7 +40,7 @@
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
-                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="FontIcon（Segoe Fluent Icons）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="FontIcon（系统图标字体）" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <ui:SimpleStackPanel Spacing="4">
                             <ui:FontIcon FontSize="18" Glyph="&#xE710;" />

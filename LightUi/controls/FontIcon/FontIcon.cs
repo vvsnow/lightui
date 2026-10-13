@@ -1,8 +1,8 @@
 namespace LightUi.Controls;
 
 /// <summary>
-/// 用图标字体渲染字符图标；字体随程序集打包（Assets/Fonts/SegoeIcons.TTF），
-/// 不依赖系统装没装 Segoe Fluent Icons。
+/// 用图标字体渲染字符图标；取系统自带的 <c>Segoe Fluent Icons</c>（Win11），
+/// 缺失时回退到 <c>Segoe MDL2 Assets</c>（Win10）。不随包分发 —— 微软字体许可禁止再分发。
 ///
 /// 用法：
 /// <code>

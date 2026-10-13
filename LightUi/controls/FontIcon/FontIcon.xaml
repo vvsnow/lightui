@@ -4,13 +4,14 @@
     xmlns:local="clr-namespace:LightUi.Controls">
 
     <!--
-        图标字体随程序集打包（csproj 里以 Resource 进 dll），pack URI 直接引用，不依赖系统装没装 Segoe Fluent Icons。
-        · # 后面必须是字体文件内部的家族名（"Segoe Fluent Icons"），且 # 前后不能有空格，否则会被当成系统字体名去找
-        · 必须带程序集名（/LightUi;component/…）：外部程序集消费样式时，"/Assets/…" 会按宿主的根解析、找不到文件
+        图标字体用系统自带的，不随包分发 —— Segoe Fluent Icons 是微软字体，其内嵌许可明确禁止再分发
+        （"Any other use is prohibited"），打进 NuGet 包有法律风险。
+        · Segoe Fluent Icons 随 Win11，Segoe MDL2 Assets 随 Win10 —— 回退链覆盖两代
+        · 库用到的 19 个码点在两个字体里都存在，回退不会出豆腐块（个别字形绘制细节不同）
     -->
     <Style TargetType="{x:Type local:FontIcon}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="FontFamily" Value="pack://application:,,,/LightUi;component/Assets/Fonts/SegoeIcons.TTF#Segoe Fluent Icons" />
+        <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />
         <Setter Property="FontSize" Value="{DynamicResource ControlGlyphFontSize}" />
         <!--  不设 Foreground：前景色跟随父级；写了具体 brush 就成了 local value，会盖掉继承（TabItem 选中态传不下来）  -->
         <Setter Property="Text" Value="{Binding Glyph, RelativeSource={RelativeSource Self}}" />

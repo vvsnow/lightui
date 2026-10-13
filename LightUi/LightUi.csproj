@@ -45,9 +45,4 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!--  FontIcon 的默认图标字体：打包进 dll，走 pack URI 引用，不依赖系统字体  -->
-    <Resource Include="Assets\Fonts\*.TTF" />
-  </ItemGroup>
-
 </Project>
