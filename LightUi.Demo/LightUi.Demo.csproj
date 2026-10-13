@@ -14,6 +14,16 @@
       只关掉「NuGet 打包」这一条管线 —— Demo 照样 publish、照样进 GitHub Release。
     -->
     <IsPackable>false</IsPackable>
+    <!--
+      发布出去的 Demo 只留一个 exe，不带 pdb / xml：
+      · DebugType=embedded：pdb 嵌进程序集，不再以独立文件躺在 exe 旁边。
+        单文件发布下 exe 旁那份 pdb 根本加载不到（Assembly.Location 返回空串），
+        留着是死文件；嵌进去反而让将来接崩溃日志时堆栈有可能带行号。
+      · AllowedReferenceRelatedFileExtensions=none：SDK 默认会把被引用项目（LightUi）
+        的 .pdb/.xml/.pri 复制到输出目录，这里一并挡住。
+    -->
+    <DebugType>embedded</DebugType>
+    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
 
   <ItemGroup>
