@@ -1,5 +1,7 @@
 using Caliburn.Micro;
 
+using System.Diagnostics;
+
 namespace LightUi.Demo.ViewModels.Pages;
 
 internal class ButtonsViewModel : Screen
@@ -8,4 +10,9 @@ internal class ButtonsViewModel : Screen
 
     public void Increase() => Counter++;
     public void Decrease() => Counter--;
+
+    public void DoSomeAction()
+    {
+        Debug.WriteLine("Do some action");
+    }
 }

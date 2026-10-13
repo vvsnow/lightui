@@ -18,7 +18,7 @@
         <ui:SimpleStackPanel Spacing="12">
 
             <TextBlock Style="{StaticResource PageTitleStyle}" Text="Buttons" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Button / RepeatButton / ToggleButton / ui:HyperlinkButton" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Button / CircleButtonStyle / RepeatButton / ToggleButton / ui:HyperlinkButton" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
@@ -32,6 +32,31 @@
                                 <ui:FontIcon Glyph="&#xE710;" />
                                 <TextBlock Text="带 FontIcon" />
                             </ui:SimpleStackPanel>
+                        </Button>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="CircleButtonStyle（圆形按钮）" />
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="默认无边框，hover 才描边；圆的大小由 Width / Height 决定（宽高不等时是胶囊）" />
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                        <Button Style="{StaticResource CircleButtonStyle}">
+                            <ui:FontIcon Glyph="&#xE710;" />
+                        </Button>
+                        <Button Style="{StaticResource CircleButtonStyle}">
+                            <ui:FontIcon Margin="10" Glyph="&#xE713;" />
+                        </Button>
+                        <Button Style="{StaticResource CircleButtonStyle}">
+                            <ui:FontIcon FontSize="16" Glyph="&#xE721;" />
+                        </Button>
+                        <Button Content="文字" Style="{StaticResource CircleButtonStyle}" />
+                        <Button IsEnabled="False" Style="{StaticResource CircleButtonStyle}">
+                            <ui:FontIcon Glyph="&#xE74D;" />
                         </Button>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
@@ -76,10 +101,10 @@
                 <ui:SimpleStackPanel Spacing="12">
                     <TextBlock Style="{StaticResource HeaderTextStyle}" Text="HyperlinkButton" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                        <TextBlock Text="这是一个超链接按钮:" />
                         <ui:HyperlinkButton Content="访问 GitHub" NavigateUri="https://github.com" />
                         <ui:HyperlinkButton Content="访问 NuGet" NavigateUri="https://www.nuget.org" />
                         <ui:HyperlinkButton Content="不跳转（纯样式）" />
+                        <ui:HyperlinkButton cal:Message.Attach="DoSomeAction" Content="执行动作" />
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>

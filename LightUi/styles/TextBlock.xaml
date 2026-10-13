@@ -2,20 +2,10 @@
 
     <!--  不设 Foreground：让前景色从父级继承；写了具体 brush 就成了 local value，会盖掉继承  -->
 
-
-
     <Style x:Key="DefaultTextStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
-        <Setter Property="SnapsToDevicePixels" Value="True" />
     </Style>
 
-    <Style
-        x:Key="HeaderTextStyle"
-        BasedOn="{StaticResource DefaultTextStyle}"
-        TargetType="{x:Type TextBlock}">
-        <Setter Property="FontSize" Value="18" />
-        <Setter Property="FontWeight" Value="Medium" />
-    </Style>
 
     <Style BasedOn="{StaticResource DefaultTextStyle}" TargetType="{x:Type TextBlock}" />
 
