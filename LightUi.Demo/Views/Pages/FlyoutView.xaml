@@ -143,9 +143,11 @@
                                     <MenuItem Header="选项 1" />
                                     <MenuItem Header="选项 2" />
                                     <Separator />
-                                    <!--  二级菜单：MenuFlyout 的宿主是 ContextMenu(MenuBase)，
-                                          嵌一层 MenuItem 就自动成为 SubmenuHeader —— 样式里 Role=SubmenuHeader
-                                          那条触发器负责显示右侧箭头、并把 PART_Popup 改成向右展开  -->
+                                    <!--
+                                        二级菜单：MenuFlyout 的宿主是 ContextMenu(MenuBase)，
+                                        嵌一层 MenuItem 就自动成为 SubmenuHeader —— 样式里 Role=SubmenuHeader
+                                        那条触发器负责显示右侧箭头、并把 PART_Popup 改成向右展开
+                                    -->
                                     <MenuItem Header="更多…">
                                         <MenuItem Header="二级选项 1" />
                                         <MenuItem Header="二级选项 2" />
@@ -222,9 +224,7 @@
                                 </ContextMenu>
                             </Button.ContextMenu>
                         </Button>
-                        <TextBox
-                            Width="220"
-                            ui:TextBoxHelper.Placeholder="右键我：这是自己挂的菜单">
+                        <TextBox Width="220" ui:TextBoxHelper.Placeholder="右键我：这是自己挂的菜单">
                             <TextBox.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="我自己的菜单项 1" />

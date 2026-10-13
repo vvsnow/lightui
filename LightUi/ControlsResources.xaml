@@ -21,6 +21,10 @@
         <ResourceDictionary Source="/LightUi;component/styles/TabControl.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TextBlock.xaml" />
 
+        <!--  无边框样式  -->
+        <ResourceDictionary Source="/LightUi;component/styles/Button.Frameless.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/Window.Frameless.xaml" />
+
         <!--  扩展控件默认样式  -->
         <ResourceDictionary Source="/LightUi;component/controls/Flyout/Flyout.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/MenuFlyout/MenuFlyout.xaml" />
@@ -30,8 +34,8 @@
         <ResourceDictionary Source="/LightUi;component/controls/ProgressBar/ProgressBar.xaml" />
         <ResourceDictionary Source="/LightUi;component/controls/FontIcon/FontIcon.xaml" />
 
-        <ResourceDictionary Source="/LightUi;component/styles/Button.Frameless.xaml" />
-        <ResourceDictionary Source="/LightUi;component/styles/Window.Frameless.xaml" />
+
+
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

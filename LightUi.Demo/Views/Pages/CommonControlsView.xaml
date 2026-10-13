@@ -165,10 +165,7 @@
                         <TabItem>
                             <TabItem.Header>
                                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="8">
-                                    <ui:FontIcon
-                                        VerticalAlignment="Center"
-                                        Foreground="DarkOrange"
-                                        Glyph="&#xE700;" />
+                                    <ui:FontIcon VerticalAlignment="Center" Glyph="&#xE700;" />
                                     <TextBlock VerticalAlignment="Center" Text="选项 A" />
                                 </ui:SimpleStackPanel>
                             </TabItem.Header>
