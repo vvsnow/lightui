@@ -1,0 +1,12 @@
+<Project>
+
+  <!--
+    Nerdbank.GitVersioning 只当构建期工具：PrivateAssets=all 保证它不会变成 LightUi 包的依赖项，
+    否则引用方会被迫拉一个他们根本不需要的包。
+    两个项目各自从自己目录往上找「最近的」version.json，版本号因此互相独立（见各自的 version.json）。
+  -->
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.10.94" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
