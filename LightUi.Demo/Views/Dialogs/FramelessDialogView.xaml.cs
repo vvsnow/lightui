@@ -2,9 +2,9 @@ using System.Windows;
 
 namespace LightUi.Demo.Views.Dialogs;
 
-public partial class FramelessWindowView : Window
+public partial class FramelessDialogView : Window
 {
-    public FramelessWindowView()
+    public FramelessDialogView()
     {
         InitializeComponent();
     }

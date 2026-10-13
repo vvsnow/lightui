@@ -1,4 +1,6 @@
-﻿using Caliburn.Micro;
+﻿using System.Windows;
+
+using Caliburn.Micro;
 
 using LightUi.Demo.ViewModels.Dialogs;
 
@@ -14,6 +16,13 @@ internal class FramelessHelperViewModel : Screen
 
     public void ShowFramelessWindow()
     {
-        windowManager.ShowWindowAsync(new FramelessWindowViewModel());
+        var settings = new Dictionary<string, object>
+        {
+            ["Owner"] = Application.Current.MainWindow,
+        };
+        windowManager.ShowWindowAsync(
+            new FramelessDialogViewModel(),
+            null,
+            settings);
     }
 }

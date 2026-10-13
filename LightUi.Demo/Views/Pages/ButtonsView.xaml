@@ -43,7 +43,7 @@
                     <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
-                        Text="默认无边框，hover 才描边；圆的大小由 Width / Height 决定（宽高不等时是胶囊）" />
+                        Text="默认无边框，hover 才描边；圆的大小由 Width 决定" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
                         <Button Style="{StaticResource CircleButtonStyle}">
                             <ui:FontIcon Glyph="&#xE710;" />

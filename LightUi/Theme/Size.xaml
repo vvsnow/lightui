@@ -3,9 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
-    <!--  与主题无关，由 Light / Dark 合并进来而不是写进 App.Resources：ResourceDictionary.Keys 只列自身 key，ThemeManager 扫不到它  -->
-
-
     <!--  ─────────  高度  ─────────  -->
 
     <sys:Double x:Key="ControlHeight">28</sys:Double>

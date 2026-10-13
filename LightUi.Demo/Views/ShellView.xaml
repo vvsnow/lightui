@@ -33,7 +33,13 @@
             ItemsSource="{Binding NavItems, Mode=OneWay}"
             SelectedValue="{Binding ActiveItem}"
             SelectedValuePath="ViewModel"
-            WindowChrome.IsHitTestVisibleInChrome="True" />
+            WindowChrome.IsHitTestVisibleInChrome="True">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ui:SimpleStackPanel Spacing="3" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
 
         <Grid Grid.Column="1">
 

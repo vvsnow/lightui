@@ -18,7 +18,7 @@
         <ui:SimpleStackPanel Spacing="12">
 
             <TextBlock Style="{StaticResource PageTitleStyle}" Text="Flyout Control" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="ui:Flyout / ui:MenuFlyout (MenuItem inside) / ui:DropDownButton / ui:FlyoutService" />
+            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="ui:Flyout / ui:MenuFlyout (MenuItem inside) / ui:DropDownButton / ui:FlyoutService / ContextMenu" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
@@ -27,7 +27,7 @@
                         <ui:DropDownButton Content="新建">
                             <ui:DropDownButton.Flyout>
                                 <ui:MenuFlyout>
-                                    <MenuItem x:Name="NewFile" cal:Message.Attach="NewFile">
+                                    <MenuItem cal:Message.Attach="NewFile">
                                         <MenuItem.Header>
                                             <ui:SimpleStackPanel Orientation="Horizontal" Spacing="10">
                                                 <ui:FontIcon FontSize="14" Glyph="&#xE8A5;" />
@@ -143,7 +143,15 @@
                                     <MenuItem Header="选项 1" />
                                     <MenuItem Header="选项 2" />
                                     <Separator />
-                                    <MenuItem Header="更多…" />
+                                    <!--  二级菜单：MenuFlyout 的宿主是 ContextMenu(MenuBase)，
+                                          嵌一层 MenuItem 就自动成为 SubmenuHeader —— 样式里 Role=SubmenuHeader
+                                          那条触发器负责显示右侧箭头、并把 PART_Popup 改成向右展开  -->
+                                    <MenuItem Header="更多…">
+                                        <MenuItem Header="二级选项 1" />
+                                        <MenuItem Header="二级选项 2" />
+                                        <Separator />
+                                        <MenuItem Header="二级选项 3" />
+                                    </MenuItem>
                                 </ui:MenuFlyout>
                             </ui:FlyoutService.Flyout>
                         </Button>
@@ -187,6 +195,43 @@
                                 </ui:Flyout>
                             </ui:FlyoutService.Flyout>
                         </Button>
+                    </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ContextMenu（右键弹出）" />
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="挂在控件上的普通 ContextMenu，吃的是 LightUi 的 ContextMenu 样式（圆角 / 阴影 / 偏移补偿）。注意：TextBox 不挂自己的菜单时，弹的是 WPF 内部类型，吃不到隐式样式。"
+                        TextWrapping="Wrap" />
+                    <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
+                        <Button Content="右键点我（普通 ContextMenu）">
+                            <Button.ContextMenu>
+                                <ContextMenu>
+                                    <!--  InputGestureText 只是右侧那列提示文字，这里没绑命令  -->
+                                    <MenuItem Header="复制" InputGestureText="Ctrl+C" />
+                                    <MenuItem Header="粘贴" InputGestureText="Ctrl+V" />
+                                    <Separator />
+                                    <MenuItem Header="更多…">
+                                        <MenuItem Header="二级选项 1" />
+                                        <MenuItem Header="二级选项 2" />
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Button.ContextMenu>
+                        </Button>
+                        <TextBox
+                            Width="220"
+                            ui:TextBoxHelper.Placeholder="右键我：这是自己挂的菜单">
+                            <TextBox.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="我自己的菜单项 1" />
+                                    <MenuItem Header="我自己的菜单项 2" />
+                                </ContextMenu>
+                            </TextBox.ContextMenu>
+                        </TextBox>
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
             </Border>
