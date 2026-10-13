@@ -11,6 +11,42 @@
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
+  <!--  ─────────  NuGet 打包元数据  ─────────  -->
+  <PropertyGroup>
+    <PackageId>LightUi</PackageId>
+    <Authors>vvsnow</Authors>
+    <Description>轻量 WPF 控件库：把 WPF 自带控件统一重刷成现代扁平外观，并提供 Flyout / MenuFlyout / DropDownButton / ToggleSwitch / FontIcon 等扩展控件，以及一套不依赖 WindowChrome 的无边框窗口方案。</Description>
+    <PackageTags>wpf;xaml;control;controls;ui;theme;modern;fluent;flyout;frameless</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/vvsnow/lightui</PackageProjectUrl>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <!--  ─────────  源码链接：把 GitHub 地址写进 pdb，引用者调试时能跳到对应行  ─────────  -->
+  <PropertyGroup>
+    <RepositoryUrl>https://github.com/vvsnow/lightui</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+  </PropertyGroup>
+
+  <!--  ─────────  XML 文档：包内附带 LightUi.xml，引用者敲代码时有提示  ─────────  -->
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!--  CS1591 = 公开成员缺少 XML 注释。先让文件生成出来，把注释补齐是另一件事  -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--  README 是 nuget.org 上那个 "Readme" 页；LICENSE 也随包附一份，便于离线查看  -->
+    <None Include="..\README.md" Link="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\LICENSE" Link="LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
   <ItemGroup>
     <Using Include="System.Windows" />
     <Using Include="System.Windows.Controls" />
