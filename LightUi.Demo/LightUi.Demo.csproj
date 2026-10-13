@@ -8,6 +8,12 @@
     <UseWPF>true</UseWPF>
     <!--  DPI 感知（PerMonitorV2）必须由 exe 自己声明，库替不了  -->
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!--
+      WinExe 的 IsPackable 默认是 true（SDK 只对测试项目默认 false），不关掉的话
+      dotnet pack 整解决方案时会顺手给 Demo 也打一个 NuGet 包。
+      只关掉「NuGet 打包」这一条管线 —— Demo 照样 publish、照样进 GitHub Release。
+    -->
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
