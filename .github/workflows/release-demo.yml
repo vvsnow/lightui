@@ -1,0 +1,109 @@
+name: Release LightUi.Demo
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+concurrency:
+  group: release-demo-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write            # 建 tag / Release、上传附件都要
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  NBGV_VERSION: '3.10.94'
+  RID: win-x64
+
+jobs:
+  release:
+    runs-on: windows-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # gh 不会自动读 GITHUB_TOKEN
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install nbgv
+        shell: pwsh
+        run: |
+          dotnet tool install --global nbgv --version $env:NBGV_VERSION
+          "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      # SimpleVersion（3 段）而不是 Version（4 段）：tag 和文件名要 SemVer 形状。
+      # 同样必须传目录，不能传 .csproj
+      - name: Resolve demo version
+        id: ver
+        shell: pwsh
+        run: |
+          $v = nbgv get-version -p LightUi.Demo -v SimpleVersion
+          if ([string]::IsNullOrWhiteSpace($v)) { throw 'nbgv 返回了空版本号' }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "tag=demo-v$v" >> $env:GITHUB_OUTPUT
+          "### LightUi.Demo 版本：``$v``" >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Publish (self-contained single-file win-x64)
+        shell: pwsh
+        run: |
+          dotnet publish LightUi.Demo/LightUi.Demo.csproj `
+            -c Release `
+            -r $env:RID `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true `
+            -p:PublishReadyToRun=false `
+            -p:PublishTrimmed=false `
+            -o publish/LightUi.Demo
+
+      - name: Zip
+        id: pack
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts | Out-Null
+          $zip = "artifacts/LightUi.Demo-${{ steps.ver.outputs.version }}-$env:RID.zip"
+          Compress-Archive -Path publish/LightUi.Demo/* -DestinationPath $zip -Force
+          "zip=$zip" >> $env:GITHUB_OUTPUT
+          $mb = [math]::Round((Get-Item $zip).Length / 1MB, 1)
+          "### Demo 包：**$mb MB**" >> $env:GITHUB_STEP_SUMMARY
+
+      # 从非 master 手动触发时：只打包不发布，zip 挂成临时 artifact 供检查
+      - name: Upload zip (dry run only)
+        if: github.ref != 'refs/heads/master'
+        uses: actions/upload-artifact@v7
+        with:
+          name: LightUi.Demo-${{ steps.ver.outputs.version }}-${{ env.RID }}
+          path: ${{ steps.pack.outputs.zip }}
+          retention-days: 14
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/master'
+        shell: pwsh
+        run: |
+          # PS 7.4 会把原生命令的非零退出码变成终止性错误，而这里正是在探测「没有这个 release」
+          $PSNativeCommandUseErrorActionPreference = $false
+          $ErrorActionPreference = 'Continue'
+
+          $tag = "${{ steps.ver.outputs.tag }}"
+          gh release view $tag --repo $env:GITHUB_REPOSITORY 2>$null | Out-Null
+          if ($LASTEXITCODE -eq 0) { Write-Host "::notice::release $tag 已存在，跳过"; exit 0 }
+
+          # --target 必须给：不给的话 tag 会打在默认分支的当前顶端，而不是这次构建的那个 commit
+          gh release create $tag "${{ steps.pack.outputs.zip }}" `
+            --repo $env:GITHUB_REPOSITORY `
+            --target $env:GITHUB_SHA `
+            --title "LightUi.Demo ${{ steps.ver.outputs.version }}" `
+            --generate-notes `
+            --latest

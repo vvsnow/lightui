@@ -1,0 +1,106 @@
+name: Publish LightUi to NuGet
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+# 同一 ref 上不并发跑两次发布，但也不打断已经在推包的那一次
+concurrency:
+  group: publish-nuget-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  NBGV_VERSION: '3.10.94'
+  NUGET_SOURCE: 'https://api.nuget.org/v3/index.json'
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    permissions:
+      contents: write        # 往仓库打 v<version> tag
+      id-token: write        # Trusted Publishing 必需：允许 GitHub 签发 OIDC token
+
+    steps:
+      # fetch-depth: 0 是硬要求 —— 默认只取 1 个提交，而 NBGV 靠遍历提交历史算版本高度，
+      # 历史一断，高度要么报错要么静默给出荒唐值
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup .NET 10 SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install nbgv
+        shell: pwsh
+        run: |
+          dotnet tool install --global nbgv --version $env:NBGV_VERSION
+          "$env:USERPROFILE\.dotnet\tools" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      # 必须传目录、不能传 .csproj：nbgv 3.10.94 传文件路径会崩
+      # （GitException: An tree object with SHA ... could not be found）
+      - name: Resolve version
+        id: ver
+        shell: pwsh
+        run: |
+          $v = nbgv get-version -p LightUi -v NuGetPackageVersion
+          if ([string]::IsNullOrWhiteSpace($v)) { throw 'nbgv 返回了空版本号' }
+          "version=$v" >> $env:GITHUB_OUTPUT
+          "tag=v$v"    >> $env:GITHUB_OUTPUT
+          "### LightUi NuGet 版本：``$v``" >> $env:GITHUB_STEP_SUMMARY
+
+      # pack 不会编译不可打包的 Demo（实测过），所以单独 build 整个解决方案，
+      # 顺便当成「Demo 也得能编过」的闸门
+      - name: Build solution
+        run: dotnet build LightUi.slnx -c Release
+
+      - name: Pack the library
+        run: >
+          dotnet pack LightUi/LightUi.csproj
+          -c Release
+          -o artifacts/package
+          -p:PublicRelease=${{ github.ref == 'refs/heads/master' }}
+
+      # 位置很关键：临时 key 只活 1 小时，紧挨着 push 才换。
+      # 一次运行只能换一把（一个 OIDC token 换一把 key），所以放在推包循环外面共用
+      - name: NuGet login (OIDC -> 临时 API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}      # nuget.org 的 profile 名，不是邮箱
+
+      - name: Push to nuget.org
+        shell: pwsh
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          $ErrorActionPreference = 'Continue'
+
+          # 必须按扩展名筛：通配 *.nupkg 也会匹配 *.snupkg（* 会把那个 s 一起吞掉）
+          $pkgs = Get-ChildItem artifacts/package -File | Where-Object { $_.Extension -eq '.nupkg' }
+          if (-not $pkgs) { throw '没有产出 .nupkg' }
+
+          foreach ($p in $pkgs) {
+            Write-Host "推送 $($p.Name)"
+            dotnet nuget push $p.FullName `
+              --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" `
+              --source "$env:NUGET_SOURCE" `
+              --skip-duplicate
+            if ($LASTEXITCODE -ne 0) { throw "推送失败：$($p.Name)" }
+          }
+
+      # 只打 tag，不建 GitHub Release —— Release 留给 Demo 的产物，免得 Latest 徽章打架
+      - name: Tag
+        shell: pwsh
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          $ErrorActionPreference = 'Continue'
+          $tag = "${{ steps.ver.outputs.tag }}"
+          if (git tag -l $tag) { Write-Host "::notice::tag $tag 已存在，跳过"; exit 0 }
+          git tag $tag
+          git push origin $tag
