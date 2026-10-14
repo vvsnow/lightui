@@ -11,6 +11,7 @@
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultFocusVisualStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
@@ -33,9 +34,9 @@
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
                             <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
-                            <!--  边框刷成透明而不是去掉：BorderThickness 保持 1px，不影响按边框算的布局  -->
-                            <Setter TargetName="Bd" Property="BorderBrush" Value="Transparent" />
+                            <Setter Property="FocusVisualStyle" Value="{DynamicResource AccentFocusVisualStyle}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
@@ -44,6 +45,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
     </Style>
 
 </ResourceDictionary>

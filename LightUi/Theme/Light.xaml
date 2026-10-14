@@ -21,6 +21,9 @@
     <SolidColorBrush x:Key="AccentPressedBrush" Color="#1E40AF" />
     <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
 
+    <!--  键盘焦点环的颜色，样式在 styles/FocusVisual.xaml。深色主题那份在 Dark.xaml  -->
+    <SolidColorBrush x:Key="FocusVisualBrush" Color="#333333" />
+
     <SolidColorBrush x:Key="ToggleSwitchThumbBrush" Color="#FFFFFF" />
 
     <SolidColorBrush x:Key="ProgressBackgroundBrush" Color="#E0E0E0" />

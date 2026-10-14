@@ -45,17 +45,23 @@
                         Foreground="{DynamicResource TextSecondaryBrush}"
                         Text="默认无边框，hover 才描边；圆的大小由 Width 决定" />
                     <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">
-                        <Button Style="{StaticResource CircleButtonStyle}">
+                        <Button VerticalAlignment="Center" Style="{StaticResource CircleButtonStyle}">
                             <ui:FontIcon Glyph="&#xE710;" />
                         </Button>
-                        <Button Style="{StaticResource CircleButtonStyle}">
+                        <Button VerticalAlignment="Center" Style="{StaticResource CircleButtonStyle}">
                             <ui:FontIcon Margin="10" Glyph="&#xE713;" />
                         </Button>
-                        <Button Style="{StaticResource CircleButtonStyle}">
+                        <Button VerticalAlignment="Center" Style="{StaticResource CircleButtonStyle}">
                             <ui:FontIcon FontSize="16" Glyph="&#xE721;" />
                         </Button>
-                        <Button Content="文字" Style="{StaticResource CircleButtonStyle}" />
-                        <Button IsEnabled="False" Style="{StaticResource CircleButtonStyle}">
+                        <Button
+                            VerticalAlignment="Center"
+                            Content="文字"
+                            Style="{StaticResource CircleButtonStyle}" />
+                        <Button
+                            VerticalAlignment="Center"
+                            IsEnabled="False"
+                            Style="{StaticResource CircleButtonStyle}">
                             <ui:FontIcon Glyph="&#xE74D;" />
                         </Button>
                     </ui:SimpleStackPanel>

@@ -15,6 +15,7 @@
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultFocusVisualStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
@@ -59,6 +60,8 @@
         <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
         <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}" />
         <Setter Property="BorderThickness" Value="0" />
+        <!--  底色是 AccentBrush，默认那圈深色环压上去看不清，换 AccentForegroundBrush  -->
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource AccentFocusVisualStyle}" />
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource AccentHoverBrush}" />

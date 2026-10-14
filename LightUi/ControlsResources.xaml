@@ -20,6 +20,7 @@
         <ResourceDictionary Source="/LightUi;component/styles/TabItem.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TabControl.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TextBlock.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/FocusVisual.xaml" />
 
         <!--  无边框样式  -->
         <ResourceDictionary Source="/LightUi;component/styles/Button.Frameless.xaml" />

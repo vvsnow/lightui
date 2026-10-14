@@ -1,0 +1,49 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        ★ 单个控件不想要环：FocusVisualStyle="{x:Null}" —— 局部值优先级最高，一句就够
+    -->
+
+    <Style x:Key="DefaultFocusVisualStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle
+                        Margin="1"
+                        RadiusX="2"
+                        RadiusY="2"
+                        SnapsToDevicePixels="True"
+                        Stroke="{DynamicResource FocusVisualBrush}"
+                        StrokeDashArray="1,2"
+                        StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="AccentFocusVisualStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle
+                        Margin="1"
+                        RadiusX="2"
+                        RadiusY="2"
+                        SnapsToDevicePixels="True"
+                        Stroke="{DynamicResource AccentForegroundBrush}"
+                        StrokeDashArray="1,2"
+                        StrokeThickness="1" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--
+        WPF 的系统焦点键，留着兜底：只对「FocusVisualStyle 还是那个空哨兵样式」的控件生效，
+        也就是主题样式没给它设过 FocusVisualStyle 的那些。主流控件都走不到这儿，它们靠各样式里显式那行 Setter。
+        写法抄 .NET 官方 Fluent 主题的 DefaultFocusVisualStyle.xaml：BasedOn 一个具名样式。
+    -->
+    <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}" BasedOn="{StaticResource DefaultFocusVisualStyle}" />
+
+</ResourceDictionary>
