@@ -148,6 +148,8 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 | `FlyoutShadowRoom` | `Thickness 12` | 弹层阴影预留：presenter 模板拿它当 Border 的 `Margin`，偏移补偿也用同一个数 |
 | `ScrollBarThickness` | `12` | 滚动条厚度 |
 | `SeparatorThickness` | `1` | 分割线高度 |
+| `TitleFontSize` | `22` | 页级标题字号（`TitleTextStyle`） |
+| `HeaderFontSize` | `16` | 区块标题字号（`HeaderTextStyle`） |
 | `ControlFontSize` | `13` | 控件标准字号 |
 | `ControlGlyphFontSize` | `14` | `FontIcon` 的标准字号 |
 | `TextSecondaryFontSize` | `12` | 次级文字字号（ToolTip 也用这个） |
@@ -173,6 +175,31 @@ Segoe Fluent Icons, Segoe MDL2 Assets
 Win11 有前者、Win10 有后者，两代都覆盖。库和 Demo 用到的 19 个码点在**两个字体里都存在**（实测），回退不会出现豆腐块；两代之间只有个别字形的绘制细节不同。
 
 想换成别的图标字体，覆盖 `FontIcon` 样式里的 `FontFamily` 即可。
+
+### 2.5 排版档位
+
+`styles/TextBlock.xaml` 里有四个**具名**文本样式，按「字号 + 字重 + 前景色」分层。
+
+区别在于：隐式样式（不写 `Style` 时生效的那条）**刻意不设 `Foreground`**，让颜色从父级继承；下面这四个把颜色**钉死**。要跟随父级就用隐式样式，要锁死就用这四个。
+
+| 样式 | 字号 | 字重 | 前景色 | 用在哪 |
+|---|---|---|---|---|
+| `TitleTextStyle` | `TitleFontSize`（22） | SemiBold | `TextPrimaryBrush` | 页级大标题 |
+| `HeaderTextStyle` | `HeaderFontSize`（16） | Medium | `TextPrimaryBrush` | 区块标题 |
+| `PrimaryTextStyle` | `ControlFontSize`（13） | Normal | `TextPrimaryBrush` | 正文 |
+| `SecondaryTextStyle` | `TextSecondaryFontSize`（12） | Normal | `TextSecondaryBrush` | 说明、图注、脚注 |
+
+```xml
+<TextBlock Style="{StaticResource TitleTextStyle}" Text="页面标题" />
+<TextBlock Style="{StaticResource SecondaryTextStyle}" Text="一行说明" />
+```
+
+四条都 `BasedOn` `DefaultTextStyle`，所以改 `DefaultTextStyle` 会同时影响这四档。
+
+**两点注意：**
+
+- **`PrimaryTextStyle` 的 13 是基准，不要单独抬。** 它等于 `ControlFontSize` —— 按钮、文本框、菜单里的字都是这个大小，正文跟控件同大界面才不自相矛盾。12 是最小档，也是 Windows 标准 UI 字号；中文再往下（11 及以下）笔画会糊。
+- **`SemiBold` / `Medium` 对中文可能无效。** 微软雅黑只有 Regular 和 Bold 两档，600 / 500 会取最近的实有字重、很可能退成 Regular。中文标题用之前实测一下，不行就改 `Bold`。
 
 ## 三、无边框窗口
 
@@ -247,8 +274,12 @@ Win11 有前者、Win10 有后者，两代都覆盖。库和 Demo 用到的 19 �
 | `FramelessCaptionButtonHeight` | `30` |
 | `FramelessSystemButtonStyle` | 最小化 / 最大化两颗按钮 |
 | `FramelessCloseButtonStyle` | 关闭键，尺寸相同、只在配色上不同 |
+| `ThemeButtonStyle` | 主题切换按钮，`BasedOn` 上面第一条 |
+| `ThemeGlyphDark` / `ThemeGlyphLight` | 上面那条用的两个图标（`x:Shared="False"`，每次取值新造实例） |
 
-这两条样式**刻意不 `BasedOn` 任何按钮样式** —— 跨字典的 `{StaticResource}` 在合并进来的子字典里搜不到，启动会抛"无法找到名为 … 的资源"，合并顺序也解决不了。所以它们自带全套 setter。
+`FramelessSystemButtonStyle` 和 `FramelessCloseButtonStyle` **刻意不 `BasedOn` 任何按钮样式** —— 跨字典的 `{StaticResource}` 在合并进来的子字典里搜不到，启动会抛"无法找到名为 … 的资源"，合并顺序也解决不了。所以它们自带全套 setter。
+
+`ThemeButtonStyle` 是个例外：它 `BasedOn` 的就是**同文件**的 `FramelessSystemButtonStyle`，同字典解析，没有这个问题。
 
 按钮尺寸是**样式自己的字面量**（46 × 30），与 `CaptionHeight` 无关；想让按钮填满 caption 就自己改这两个资源。
 
@@ -263,6 +294,26 @@ Win11 有前者、Win10 有后者，两代都覆盖。库和 Demo 用到的 19 �
 这个附加属性在这里只当"逃生出口"用（**读**它不需要真的挂 `WindowChrome`）：标了的元素命中时返回 `HTCLIENT` 交给 WPF，没标的按 `HTCAPTION` 当拖动区。
 
 系统按钮自己反而显式设成 `WindowChrome.IsHitTestVisibleInChrome="False"`，免得它们在"逃生出口"那一判里多嘴。
+
+**主题切换按钮库里有现成的**，直接挂样式：
+
+```xml
+<Button
+    WindowChrome.IsHitTestVisibleInChrome="True"
+    Style="{StaticResource ThemeButtonStyle}"
+    Click="OnToggleTheme" />
+```
+
+它 `BasedOn` `FramelessSystemButtonStyle`（尺寸、配色、非客户区的悬停与按下色都齐了），图标跟着 `ThemeManager.CurrentTheme` 自动在太阳 / 月亮之间切。
+
+**它只负责显示图标，切主题要你自己在 `Click` 里调**：
+
+```csharp
+ThemeManager.ApplyTheme(
+    ThemeManager.Current.CurrentTheme == ApplicationTheme.Light
+        ? ApplicationTheme.Dark
+        : ApplicationTheme.Light);
+```
 
 ### 3.7 子窗口居中于父窗口
 

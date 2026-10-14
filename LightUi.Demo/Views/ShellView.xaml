@@ -54,7 +54,13 @@
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"
                 WindowChrome.IsHitTestVisibleInChrome="True">
-                <Button cal:Message.Attach="ToggleTheme" Style="{StaticResource ThemeButtonStyle}" />
+                <Button
+                    cal:Message.Attach="ToggleTheme"
+                    Style="{StaticResource ThemeButtonStyle}"
+                    ToolTip="切换主题"
+                    ToolTipService.HorizontalOffset="-12"
+                    ToolTipService.Placement="Top"
+                    ToolTipService.VerticalOffset="-2" />
             </ui:SimpleStackPanel>
 
             <ContentControl

@@ -14,12 +14,12 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Home" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="9 semantic brushes — switch theme and the whole palette flips" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Home" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="9 semantic brushes — switch theme and the whole palette flips" />
 
             <UniformGrid Columns="3" Rows="3">
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="PageBackgroundBrush" />
                         <TextBlock
@@ -29,7 +29,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource ControlBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlBackgroundBrush" />
                         <TextBlock
@@ -39,7 +39,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource ControlSubtleBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlSubtleBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlSubtleBackgroundBrush" />
                         <TextBlock
@@ -49,7 +49,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource ControlHoverBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlHoverBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlHoverBackgroundBrush" />
                         <TextBlock
@@ -59,7 +59,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource ControlSelectedBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlSelectedBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlSelectedBackgroundBrush" />
                         <TextBlock
@@ -72,7 +72,7 @@
                 <!--  强调色方块原本没有描边：描边刷子设成 Transparent 而不是去掉 BorderThickness，
                       这样 1px 的内缩和其它方块一致，内容不会跟着挪位  -->
                 <Border
-                    Style="{StaticResource SwatchStyle}"
+                    Style="{StaticResource PaletteStyle}"
                     Background="{DynamicResource AccentBrush}"
                     BorderBrush="Transparent">
                     <ui:SimpleStackPanel Spacing="4">
@@ -87,7 +87,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="BorderBrush" />
                         <TextBlock
@@ -97,7 +97,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="TextPrimaryBrush" />
                         <TextBlock
@@ -107,7 +107,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource SwatchStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock
                             FontSize="12"

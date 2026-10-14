@@ -31,6 +31,15 @@
 
     <!--  ─────────  字号  ─────────  -->
 
+    <!--
+        排版档位（TitleTextStyle / HeaderTextStyle）专用：22 = 16 × 1.375，16 = 13 × 1.23。
+        越往上的层级跨度越开，标题才跳得出来。
+        正文（13）和最小档（12）刻意不另起 token —— 直接用现成的 ControlFontSize / TextSecondaryFontSize，
+        正文跟控件里的字同大，界面才不自相矛盾。
+    -->
+    <sys:Double x:Key="TitleFontSize">22</sys:Double>
+    <sys:Double x:Key="HeaderFontSize">16</sys:Double>
+
     <sys:Double x:Key="ControlFontSize">13</sys:Double>
 
     <!--  FontIcon 的统一字号；与 CaptionGlyphFontSize 分开，别互相牵连  -->

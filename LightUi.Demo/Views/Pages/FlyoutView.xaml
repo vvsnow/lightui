@@ -17,8 +17,8 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Flyout Control" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="ui:Flyout / ui:MenuFlyout (MenuItem inside) / ui:DropDownButton / ui:FlyoutService / ContextMenu" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Flyout Control" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="ui:Flyout / ui:MenuFlyout (MenuItem inside) / ui:DropDownButton / ui:FlyoutService / ContextMenu" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">

@@ -16,8 +16,8 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Common Controls" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander — WPF controls restyled by LightUi" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Common Controls" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander — WPF controls restyled by LightUi" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">

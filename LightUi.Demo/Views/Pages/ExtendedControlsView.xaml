@@ -14,8 +14,8 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Extended Control" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="ui:ToggleSwitch / ui:FontIcon / ui:SimpleStackPanel" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Extended Control" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="ui:ToggleSwitch / ui:FontIcon / ui:SimpleStackPanel" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">

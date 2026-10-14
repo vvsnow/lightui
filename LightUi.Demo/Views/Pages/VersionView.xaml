@@ -16,8 +16,8 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Version" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Verison information" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Version" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="Verison information" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Orientation="Horizontal" Spacing="12">

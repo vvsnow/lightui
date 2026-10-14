@@ -13,8 +13,8 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Frameless Helper" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Opens a real frameless window — drag, 8-way resize, Snap, custom caption buttons" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Frameless Helper" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="Opens a real frameless window — drag, 8-way resize, Snap, custom caption buttons" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">

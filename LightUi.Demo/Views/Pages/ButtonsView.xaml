@@ -17,8 +17,8 @@
 
         <ui:SimpleStackPanel Spacing="12">
 
-            <TextBlock Style="{StaticResource PageTitleStyle}" Text="Buttons" />
-            <TextBlock Style="{StaticResource PageSubtitleStyle}" Text="Button / CircleButtonStyle / RepeatButton / ToggleButton / ui:HyperlinkButton" />
+            <TextBlock Style="{StaticResource TitleTextStyle}" Text="Buttons" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="Button / CircleButtonStyle / RepeatButton / ToggleButton / ui:HyperlinkButton" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">

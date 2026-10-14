@@ -21,6 +21,7 @@
         <ResourceDictionary Source="/LightUi;component/styles/TabControl.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TextBlock.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/FocusVisual.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/Border.xaml" />
 
         <!--  无边框样式  -->
         <ResourceDictionary Source="/LightUi;component/styles/Button.Frameless.xaml" />
