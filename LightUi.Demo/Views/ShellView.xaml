@@ -58,7 +58,7 @@
                     cal:Message.Attach="ToggleTheme"
                     Style="{StaticResource ThemeButtonStyle}"
                     ToolTip="切换主题"
-                    ToolTipService.HorizontalOffset="-12"
+                    ToolTipService.HorizontalOffset="-14"
                     ToolTipService.Placement="Top"
                     ToolTipService.VerticalOffset="-2" />
             </ui:SimpleStackPanel>

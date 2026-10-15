@@ -89,21 +89,21 @@
     <local:FontIcon
         x:Key="ThemeGlyphDark"
         x:Shared="False"
-        FontSize="13"
-        Glyph="&#xE708;" />
+        Glyph="&#xE706;" />
     <local:FontIcon
         x:Key="ThemeGlyphLight"
         x:Shared="False"
-        Glyph="&#xE706;" />
+        FontSize="13"
+        Glyph="&#xE708;" />
 
     <Style
         x:Key="ThemeButtonStyle"
         BasedOn="{StaticResource FramelessSystemButtonStyle}"
         TargetType="Button">
-        <Setter Property="Content" Value="{DynamicResource ThemeGlyphDark}" />
+        <Setter Property="Content" Value="{DynamicResource ThemeGlyphLight}" />
         <Style.Triggers>
-            <DataTrigger Binding="{Binding Source={x:Static ui:ThemeManager.Current}, Path=CurrentTheme}" Value="Light">
-                <Setter Property="Content" Value="{DynamicResource ThemeGlyphLight}" />
+            <DataTrigger Binding="{Binding Source={x:Static ui:ThemeManager.Current}, Path=CurrentTheme}" Value="Dark">
+                <Setter Property="Content" Value="{DynamicResource ThemeGlyphDark}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>

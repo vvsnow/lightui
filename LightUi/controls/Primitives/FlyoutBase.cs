@@ -89,7 +89,7 @@ public abstract class FlyoutBase : FrameworkElement
 
         if (!(bool)e.NewValue)
         {
-            self.DetachEscHook();
+            self.DetachWindowHooks();
         }
 
         // MenuFlyout：presenter 是 ContextMenu（MenuBase），直接同步到 ContextMenu.IsOpen
@@ -109,7 +109,7 @@ public abstract class FlyoutBase : FrameworkElement
 
     private Popup? _popup;
     private FrameworkElement? _presenter;
-    private Window? _escHookWindow;
+    private Window? _hookedWindow;          // 窗口级钩子（Esc + 焦点离开）挂在哪扇窗上
 
     /// <summary>弹层与宿主之间沿放置方向的固定缝（DIP）。想调间距就改这一个数。</summary>
     private const double PlacementGap = 2;
@@ -195,36 +195,39 @@ public abstract class FlyoutBase : FrameworkElement
             p.IsOpen = true;
         }
 
-        AttachEscHook(anchor);
+        AttachWindowHooks(anchor);
     }
 
     /// <summary>
-    /// Esc 关闭。Esc 是发给**焦点元素**的，弹层自己收不到键盘事件（它的 Popup 只捕获鼠标），
-    /// 所以挂在锚点所在的窗口上：打开时挂、关掉时摘。
-    /// MenuFlyout 那条走 ContextMenu（自带 Esc 处理），这里挂上也无害。
+    /// 窗口级钩子，打开时挂、关掉时摘。两条都必须挂在窗口上：
+    /// · Esc 关闭 —— Esc 是发给**焦点元素**的，弹层自己收不到键盘事件（它的 Popup 只捕获鼠标）
+    /// · 焦点离开锚点就关闭 —— 见 <see cref="OnPreviewGotKeyboardFocus"/>
+    /// MenuFlyout 那条走 ContextMenu（自带 Esc 与焦点处理），这里挂上也无害。
     /// </summary>
-    private void AttachEscHook(FrameworkElement anchor)
+    private void AttachWindowHooks(FrameworkElement anchor)
     {
         Window? window = Window.GetWindow(anchor);
-        if (window is null || ReferenceEquals(window, _escHookWindow))
+        if (window is null || ReferenceEquals(window, _hookedWindow))
         {
             return;
         }
 
-        DetachEscHook();
-        _escHookWindow = window;
+        DetachWindowHooks();
+        _hookedWindow = window;
         window.PreviewKeyDown += OnPreviewKeyDown;
+        window.PreviewGotKeyboardFocus += OnPreviewGotKeyboardFocus;
     }
 
-    private void DetachEscHook()
+    private void DetachWindowHooks()
     {
-        if (_escHookWindow is null)
+        if (_hookedWindow is null)
         {
             return;
         }
 
-        _escHookWindow.PreviewKeyDown -= OnPreviewKeyDown;
-        _escHookWindow = null;
+        _hookedWindow.PreviewKeyDown -= OnPreviewKeyDown;
+        _hookedWindow.PreviewGotKeyboardFocus -= OnPreviewGotKeyboardFocus;
+        _hookedWindow = null;
     }
 
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
@@ -236,6 +239,34 @@ public abstract class FlyoutBase : FrameworkElement
 
         Hide();
         e.Handled = true;   // 别让 Esc 继续往外冒（比如顺手把宿主对话框也关了）
+    }
+
+    /// <summary>
+    /// 焦点一离开锚点就收起弹层。
+    ///
+    /// Popup 的 StaysOpen=false 只认鼠标（点外部关闭），键盘切焦点它完全看不到 ——
+    /// Tab 走到别处、弹层还开着，再从左侧导航换页时，弹层的 PlacementTarget（那个按钮）
+    /// 已经随页面一起被换下可视树，位置再也算不出来，就飘到窗口外左上角去了。
+    ///
+    /// 锚点自己拿到焦点不算离开：点按钮要保持弹出，Shift+Tab 回到按钮也要留着。
+    /// 焦点进到弹层**内部**不会走到这里 —— presenter 是 Popup.Child，属于弹层自己的可视树，
+    /// 焦点事件只在弹层内部路由，冒不到宿主窗口，所以不用特判"新焦点是不是弹层里的元素"。
+    /// MenuFlyout 直接返回：presenter 是 ContextMenu，原生就接管键盘焦点、自己收尾。
+    /// </summary>
+    private void OnPreviewGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        if (!IsOpen || _presenter is Controls.MenuFlyoutPresenter)
+        {
+            return;
+        }
+
+        // NewFocus 可能是 null（焦点被清掉 / 窗口失活），那不算"移到了别的控件上"
+        if (e.NewFocus is null || ReferenceEquals(e.NewFocus, _popup?.PlacementTarget))
+        {
+            return;
+        }
+
+        Hide();
     }
 
     public void Hide() => IsOpen = false;
