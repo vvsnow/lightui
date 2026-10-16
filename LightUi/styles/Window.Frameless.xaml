@@ -5,16 +5,10 @@
 
     <!--
         无边框窗口的「样式」那一半（逻辑在 controls/FramelessHelper/）。
-        用法：ui:FramelessHelper.IsFrameless="True" —— 样式已经是 Window 的隐式默认，不用自己写 Style。
-
-        ★ 合并集里只能有一条 <Style TargetType="Window"/>，就是本文件末尾那条隐式样式；它只对精确的 Window 生效 ——
-          XAML 里 x:Class 声明的窗口都是派生类（隐式样式按精确类型匹配，命不中），那些由 FramelessHelper
-          在挂载时补上（窗口自己写了 Style 就不动）。要显式引用或单独覆盖时用 x:Key="DefaultFramelessWindowStyle"。
-        ★ 悬停/按下不由 IsMouseOver 驱动：返回 HT* 之后那块是非客户区，颜色只能来自
-          FramelessHelper.HoveredCaptionButton / PressedCaptionButton 这两个只读附加属性。
-        ★ caption 的视觉与行高由你自己的内容决定，本样式只管右上角那三颗按钮；
-          FramelessHelper 也不往任何元素写高度，它算的 caption 高度只用于命中判定。
-        ★ 按钮必须真的 IsVisible=false（ResizeMode 触发器做的），命中判定才会跳过它。
+        用法：
+        -  ui:FramelessHelper.IsFrameless="True" 应用无边框样式
+        -  ui:FramelessHelper.CaptionHeight="100" 设置可拖动区域高度为100
+        -  WindowChrome.IsHitTestVisibleInChrome="True" 控件逃生窗口
     -->
 
     <Style x:Key="DefaultFramelessWindowStyle" TargetType="Window">

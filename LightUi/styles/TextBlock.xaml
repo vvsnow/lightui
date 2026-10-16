@@ -1,6 +1,5 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!--  不设 Foreground：让前景色从父级继承；写了具体 brush 就成了 local value，会盖掉继承  -->
 
     <Style x:Key="DefaultTextStyle" TargetType="{x:Type TextBlock}">
         <Setter Property="FontSize" Value="{DynamicResource ControlFontSize}" />
@@ -8,17 +7,6 @@
 
     <Style BasedOn="{StaticResource DefaultTextStyle}" TargetType="{x:Type TextBlock}" />
 
-    <!--
-        ─────  排版档位  ─────
-        四档按「字号 + 字重 + 前景色」分层，全部 BasedOn DefaultTextStyle —— 以后它加东西
-        （行高、换行策略之类）这四档跟着一起变。
-        Foreground 一律写死：这四档存在的意义就是把颜色钉住；不想钉死的用上面那条隐式样式（它不设 Foreground，靠继承）。
-        
-        字号阶梯 22 / 16 / 13 / 12。13 是正文基准（= ControlFontSize，跟按钮、文本框里的字一样大），
-        12 是最小档（= TextSecondaryFontSize，也是 Windows 标准 UI 字号）。
-        注：SemiBold(600) / Medium(500) 对拉丁字母有效；微软雅黑只有 Regular / Bold 两档，
-        中文标题上这两个字重可能退成 Regular —— 要实测确认，不行就把中文标题改 Bold。
-    -->
     <Style
         x:Key="TitleTextStyle"
         BasedOn="{StaticResource DefaultTextStyle}"
@@ -37,7 +25,6 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     </Style>
 
-    <!--  正文：不设 FontSize，继承 DefaultTextStyle 的 ControlFontSize(13)，只是把前景色钉成主色  -->
     <Style
         x:Key="PrimaryTextStyle"
         BasedOn="{StaticResource DefaultTextStyle}"
@@ -45,7 +32,6 @@
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
     </Style>
 
-    <!--  次要文字：说明、图注、脚注。原名 PageSubtitleStyle，值和它一字不差  -->
     <Style
         x:Key="SecondaryTextStyle"
         BasedOn="{StaticResource DefaultTextStyle}"

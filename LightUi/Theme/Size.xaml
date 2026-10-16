@@ -4,18 +4,11 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!--  ─────────  高度  ─────────  -->
-
     <sys:Double x:Key="ControlHeight">28</sys:Double>
 
-    <!--
-        菜单项高度 = ControlHeight − 2 × ControlBorderThickness（外面还裹着菜单的 1px 边框）。
-        改 ControlHeight 时记得一并改这里 —— XAML 里表达不出这个减法，编译器不会提醒你。
-    -->
     <sys:Double x:Key="MenuItemHeight">26</sys:Double>
 
     <!--  ─────────  线维度  ─────────  -->
-
-    <!--  必须是 Thickness 不能是 sys:Double：它只用在 BorderThickness 上，拿到 boxed double 会抛「不是有效值」  -->
     <Thickness x:Key="ControlBorderThickness">1</Thickness>
     <Thickness x:Key="ControlPaddingHorizontal">12,0</Thickness>
 
@@ -31,12 +24,6 @@
 
     <!--  ─────────  字号  ─────────  -->
 
-    <!--
-        排版档位（TitleTextStyle / HeaderTextStyle）专用：22 = 16 × 1.375，16 = 13 × 1.23。
-        越往上的层级跨度越开，标题才跳得出来。
-        正文（13）和最小档（12）刻意不另起 token —— 直接用现成的 ControlFontSize / TextSecondaryFontSize，
-        正文跟控件里的字同大，界面才不自相矛盾。
-    -->
     <sys:Double x:Key="TitleFontSize">22</sys:Double>
     <sys:Double x:Key="HeaderFontSize">16</sys:Double>
 
@@ -52,7 +39,6 @@
 
 
     <!--  ─────────  圆角  ─────────  -->
-
     <CornerRadius x:Key="ControlCornerRadius">3</CornerRadius>
     <CornerRadius x:Key="OverlayCornerRadius">4</CornerRadius>
 

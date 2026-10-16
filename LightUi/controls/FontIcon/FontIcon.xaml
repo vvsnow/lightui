@@ -3,12 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <!--
-        图标字体用系统自带的，不随包分发 —— Segoe Fluent Icons 是微软字体，其内嵌许可明确禁止再分发
-        （"Any other use is prohibited"），打进 NuGet 包有法律风险。
-        · Segoe Fluent Icons 随 Win11，Segoe MDL2 Assets 随 Win10 —— 回退链覆盖两代
-        · 库用到的 19 个码点在两个字体里都存在，回退不会出豆腐块（个别字形绘制细节不同）
-    -->
     <Style TargetType="{x:Type local:FontIcon}">
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets" />

@@ -5,15 +5,6 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ui="clr-namespace:LightUi">
 
-    <!--
-        尺寸是样式自己的资源，**与 caption 高度无关** —— caption 高度只用于命中判定（多高算拖动区）。
-        悬停/按下主要不在这里上色：返回 HT* 之后那块是非客户区，IsMouseOver 恒为 false，
-        真正的悬停色在 DefaultFramelessWindowStyle 的模板触发器里；下面那两个只作**兜底**
-        （布局完成前命中会回落到 WPF 输入，那时按钮就是普通 WPF 按钮）。
-        ★ 刻意不 BasedOn 任何按钮样式：跨字典的 {StaticResource} 在合并进来的子字典里搜不到，
-        启动会抛「无法找到名为 … 的资源」（合并顺序也解决不了）—— 所以这里自带全套 setter。
-    -->
-
     <sys:Double x:Key="FramelessCaptionButtonWidth">46</sys:Double>
     <sys:Double x:Key="FramelessCaptionButtonHeight">30</sys:Double>
 
@@ -76,24 +67,18 @@
     </Style>
 
     <!--
-        主题切换按钮：标题栏里那颗「点一下切明/暗」的按钮，配 ui:ThemeManager 用。
-        BasedOn 的是**同文件**的 FramelessSystemButtonStyle，所以能解析
-        （跨字典的 {StaticResource} 在合并进来的子字典里搜不到，原因见本文件顶部那段注释）。
-        图标显示的是**当前**主题：浅色主题显示太阳，深色主题显示月亮。
-        
         ★ 两个 FontIcon 必须 x:Shared="False"，不能写成 Setter.Value 里的内联对象。
         原因：Style 的 Setter 值是**共享实例** —— 内联的话全局只有一个 FontIcon 对象，
         两颗按钮同时用这个样式，同一个 UIElement 就会被挂到两个父级上。
         x:Shared="False" + {DynamicResource} 让每次取值都新造一个实例，才是能复用的写法。
     -->
     <local:FontIcon
-        x:Key="ThemeGlyphDark"
+        x:Key="ThemeGlyphLight"
         x:Shared="False"
         Glyph="&#xE706;" />
     <local:FontIcon
-        x:Key="ThemeGlyphLight"
+        x:Key="ThemeGlyphDark"
         x:Shared="False"
-        FontSize="13"
         Glyph="&#xE708;" />
 
     <Style

@@ -3,12 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LightUi.Controls">
 
-    <!--
-        本文件才是可视逻辑（styles/ProgressBar.xaml 只是把原生 ProgressBar 套进来的壳）。
-        只搭静态视觉树：动画在 ProgressBar.cs 里用 BeginAnimation 驱动 —— 位移量依赖 ActualWidth，
-        放在 XAML 关键帧的绑定上实测不生效；指示块显隐靠"宽度归零"而不是 Opacity，所以模板里没有视觉状态。
-    -->
-
     <Style TargetType="{x:Type local:ProgressBar}">
         <Setter Property="Foreground" Value="{DynamicResource AccentBrush}" />
         <Setter Property="Background" Value="{DynamicResource ProgressBackgroundBrush}" />
