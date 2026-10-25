@@ -126,10 +126,10 @@
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="8">
-                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="WarningBrush（警告文字）" />
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="TextWarningBrush（警告文字）" />
                     <TextBlock
                         FontSize="{DynamicResource ControlFontSize}"
-                        Foreground="{DynamicResource WarningBrush}"
+                        Foreground="{DynamicResource TextWarningBrush}"
                         Text="这是一条警告文字：颜色随主题在 #C2410C（浅色）/ #FFA033（深色）之间切换。"
                         TextWrapping="Wrap" />
                     <TextBlock

@@ -109,7 +109,7 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 
 ### 2.2 语义色板
 
-所有控件只引用下面这些**语义令牌**，不写死颜色 —— 换主题就是在换这一组值。Demo 的 Home 页把其中 9 个摆成了色板，`WarningBrush` 以文字示例展示。
+所有控件只引用下面这些**语义令牌**，不写死颜色 —— 换主题就是在换这一组值。Demo 的 Home 页把其中 9 个摆成了色板，`TextWarningBrush` 以文字示例展示。
 
 | 令牌 | 浅色 | 深色 | 用途 |
 |---|---|---|---|
@@ -121,11 +121,11 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 | `BorderBrush` | `#D3D3D3` | `#4A4A4A` | 描边 |
 | `TextPrimaryBrush` | `#1F1F1F` | `#F5F5F5` | 主文字（标题、正文） |
 | `TextSecondaryBrush` | `#6B6B6B` | `#B0B0B0` | 次文字（说明、辅助） |
+| `TextWarningBrush` | `#C2410C` | `#FFA033` | 警告 / 危险提示文字 |
 | `AccentBrush` | `#2563EB` | `#3B82F6` | 强调色 / Primary 按钮 |
 | `AccentHoverBrush` | `#1D4ED8` | `#60A5FA` | 强调色悬停 |
 | `AccentPressedBrush` | `#1E40AF` | `#2563EB` | 强调色按下 |
 | `AccentForegroundBrush` | `#FFFFFF` | `#FFFFFF` | 强调色上的文字 |
-| `WarningBrush` | `#C2410C` | `#FFA033` | 警告 / 危险提示文字 |
 | `ToggleSwitchThumbBrush` | `#FFFFFF` | `#E5E5E5` | 开关滑块 |
 | `ProgressBackgroundBrush` | `#E0E0E0` | `#505050` | 进度条轨道 |
 | `ScrollBackgroundBrush` | `#E0E0E0` | `#505050` | 滚动条滑块 |
@@ -134,7 +134,7 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 | `SystemCloseForegroundBrush` | `#FFFFFF` | 同左 | 标题栏关闭键前景 |
 | `FlyoutShadowEffect` | DropShadow · Blur 10 · Dir 270 · Opacity 0.4 · `#DDDDDD` | 同参数 · `#000000` | 弹层阴影 |
 
-`WarningBrush` 专门用于警告 / 危险提示的字色：浅色 `#C2410C` 在白底约 5.2:1，深色 `#FFA033` 在 `#1F1F1F` 上约 8.3:1，两边都满足正常文字的对比度要求。
+`TextWarningBrush` 专门用于警告 / 危险提示的字色：浅色 `#C2410C` 在白底约 5.2:1，深色 `#FFA033` 在 `#1F1F1F` 上约 8.3:1，两边都满足正常文字的对比度要求。
 
 弹层阴影整个 `DropShadowEffect` 放在主题里而不在模板里 —— 切主题时颜色、模糊、浓度可以各自调。深色主题必须用黑：浅灰投影在深底上会变成一圈发光边。
 
