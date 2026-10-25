@@ -19,7 +19,7 @@
 
             <UniformGrid Columns="3" Rows="3">
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Background="{DynamicResource PageBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="PageBackgroundBrush" />
                         <TextBlock
@@ -29,7 +29,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlBackgroundBrush}">
+                <Border Background="{DynamicResource ControlBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlBackgroundBrush" />
                         <TextBlock
@@ -39,7 +39,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlSubtleBackgroundBrush}">
+                <Border Background="{DynamicResource ControlSubtleBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlSubtleBackgroundBrush" />
                         <TextBlock
@@ -49,7 +49,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlHoverBackgroundBrush}">
+                <Border Background="{DynamicResource ControlHoverBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlHoverBackgroundBrush" />
                         <TextBlock
@@ -59,7 +59,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource ControlSelectedBackgroundBrush}">
+                <Border Background="{DynamicResource ControlSelectedBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="ControlSelectedBackgroundBrush" />
                         <TextBlock
@@ -69,12 +69,14 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <!--  强调色方块原本没有描边：描边刷子设成 Transparent 而不是去掉 BorderThickness，
-                      这样 1px 的内缩和其它方块一致，内容不会跟着挪位  -->
+                <!--
+                    强调色方块原本没有描边：描边刷子设成 Transparent 而不是去掉 BorderThickness，
+                    这样 1px 的内缩和其它方块一致，内容不会跟着挪位
+                -->
                 <Border
-                    Style="{StaticResource PaletteStyle}"
                     Background="{DynamicResource AccentBrush}"
-                    BorderBrush="Transparent">
+                    BorderBrush="Transparent"
+                    Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock
                             FontSize="12"
@@ -87,7 +89,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Background="{DynamicResource PageBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="BorderBrush" />
                         <TextBlock
@@ -97,7 +99,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Background="{DynamicResource PageBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock FontSize="12" Text="TextPrimaryBrush" />
                         <TextBlock
@@ -107,7 +109,7 @@
                     </ui:SimpleStackPanel>
                 </Border>
 
-                <Border Style="{StaticResource PaletteStyle}" Background="{DynamicResource PageBackgroundBrush}">
+                <Border Background="{DynamicResource PageBackgroundBrush}" Style="{StaticResource PaletteStyle}">
                     <ui:SimpleStackPanel Spacing="4">
                         <TextBlock
                             FontSize="12"
@@ -121,6 +123,22 @@
                 </Border>
 
             </UniformGrid>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="8">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="WarningBrush（警告文字）" />
+                    <TextBlock
+                        FontSize="{DynamicResource ControlFontSize}"
+                        Foreground="{DynamicResource WarningBrush}"
+                        Text="这是一条警告文字：颜色随主题在 #C2410C（浅色）/ #FFA033（深色）之间切换。"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        FontSize="{DynamicResource TextSecondaryFontSize}"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="用于危险 / 警告提示的字体颜色。"
+                        TextWrapping="Wrap" />
+                </ui:SimpleStackPanel>
+            </Border>
 
         </ui:SimpleStackPanel>
     </ScrollViewer>

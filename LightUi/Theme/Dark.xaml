@@ -21,6 +21,9 @@
     <SolidColorBrush x:Key="AccentPressedBrush" Color="#2563EB" />
     <SolidColorBrush x:Key="AccentForegroundBrush" Color="#FFFFFF" />
 
+    <!--  警告 / 危险文字色：亮橘，在 #1F1F1F 上对比度约 8.3:1  -->
+    <SolidColorBrush x:Key="WarningBrush" Color="#FFA033" />
+
     <!--  键盘焦点环的颜色，样式在 styles/FocusVisual.xaml。浅色主题那份在 Light.xaml  -->
     <SolidColorBrush x:Key="FocusVisualBrush" Color="#B4B4B4" />
 
