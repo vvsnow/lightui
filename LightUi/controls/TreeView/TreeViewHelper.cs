@@ -7,7 +7,8 @@ namespace LightUi.Controls;
 /// <code>
 /// &lt;TreeView ui:TreeViewHelper.ItemHeight="30" ui:TreeViewHelper.Indent="16" /&gt;
 /// </code>
-/// <see cref="ItemHeightProperty"/>：每行高度；<see cref="IndentProperty"/>：每级内容缩进。
+/// <see cref="ItemHeightProperty"/>：每行高度；<see cref="IndentProperty"/>：每级内容缩进；
+/// <see cref="ToggleExpandedOnEnterProperty"/>：回车切换展开（默认开）。
 /// 行本身始终是全宽，缩进只影响内容。
 /// </summary>
 public static class TreeViewHelper
@@ -41,4 +42,42 @@ public static class TreeViewHelper
     public static double GetItemHeight(DependencyObject element) => (double)element.GetValue(ItemHeightProperty);
 
     public static void SetItemHeight(DependencyObject element, double value) => element.SetValue(ItemHeightProperty, value);
+
+    /// <summary>
+    /// 按回车切换当前行的展开状态。写在 TreeView 上；隐式 TreeView 样式默认打开，
+    /// 不想用就在自己的 TreeView 上写 False。叶子（没有子项）不响应，也不吞掉按键。
+    /// </summary>
+    public static readonly DependencyProperty ToggleExpandedOnEnterProperty =
+        DependencyProperty.RegisterAttached(
+            "ToggleExpandedOnEnter",
+            typeof(bool),
+            typeof(TreeViewHelper),
+            new PropertyMetadata(false, OnToggleExpandedOnEnterChanged));
+
+    public static bool GetToggleExpandedOnEnter(DependencyObject element) =>
+        (bool)element.GetValue(ToggleExpandedOnEnterProperty);
+
+    public static void SetToggleExpandedOnEnter(DependencyObject element, bool value) =>
+        element.SetValue(ToggleExpandedOnEnterProperty, value);
+
+    private static void OnToggleExpandedOnEnterChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not TreeView treeView)
+            return;
+
+        treeView.KeyDown -= OnTreeKeyDown;
+
+        if (e.NewValue is true)
+            treeView.KeyDown += OnTreeKeyDown;
+    }
+
+    private static void OnTreeKeyDown(object sender, KeyEventArgs e)
+    {
+        // 键盘事件从焦点元素冒泡上来；焦点在某个 TreeViewItem 上时 OriginalSource 就是它
+        if (e.Key != Key.Enter || e.OriginalSource is not TreeViewItem item || !item.HasItems)
+            return;
+
+        item.IsExpanded = !item.IsExpanded;
+        e.Handled = true;
+    }
 }

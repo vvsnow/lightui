@@ -632,6 +632,8 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 | 行高 | `ui:TreeViewHelper.ItemHeight`，默认 `24`；继承到每个 `TreeViewItem` |
 | 缩进 | `ui:TreeViewHelper.Indent`，默认 `8`；只缩进内容，**行本身保持全宽** |
 | 展开状态 | 隐式样式默认把 `TreeViewItem.IsExpanded` 双向绑到数据项的 `IsExpanded`，不用写 `ItemContainerStyle` |
+| 回车 | 切换当前行的展开 / 收起；`ui:TreeViewHelper.ToggleExpandedOnEnter`（默认开，写 `False` 关闭），叶子不响应 |
+| 焦点 | `TreeView` / `TreeViewItem` 都不画虚线焦点框（`FocusVisualStyle="{x:Null}"`） |
 | 选中 | `ControlSelectedBackgroundBrush`，与 `ListBox` 一致 |
 | 悬停 | `ControlHoverBackgroundBrush`，触发器用 `SourceName="Bd"` 只看本行（`TreeViewItem.IsMouseOver` 在子项上恒为 `True`） |
 | 展开箭头 | 共享 `ChevronDownGeometry`：收起旋转 `-90°`，展开 `0°`；叶子不显示箭头，但保留 16px 列保证同级文字对齐 |
@@ -640,6 +642,9 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 ```xml
 <!-- 行高 / 缩进都在 TreeView 上设置一次即可 -->
 <TreeView ui:TreeViewHelper.ItemHeight="30" ui:TreeViewHelper.Indent="16" />
+
+<!-- 不需要「回车切换展开」时 -->
+<TreeView ui:TreeViewHelper.ToggleExpandedOnEnter="False" />
 ```
 
 > 数据项**没有** `IsExpanded` 属性时，默认绑定会失败（调试输出里有一条 binding 错误，不影响运行），树保持收起；不想要这条默认行为可以覆盖 `ItemContainerStyle`。
@@ -876,6 +881,7 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 | `ui:FlyoutService` | 任意 `ButtonBase` | `Flyout` (`FlyoutBase`) | 点击按钮弹出 Flyout / MenuFlyout |
 | `ui:TreeViewHelper` | `TreeView` | `ItemHeight` (`double`) | 每行高度（默认 `24`），继承到每个 `TreeViewItem` |
 | | | `Indent` (`double`) | 每级内容缩进（默认 `8`），只影响内容、不影响行宽 |
+| | | `ToggleExpandedOnEnter` (`bool`) | 回车切换当前行展开状态（默认开；写 `False` 关闭） |
 | `ui:FramelessHelper` | `Window` | `IsFrameless` (`bool`) | 挂上无边框逻辑 |
 | | | `CaptionHeight` (`double`) | 标题栏条带高度（DIP），`0` = 按系统度量算 |
 | | | `CloakUntilFirstFrame` (`bool`) | 启动不闪 |
