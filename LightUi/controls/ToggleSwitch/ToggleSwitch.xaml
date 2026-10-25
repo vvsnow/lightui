@@ -10,7 +10,6 @@
         <Setter Property="Background" Value="{DynamicResource BorderBrush}" />
         <Setter Property="Cursor" Value="Hand" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{DynamicResource DefaultFocusVisualStyle}" />
         <Setter Property="Template">
             <Setter.Value>

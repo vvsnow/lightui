@@ -1,0 +1,172 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:LightUi.Controls">
+
+    <!--
+        VS Code 资源管理器风格的文件树：
+        · 行高 24、每级内容缩进 8（都用 ui:TreeViewHelper 调），展开箭头占 16 的列
+        · 每级只缩进内容，行保持全宽 —— hover / 选中的底色从控件最左边铺满整行
+        · 叶子也留着箭头那一列，同一层级的文字才对得齐
+        · 选中与 ListBox 一致：ControlSelectedBackgroundBrush 灰底
+    -->
+
+    <local:TreeViewIndentConverter x:Key="TreeViewIndentConverter" />
+
+    <Style TargetType="{x:Type TreeView}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <!--  VS Code 的资源管理器不横向滚动，长文件名靠 TextTrimming 省略  -->
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeView}">
+                    <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                        <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="False">
+                            <ItemsPresenter />
+                        </ScrollViewer>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <!--  VS Code 的树没有虚线焦点框，焦点直接由选中底色表达  -->
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <!--  默认把展开状态绑到数据项的 IsExpanded，宿主不用再写 ItemContainerStyle  -->
+        <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            x:Name="Bd"
+                            Grid.Row="0"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{DynamicResource ControlCornerRadius}"
+                            SnapsToDevicePixels="True">
+                            <Grid
+                                Height="{Binding Path=(local:TreeViewHelper.ItemHeight), RelativeSource={RelativeSource TemplatedParent}}"
+                                Margin="{Binding RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TreeViewIndentConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="16" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <!--
+                                    展开箭头。Name 必须是 Expander：TreeViewItem.OnApplyTemplate 靠 GetTemplateChild 取它。
+                                    Focusable=False：点箭头不该把键盘焦点从行上抢走（选中态判断依赖 IsKeyboardFocused）。
+                                -->
+                                <ToggleButton
+                                    x:Name="Expander"
+                                    Grid.Column="0"
+                                    Height="{Binding Path=(local:TreeViewHelper.ItemHeight), RelativeSource={RelativeSource TemplatedParent}}"
+                                    MinHeight="0"
+                                    Padding="0"
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    ClickMode="Press"
+                                    Cursor="Arrow"
+                                    Focusable="False"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent">
+                                                <Path
+                                                    x:Name="Chevron"
+                                                    Width="10"
+                                                    Height="10"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Data="{DynamicResource ChevronDownGeometry}"
+                                                    RenderTransformOrigin="0.5,0.5"
+                                                    Stretch="Uniform"
+                                                    Stroke="{TemplateBinding Foreground}"
+                                                    StrokeEndLineCap="Round"
+                                                    StrokeLineJoin="Round"
+                                                    StrokeStartLineCap="Round"
+                                                    StrokeThickness="1.2">
+                                                    <Path.RenderTransform>
+                                                        <RotateTransform Angle="-90" />
+                                                    </Path.RenderTransform>
+                                                </Path>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsChecked" Value="True">
+                                                    <Setter TargetName="Chevron" Property="RenderTransform">
+                                                        <Setter.Value>
+                                                            <RotateTransform Angle="0" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+
+                                <ContentPresenter
+                                    Grid.Column="1"
+                                    Margin="5,0,8,0"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    ContentSource="Header"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Grid>
+                        </Border>
+
+                        <ItemsPresenter x:Name="ItemsHost" Grid.Row="1" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!--
+                            展开/折叠由模板负责：TreeViewItem 只改 IsExpanded，
+                            子项容器的可见性得模板自己跟着切，否则点了箭头也收不起来。
+                        -->
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+
+                        <!--
+                            必须写 SourceName：TreeViewItem.IsMouseOver 在子项上恒为 True，
+                            不写的话悬停子项会把整条祖先链一起点亮。
+                        -->
+                        <Trigger SourceName="Bd" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlHoverBackgroundBrush}" />
+                        </Trigger>
+
+                        <!--  选中：与 ListBox 一致  -->
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource ControlSelectedBackgroundBrush}" />
+                        </Trigger>
+
+                        <!--  叶子不显示箭头，但 16px 的列还留着，保证同级文字对齐  -->
+                        <Trigger Property="HasItems" Value="False">
+                            <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="{DynamicResource DisabledOpacity}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -17,7 +17,7 @@
         <ui:SimpleStackPanel Spacing="12">
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="Common Controls" />
-            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander — WPF controls restyled by LightUi" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander / TreeView — WPF controls restyled by LightUi" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
@@ -218,6 +218,30 @@
                     </ui:SimpleStackPanel>
                 </ui:SimpleStackPanel>
 
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="TreeView（文件树，VS Code 风格）" />
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="22px 行高、每级缩进 8px；选中态与 ListBox 一致（灰底）；点箭头只展开、不改变选中。"
+                        TextWrapping="Wrap" />
+                    <TreeView Height="240" ItemsSource="{Binding FileTree}">
+                        <TreeView.ItemTemplate>
+                            <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                                <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                                    <ui:FontIcon Glyph="{Binding Glyph}" />
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        Text="{Binding Name}"
+                                        TextTrimming="CharacterEllipsis" />
+                                </ui:SimpleStackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.ItemTemplate>
+                    </TreeView>
+                </ui:SimpleStackPanel>
             </Border>
 
         </ui:SimpleStackPanel>

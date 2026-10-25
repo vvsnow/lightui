@@ -54,7 +54,7 @@
 
     <!--  ─────────  形状  ─────────  -->
 
-    <!--  V 形箭头（ChevronDown）几何：DropDownButton / ComboBox / Expander 三处共用  -->
-    <StreamGeometry x:Key="ChevronDownGeometry">M0,3 L5,7 L10,3</StreamGeometry>
+    <!--  V 形箭头（ChevronDown）几何：DropDownButton / ComboBox / Expander / TreeView 共用；开口约 96°  -->
+    <StreamGeometry x:Key="ChevronDownGeometry">M0,3 L5,7.5 L10,3</StreamGeometry>
 
 </ResourceDictionary>
