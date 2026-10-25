@@ -36,4 +36,17 @@ internal class CommonControlsViewModel : Screen
             new FileNode("Views", "", false,
                 new FileNode("ShellView.xaml", ""))),
     ];
+
+    /// <summary>DataGrid 演示数据。</summary>
+    public IReadOnlyList<TableRow> TableRows { get; } =
+    [
+        new("Light.xaml", "XAML", "1.2 KB"),
+        new("Dark.xaml", "XAML", "1.1 KB"),
+        new("Size.xaml", "XAML", "0.8 KB"),
+        new("TreeView.xaml", "XAML", "6.4 KB"),
+        new("DataGrid.xaml", "XAML", "9.1 KB"),
+        new("TreeViewHelper.cs", "C#", "2.3 KB"),
+        new("TreeViewIndentConverter.cs", "C#", "1.4 KB"),
+        new("README.md", "Markdown", "38 KB"),
+    ];
 }

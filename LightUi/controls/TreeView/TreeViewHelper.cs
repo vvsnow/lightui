@@ -14,14 +14,14 @@ namespace LightUi.Controls;
 public static class TreeViewHelper
 {
     /// <summary>
-    /// 每行的高度（DIP）。默认 24；展开箭头的高度跟着它走。
+    /// 每行的高度（DIP）。默认 28；展开箭头的高度跟着它走。
     /// </summary>
     public static readonly DependencyProperty ItemHeightProperty =
         DependencyProperty.RegisterAttached(
             "ItemHeight",
             typeof(double),
             typeof(TreeViewHelper),
-            new FrameworkPropertyMetadata(24.0, FrameworkPropertyMetadataOptions.Inherits),
+            new FrameworkPropertyMetadata(28.0, FrameworkPropertyMetadataOptions.Inherits),
             static value => value is double height && height >= 0);
 
     /// <summary>

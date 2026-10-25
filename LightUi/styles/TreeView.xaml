@@ -5,7 +5,7 @@
 
     <!--
         VS Code 资源管理器风格的文件树：
-        · 行高 24、每级内容缩进 8（都用 ui:TreeViewHelper 调），展开箭头占 16 的列
+        · 行高 28、每级内容缩进 8（都用 ui:TreeViewHelper 调），展开箭头占 16 的列
         · 每级只缩进内容，行保持全宽 —— hover / 选中的底色从控件最左边铺满整行
         · 叶子也留着箭头那一列，同一层级的文字才对得齐
         · 选中与 ListBox 一致：ControlSelectedBackgroundBrush 灰底

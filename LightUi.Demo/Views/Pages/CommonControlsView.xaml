@@ -17,7 +17,7 @@
         <ui:SimpleStackPanel Spacing="12">
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="Common Controls" />
-            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander / TreeView — WPF controls restyled by LightUi" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander / TreeView / DataGrid — WPF controls restyled by LightUi" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
@@ -226,7 +226,7 @@
                     <TextBlock
                         FontSize="12"
                         Foreground="{DynamicResource TextSecondaryBrush}"
-                        Text="22px 行高、每级缩进 8px；选中态与 ListBox 一致（灰底）；点箭头只展开、不改变选中。"
+                        Text="28px 行高、每级缩进 8px；选中态与 ListBox 一致（灰底）；点箭头只展开、不改变选中。"
                         TextWrapping="Wrap" />
                     <TreeView Height="240" ItemsSource="{Binding FileTree}">
                         <TreeView.ItemTemplate>
@@ -241,6 +241,37 @@
                             </HierarchicalDataTemplate>
                         </TreeView.ItemTemplate>
                     </TreeView>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="DataGrid（表格）" />
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="圆角卡片、28px 行高、行间 1px 分隔线；行 hover / 选中与 ListBox 一致；列头可排序、可拖拽改宽。"
+                        TextWrapping="Wrap" />
+                    <DataGrid
+                        Height="240"
+                        AutoGenerateColumns="False"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding TableRows}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Width="*"
+                                Binding="{Binding Name}"
+                                Header="名称" />
+                            <DataGridTextColumn
+                                Width="100"
+                                Binding="{Binding Kind}"
+                                Header="类型" />
+                            <DataGridTextColumn
+                                Width="100"
+                                Binding="{Binding Size}"
+                                Header="大小" />
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </ui:SimpleStackPanel>
             </Border>
 

@@ -629,7 +629,7 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 
 | 项 | 说明 |
 |---|---|
-| 行高 | `ui:TreeViewHelper.ItemHeight`，默认 `24`；继承到每个 `TreeViewItem` |
+| 行高 | `ui:TreeViewHelper.ItemHeight`，默认 `28`；继承到每个 `TreeViewItem` |
 | 缩进 | `ui:TreeViewHelper.Indent`，默认 `8`；只缩进内容，**行本身保持全宽** |
 | 展开状态 | 隐式样式默认把 `TreeViewItem.IsExpanded` 双向绑到数据项的 `IsExpanded`，不用写 `ItemContainerStyle` |
 | 回车 | 切换当前行的展开 / 收起；`ui:TreeViewHelper.ToggleExpandedOnEnter`（默认开，写 `False` 关闭），叶子不响应 |
@@ -648,6 +648,36 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 ```
 
 > 数据项**没有** `IsExpanded` 属性时，默认绑定会失败（调试输出里有一条 binding 错误，不影响运行），树保持收起；不想要这条默认行为可以覆盖 `ItemContainerStyle`。
+
+### 5.12 `DataGrid`
+
+与 `ListBox` / `TreeView` 同一套扁平风格：圆角卡片、行高 28、行间 1px 分隔线。
+
+```xml
+<DataGrid
+    AutoGenerateColumns="False"
+    IsReadOnly="True"
+    ItemsSource="{Binding Rows}">
+    <DataGrid.Columns>
+        <DataGridTextColumn Width="*" Binding="{Binding Name}" Header="名称" />
+        <DataGridTextColumn Width="100" Binding="{Binding Kind}" Header="类型" />
+        <DataGridTextColumn Width="100" Binding="{Binding Size}" Header="大小" />
+    </DataGrid.Columns>
+</DataGrid>
+```
+
+| 项 | 说明 |
+|---|---|
+| 容器 | 圆角 `ContainerCornerRadius` + 1px 描边 |
+| 行高 / 列头高 | 都是 `ControlHeight`（28） |
+| 分隔线 | `GridLinesVisibility="None"`，改由**行模板的 1px 上边框**画 —— DataGrid 自带网格线不吸附像素，125% 缩放下会被抗锯齿摊成 2px |
+| 行状态 | 悬停 `ControlHoverBackgroundBrush`、选中 `ControlSelectedBackgroundBrush`，与 `ListBox` 一致 |
+| 列头 | 透明底、`TextSecondaryBrush` 小字（12px）、无底边（第一行的上边框充当分隔线） |
+| 排序 | 点击列头排序，`SortDirection` 用共享的 `ChevronDownGeometry`：升序箭头朝上、降序朝下 |
+| 列宽 | 列头两侧的透明 `Thumb`（`PART_LeftHeaderGripper` / `PART_RightHeaderGripper`）支持拖拽改宽 |
+| 行头 | 默认 `HeadersVisibility=Column` 不显示；改成 `All` / `Row` 会出现，但**行头本身没有做样式** |
+
+> 模板部件名不能改：`DG_ScrollViewer`、`PART_ColumnHeadersPresenter`、`PART_ScrollContentPresenter`、`PART_VerticalScrollBar`、`PART_HorizontalScrollBar`、`DGR_CellsPresenter`、`DGR_DetailsPresenter`、`DGR_RowHeaderPresenter`。
 
 ## 六、Extended Control 页
 
@@ -879,7 +909,7 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 | `ui:TextBoxHelper` | `TextBox` / `PasswordBox` | `Placeholder` (`string`) | 占位符文字，内容为空时显示 |
 | | | `HasText` (只读 `bool`) | 控件里当前有没有内容，**模板消费**（`PART_Placeholder` 靠它收起） |
 | `ui:FlyoutService` | 任意 `ButtonBase` | `Flyout` (`FlyoutBase`) | 点击按钮弹出 Flyout / MenuFlyout |
-| `ui:TreeViewHelper` | `TreeView` | `ItemHeight` (`double`) | 每行高度（默认 `24`），继承到每个 `TreeViewItem` |
+| `ui:TreeViewHelper` | `TreeView` | `ItemHeight` (`double`) | 每行高度（默认 `28`），继承到每个 `TreeViewItem` |
 | | | `Indent` (`double`) | 每级内容缩进（默认 `8`），只影响内容、不影响行宽 |
 | | | `ToggleExpandedOnEnter` (`bool`) | 回车切换当前行展开状态（默认开；写 `False` 关闭） |
 | `ui:FramelessHelper` | `Window` | `IsFrameless` (`bool`) | 挂上无边框逻辑 |
@@ -918,4 +948,5 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 7. **不监听系统主题**：`ThemeManager` 只在被显式调用时切换，不跟随 `SystemParameters`，也不探测高对比度（`ApplicationTheme.HighContrast` 目前是占位，映射到 Light）。
 8. **DPI 感知是宿主 exe 的责任**，库里只能探测并打警告。
 9. **`TreeView` 默认约定数据项带 `IsExpanded` 属性** —— 隐式样式里做了双向绑定；没有这个属性时绑定会失败（不影响运行，树保持收起），可以覆盖 `ItemContainerStyle` 去掉它。
+10. **`DataGrid` 的行头没有做样式** —— 默认 `HeadersVisibility=Column` 不显示；改成 `All` / `Row` 时行头是系统默认外观。另外 DataGrid 模板是自绘的，部件名改动会让列头 / 单元格 / 行详情失效。
 
