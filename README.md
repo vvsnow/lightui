@@ -158,7 +158,7 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 | `OverlayCornerRadius` | `CornerRadius 4` | 弹层圆角（Flyout / MenuFlyout / ContextMenu） |
 | `ContainerCornerRadius` | `CornerRadius 6` | 容器卡片圆角（Expander / TabControl / ListBox） |
 | `DisabledOpacity` | `0.5` | 所有 `IsEnabled=False` 触发器共用 |
-| `ChevronDownGeometry` | `M0,3 L5,7 L10,3` | V 形箭头几何（DropDownButton / ComboBox / Expander 三处共用） |
+| `ChevronDownGeometry` | `M0,3 L5,7.5 L10,3` | V 形箭头几何，开口约 96°（DropDownButton / ComboBox / Expander / TreeView 共用） |
 
 另有一个 `ExpanderHeaderHeight`（`50`）定义在 `styles/Expander.xaml` 里，不在 `Size.xaml`。
 
@@ -610,6 +610,40 @@ public void ShowFramelessDialog()
 | 阴影预留 | `Padding` = `FlyoutShadowRoom`(12)，模板把它当 `Border` 的 `Margin` |
 | 偏移补偿 | `ui:ContextMenuShadow.FixOffsets="True"`，见 [7.5](#75-uicontextmenushadow附加属性) |
 
+### 5.11 `TreeView` / `TreeViewItem`
+
+VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内容**，hover / 选中的高亮从控件最左边铺满整行。
+
+```xml
+<TreeView ItemsSource="{Binding FileTree}">
+    <TreeView.ItemTemplate>
+        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+            <ui:SimpleStackPanel Orientation="Horizontal" Spacing="6">
+                <ui:FontIcon Glyph="{Binding Glyph}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding Name}" />
+            </ui:SimpleStackPanel>
+        </HierarchicalDataTemplate>
+    </TreeView.ItemTemplate>
+</TreeView>
+```
+
+| 项 | 说明 |
+|---|---|
+| 行高 | `ui:TreeViewHelper.ItemHeight`，默认 `24`；继承到每个 `TreeViewItem` |
+| 缩进 | `ui:TreeViewHelper.Indent`，默认 `8`；只缩进内容，**行本身保持全宽** |
+| 展开状态 | 隐式样式默认把 `TreeViewItem.IsExpanded` 双向绑到数据项的 `IsExpanded`，不用写 `ItemContainerStyle` |
+| 选中 | `ControlSelectedBackgroundBrush`，与 `ListBox` 一致 |
+| 悬停 | `ControlHoverBackgroundBrush`，触发器用 `SourceName="Bd"` 只看本行（`TreeViewItem.IsMouseOver` 在子项上恒为 `True`） |
+| 展开箭头 | 共享 `ChevronDownGeometry`：收起旋转 `-90°`，展开 `0°`；叶子不显示箭头，但保留 16px 列保证同级文字对齐 |
+| 全宽高亮 | 子项容器不右移，缩进由 `TreeViewIndentConverter` 按层级算到行内容上 |
+
+```xml
+<!-- 行高 / 缩进都在 TreeView 上设置一次即可 -->
+<TreeView ui:TreeViewHelper.ItemHeight="30" ui:TreeViewHelper.Indent="16" />
+```
+
+> 数据项**没有** `IsExpanded` 属性时，默认绑定会失败（调试输出里有一条 binding 错误，不影响运行），树保持收起；不想要这条默认行为可以覆盖 `ItemContainerStyle`。
+
 ## 六、Extended Control 页
 
 ### 6.1 `ui:ToggleSwitch`
@@ -840,6 +874,8 @@ public void ShowFramelessDialog()
 | `ui:TextBoxHelper` | `TextBox` / `PasswordBox` | `Placeholder` (`string`) | 占位符文字，内容为空时显示 |
 | | | `HasText` (只读 `bool`) | 控件里当前有没有内容，**模板消费**（`PART_Placeholder` 靠它收起） |
 | `ui:FlyoutService` | 任意 `ButtonBase` | `Flyout` (`FlyoutBase`) | 点击按钮弹出 Flyout / MenuFlyout |
+| `ui:TreeViewHelper` | `TreeView` | `ItemHeight` (`double`) | 每行高度（默认 `24`），继承到每个 `TreeViewItem` |
+| | | `Indent` (`double`) | 每级内容缩进（默认 `8`），只影响内容、不影响行宽 |
 | `ui:FramelessHelper` | `Window` | `IsFrameless` (`bool`) | 挂上无边框逻辑 |
 | | | `CaptionHeight` (`double`) | 标题栏条带高度（DIP），`0` = 按系统度量算 |
 | | | `CloakUntilFirstFrame` (`bool`) | 启动不闪 |
@@ -875,4 +911,5 @@ public void ShowFramelessDialog()
 6. **`ToolTip` 模板覆盖后没有默认阴影**。
 7. **不监听系统主题**：`ThemeManager` 只在被显式调用时切换，不跟随 `SystemParameters`，也不探测高对比度（`ApplicationTheme.HighContrast` 目前是占位，映射到 Light）。
 8. **DPI 感知是宿主 exe 的责任**，库里只能探测并打警告。
+9. **`TreeView` 默认约定数据项带 `IsExpanded` 属性** —— 隐式样式里做了双向绑定；没有这个属性时绑定会失败（不影响运行，树保持收起），可以覆盖 `ItemContainerStyle` 去掉它。
 
