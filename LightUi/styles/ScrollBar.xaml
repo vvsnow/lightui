@@ -72,4 +72,54 @@
         <Setter Property="SnapsToDevicePixels" Value="True" />
     </Style>
 
+    <!--
+        无角落填充的 ScrollViewer 模板：系统默认模板在横竖滚动条交汇处放了一个
+        Rectangle（SystemColors.ControlBrush），两轴都出滚动条时就是右下角那个小方块。
+        这里把横条放在第 0 列，右下角留空，不再画填充块。
+    -->
+    <ControlTemplate x:Key="LightUiScrollViewerTemplate" TargetType="{x:Type ScrollViewer}">
+        <Border Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ScrollContentPresenter
+                    x:Name="PART_ScrollContentPresenter"
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    CanContentScroll="{TemplateBinding CanContentScroll}"
+                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                    ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
+                    Margin="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+
+                <ScrollBar
+                    x:Name="PART_VerticalScrollBar"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Orientation="Vertical"
+                    Maximum="{TemplateBinding ScrollableHeight}"
+                    ViewportSize="{TemplateBinding ViewportHeight}"
+                    Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                    Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
+
+                <ScrollBar
+                    x:Name="PART_HorizontalScrollBar"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Orientation="Horizontal"
+                    Maximum="{TemplateBinding ScrollableWidth}"
+                    ViewportSize="{TemplateBinding ViewportWidth}"
+                    Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
+                    Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" />
+            </Grid>
+        </Border>
+    </ControlTemplate>
+
 </ResourceDictionary>

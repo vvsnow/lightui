@@ -682,6 +682,33 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 
 > 模板部件名不能改：`DG_ScrollViewer`、`PART_ColumnHeadersPresenter`、`PART_ScrollContentPresenter`、`PART_VerticalScrollBar`、`PART_HorizontalScrollBar`、`DGR_CellsPresenter`、`DGR_DetailsPresenter`、`DGR_RowHeaderPresenter`。
 
+### 5.13 `ListView`（GridView）
+
+与 `ListBox` / `DataGrid` 同一套扁平风格。`ListView` / `ListViewItem` / `GridViewColumnHeader` 都不是 `ListBox` / `ListBoxItem` 的精确类型，所以库里为它们单独定义了隐式样式。
+
+```xml
+<ListView Height="160" ItemsSource="{Binding Rows}">
+    <ListView.View>
+        <GridView>
+            <GridViewColumn Width="260" DisplayMemberBinding="{Binding Name}" Header="名称" />
+            <GridViewColumn Width="120" DisplayMemberBinding="{Binding Kind}" Header="类型" />
+            <GridViewColumn Width="120" DisplayMemberBinding="{Binding Size}" Header="大小" />
+        </GridView>
+    </ListView.View>
+</ListView>
+```
+
+| 项 | 说明 |
+|---|---|
+| 容器 | 圆角 `ContainerCornerRadius` + 1px 描边 |
+| 行 | 无分割线；`Margin="0"`（覆盖系统主题默认的 `0,0,0,1`，否则会有 1px 白缝）；hover / 选中与 `ListBox` 一致；3px 圆角 |
+| 行内容左缩进 | `Padding="2,0"` —— `GridViewRowPresenter` 会给单元格内容额外加约 6 DIP，2 + 6 = 8，与 `ListBoxItem` 的 8 对齐 |
+| 表头 | 透明底、12px 次要色；`Padding="8.5,0"` + `Margin="-1.5,0,0,0"` 抵消系统 GridView 表头行约 1.6 DIP 的内缩，避免左侧白缝并保持文字与单元格对齐 |
+| 滚动 | 仍使用系统 `GridViewScrollViewerStyleKey`（列头与内容的横向同步由它负责） |
+| 列宽 | 列头两侧的透明 `Thumb`（`PART_LeftHeaderGripper` / `PART_RightHeaderGripper`）支持拖拽改宽 |
+
+> 样式按 **GridView** 用法适配；无 `View` 的纯 ListView 没有专门处理。
+
 ## 六、Extended Control 页
 
 ### 6.1 `ui:ToggleSwitch`
@@ -952,4 +979,5 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 8. **DPI 感知是宿主 exe 的责任**，库里只能探测并打警告。
 9. **`TreeView` 默认约定数据项带 `IsExpanded` 属性** —— 隐式样式里做了双向绑定；没有这个属性时绑定会失败（不影响运行，树保持收起），可以覆盖 `ItemContainerStyle` 去掉它。
 10. **`DataGrid` 的行头没有做样式** —— 默认 `HeadersVisibility=Column` 不显示；改成 `All` / `Row` 时行头是系统默认外观。另外 DataGrid 模板是自绘的，部件名改动会让列头 / 单元格 / 行详情失效。
+11. **`ListView` 样式按 GridView 适配** —— 无 `View` 的纯 ListView 未专门处理；列头 / 横向同步仍由系统 `GridViewScrollViewerStyleKey` 提供，如果那里也需要去掉右下角小方块，需要单独覆盖该 key。
 

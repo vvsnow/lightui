@@ -17,7 +17,7 @@
         <ui:SimpleStackPanel Spacing="12">
 
             <TextBlock Style="{StaticResource TitleTextStyle}" Text="Common Controls" />
-            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander / TreeView / DataGrid — WPF controls restyled by LightUi" />
+            <TextBlock Style="{StaticResource SecondaryTextStyle}" Text="CheckBox / RadioButton / TextBox / PasswordBox / ComboBox / ListBox / ProgressBar / ToolTip / TabControl / Expander / TreeView / ListView / DataGrid — WPF controls restyled by LightUi" />
 
             <Border Style="{StaticResource ContainerStyle}">
                 <ui:SimpleStackPanel Spacing="12">
@@ -106,6 +106,35 @@
                             ItemsSource="{Binding FruitItems}"
                             SelectedItem="{Binding SelectedFruit}" />
                     </ui:SimpleStackPanel>
+                </ui:SimpleStackPanel>
+            </Border>
+
+            <Border Style="{StaticResource ContainerStyle}">
+                <ui:SimpleStackPanel Spacing="12">
+                    <TextBlock Style="{StaticResource HeaderTextStyle}" Text="ListView（GridView 列表）" />
+                    <TextBlock
+                        FontSize="12"
+                        Foreground="{DynamicResource TextSecondaryBrush}"
+                        Text="ListView / ListViewItem / GridViewColumnHeader 已补齐隐式样式，和 ListBox / DataGrid 一致；列头 / 横向同步仍由系统的 GridView ScrollViewer 样式提供。"
+                        TextWrapping="Wrap" />
+                    <ListView Height="160" ItemsSource="{Binding TableRows}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn
+                                    Width="260"
+                                    DisplayMemberBinding="{Binding Name}"
+                                    Header="名称" />
+                                <GridViewColumn
+                                    Width="120"
+                                    DisplayMemberBinding="{Binding Kind}"
+                                    Header="类型" />
+                                <GridViewColumn
+                                    Width="120"
+                                    DisplayMemberBinding="{Binding Size}"
+                                    Header="大小" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
                 </ui:SimpleStackPanel>
             </Border>
 
@@ -260,6 +289,7 @@
                         <DataGrid.Columns>
                             <DataGridTextColumn
                                 Width="*"
+                                MinWidth="300"
                                 Binding="{Binding Name}"
                                 Header="名称" />
                             <DataGridTextColumn

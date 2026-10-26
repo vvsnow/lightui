@@ -53,7 +53,10 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ContainerCornerRadius}"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer Padding="{TemplateBinding Padding}" Focusable="False">
+                        <ScrollViewer
+                            Padding="{TemplateBinding Padding}"
+                            Focusable="False"
+                            Template="{DynamicResource LightUiScrollViewerTemplate}">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </ScrollViewer>
                     </Border>

@@ -14,6 +14,7 @@
         <ResourceDictionary Source="/LightUi;component/styles/ListBox.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/TreeView.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/DataGrid.xaml" />
+        <ResourceDictionary Source="/LightUi;component/styles/ListView.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/ScrollBar.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/Menu.xaml" />
         <ResourceDictionary Source="/LightUi;component/styles/ToolTip.xaml" />

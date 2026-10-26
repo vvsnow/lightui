@@ -29,8 +29,6 @@
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="FocusVisualStyle" Value="{x:Null}" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type DataGrid}">
@@ -40,7 +38,13 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{DynamicResource ContainerCornerRadius}"
                         SnapsToDevicePixels="True">
-                        <ScrollViewer x:Name="DG_ScrollViewer" Focusable="False">
+                        <!--  ScrollViewer.* 附加属性不继承，必须写在真正的 ScrollViewer 上  -->
+                        <ScrollViewer
+                            x:Name="DG_ScrollViewer"
+                            CanContentScroll="{Binding Path=(ScrollViewer.CanContentScroll), RelativeSource={RelativeSource TemplatedParent}}"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto"
+                            Focusable="False">
                             <ScrollViewer.Template>
                                 <ControlTemplate TargetType="{x:Type ScrollViewer}">
                                     <Grid>
