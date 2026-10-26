@@ -7,12 +7,28 @@ namespace LightUi.Controls;
 /// <code>
 /// &lt;TreeView ui:TreeViewHelper.ItemHeight="30" ui:TreeViewHelper.Indent="16" /&gt;
 /// </code>
-/// <see cref="ItemHeightProperty"/>：每行高度；<see cref="IndentProperty"/>：每级内容缩进；
+/// <see cref="ItemHeightProperty"/>：每行高度；<see cref="ItemPaddingProperty"/>：行内容左右内边距；
+/// <see cref="IndentProperty"/>：每级内容缩进；
 /// <see cref="ToggleExpandedOnEnterProperty"/>：回车切换展开（默认开）。
 /// 行本身始终是全宽，缩进只影响内容。
 /// </summary>
 public static class TreeViewHelper
 {
+    /// <summary>
+    /// 每个 TreeViewItem 行内容的左右内边距。默认 5,0；
+    /// 箭头列内部还会给图形留 3，所以 5 + 3 = 8，与 ListBoxItem 的内容起点对齐。
+    /// </summary>
+    public static readonly DependencyProperty ItemPaddingProperty =
+        DependencyProperty.RegisterAttached(
+            "ItemPadding",
+            typeof(Thickness),
+            typeof(TreeViewHelper),
+            new FrameworkPropertyMetadata(new Thickness(5, 0, 5, 0), FrameworkPropertyMetadataOptions.Inherits));
+
+    public static Thickness GetItemPadding(DependencyObject element) => (Thickness)element.GetValue(ItemPaddingProperty);
+
+    public static void SetItemPadding(DependencyObject element, Thickness value) => element.SetValue(ItemPaddingProperty, value);
+
     /// <summary>
     /// 每行的高度（DIP）。默认 28；展开箭头的高度跟着它走。
     /// </summary>

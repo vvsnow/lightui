@@ -45,8 +45,7 @@
     <Style TargetType="{x:Type TreeViewItem}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
-        <!--  5 + 箭头列里图形居中留的 3 = 8，与 ListBoxItem 的内容起点对齐；高亮仍全宽  -->
-        <Setter Property="Padding" Value="5,0" />
+        <!--  行内容的左右内边距由 TreeViewHelper.ItemPadding 控制（见模板），高亮仍全宽  -->
         <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
@@ -66,7 +65,7 @@
                         <Border
                             x:Name="Bd"
                             Grid.Row="0"
-                            Padding="{TemplateBinding Padding}"
+                            Padding="{Binding Path=(local:TreeViewHelper.ItemPadding), RelativeSource={RelativeSource TemplatedParent}}"
                             Background="{TemplateBinding Background}"
                             CornerRadius="{DynamicResource ControlCornerRadius}"
                             SnapsToDevicePixels="True">

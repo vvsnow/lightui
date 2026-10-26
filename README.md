@@ -633,6 +633,7 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 | 项 | 说明 |
 |---|---|
 | 行高 | `ui:TreeViewHelper.ItemHeight`，默认 `28`；继承到每个 `TreeViewItem` |
+| 行内边距 | `ui:TreeViewHelper.ItemPadding`，默认 `5,0`；只影响行内容，行背景仍全宽 |
 | 缩进 | `ui:TreeViewHelper.Indent`，默认 `8`；只缩进内容，**行本身保持全宽** |
 | 展开状态 | 隐式样式默认把 `TreeViewItem.IsExpanded` 双向绑到数据项的 `IsExpanded`，不用写 `ItemContainerStyle` |
 | 回车 | 切换当前行的展开 / 收起；`ui:TreeViewHelper.ToggleExpandedOnEnter`（默认开，写 `False` 关闭），叶子不响应 |
@@ -940,6 +941,7 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 | | | `HasText` (只读 `bool`) | 控件里当前有没有内容，**模板消费**（`PART_Placeholder` 靠它收起） |
 | `ui:FlyoutService` | 任意 `ButtonBase` | `Flyout` (`FlyoutBase`) | 点击按钮弹出 Flyout / MenuFlyout |
 | `ui:TreeViewHelper` | `TreeView` | `ItemHeight` (`double`) | 每行高度（默认 `28`），继承到每个 `TreeViewItem` |
+| | | `ItemPadding` (`Thickness`) | 每行内容的左右内边距（默认 `5,0`），只影响内容、不影响行宽 |
 | | | `Indent` (`double`) | 每级内容缩进（默认 `8`），只影响内容、不影响行宽 |
 | | | `ToggleExpandedOnEnter` (`bool`) | 回车切换当前行展开状态（默认开；写 `False` 关闭） |
 | `ui:FramelessHelper` | `Window` | `IsFrameless` (`bool`) | 挂上无边框逻辑 |
