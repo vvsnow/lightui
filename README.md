@@ -2,7 +2,7 @@
 
 一个轻量的 WPF 控件库：把 WPF 自带控件统一重刷成一套现代扁平外观，再补上几个 WPF 没有的控件（Flyout / MenuFlyout / DropDownButton / ToggleSwitch / FontIcon），以及一套**不依赖 `WindowChrome`** 的无边框窗口方案。
 
-- 目标框架 `net10.0-windows`，语言 C# / XAML
+- 目标框架 `net472` / `net10.0-windows`（多目标；.NET Framework 4.7.2+ 与现代 .NET 共用同一份源码），语言 C# / XAML
 - 单程序集 `LightUi.dll`，根命名空间 `LightUi`
 - 视觉参考 [ModernWpf](https://github.com/Kinnara/ModernWpf) 0.9.6，但代码与模板全部重写
 

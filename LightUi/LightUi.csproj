@@ -1,14 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFrameworks>net472;net10.0-windows</TargetFrameworks>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <RootNamespace>LightUi</RootNamespace>
     <AssemblyName>LightUi</AssemblyName>
-    <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+    <!--  只对现代 .NET 有意义；net472 没有平台版本概念  -->
+    <SupportedOSPlatformVersion Condition="'$(TargetFramework)' == 'net10.0-windows'">7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <!--  ─────────  NuGet 打包元数据  ─────────  -->
@@ -39,6 +40,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!--  没装 VS / .NET Framework 目标包的构建机也能编 net472  -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>

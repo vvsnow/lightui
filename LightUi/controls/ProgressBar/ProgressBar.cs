@@ -241,7 +241,7 @@ public class ProgressBar : RangeBase
         }
         else
         {
-            newWidth = Math.Clamp(trackWidth / (Maximum - Minimum) * (Value - Minimum), 0, trackWidth);
+            newWidth = Math.Min(Math.Max(trackWidth / (Maximum - Minimum) * (Value - Minimum), 0), trackWidth);
         }
 
         _determinateIndicator.Width = newWidth;
