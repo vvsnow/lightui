@@ -260,12 +260,14 @@ Win11 有前者、Win10 有后者，两代都覆盖。库和 Demo 用到的 19 �
 | `PART_MinimizeButton` | `Button` | 最小化。`Command="{x:Static SystemCommands.MinimizeWindowCommand}"` |
 | `PART_MaximizeButton` | `Button` | 最大化 ↔ 还原。`WindowState=Maximized` 触发器把命令换成 `RestoreWindowCommand`、字形换成 `&#xE923;` |
 | `PART_CloseButton` | `Button` | 关闭。悬停 / 按下变红底白字 |
-| `CaptionButtons` | `StackPanel` | 右上角那一整条按钮容器，`IsFrameless=True` 时才可见 |
+| `CaptionButtons` | `StackPanel` | 右上角那一整条按钮容器，`IsFrameless=True` 时才可见；**不刷底色**，透出下面的内容层 |
 
 **触发器行为**：
 
 - `ResizeMode=NoResize` → 收起最小化与最大化；`CanMinimize` → 收起最大化。**必须由样式收起**：命中判定要求元素真的 `IsVisible=false` 才会跳过它
 - 悬停 / 按下写在模板触发器里（以模板父级即这个 Window 为对象），而不是按钮样式里 —— 因为那两个附加属性正是写在窗口上的
+
+> **按钮条没有自己的背景色** —— 它透出窗口内容层的背景。这样窗口背景与页面背景不同时（例如登录窗口内容用 `ControlBackgroundBrush` 铺底、窗口仍是 `PageBackgroundBrush`），三颗系统按钮不会出现一条与旁边主题按钮不一致的色带。
 
 ### 3.5 标题栏按钮样式
 

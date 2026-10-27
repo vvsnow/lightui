@@ -35,11 +35,15 @@
                                 <ContentPresenter />
                             </AdornerDecorator>
 
+                            <!--
+                                不刷底色：按钮条透出下面的内容层。
+                                否则窗口 Background 与页面内容 Background 不同时，
+                                三颗系统按钮下面会出现一条与主题按钮不一致的色带。
+                            -->
                             <StackPanel
                                 x:Name="CaptionButtons"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
-                                Background="{TemplateBinding Background}"
                                 Orientation="Horizontal"
                                 Visibility="Collapsed">
 
