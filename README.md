@@ -489,7 +489,8 @@ public void ShowFramelessDialog()
 | `MinHeight` | `ControlHeight` |
 | `Padding` | `ControlPaddingHorizontal`(12,0) |
 | `MaxDropDownHeight` | 下拉面板直接 `TemplateBinding` 到它 |
-| 下拉面板 | `Placement=Bottom`、`MinWidth` 绑控件实际宽、`Margin="0,4,0,0"`、圆角 `ControlCornerRadius` |
+| 下拉面板 | `Placement=Bottom`、`MinWidth` 绑控件实际宽、`VerticalOffset=2`、圆角 `ControlCornerRadius` |
+| 阴影 | `Margin` = `FlyoutShadowRoom`(12) 给阴影留空间，`Effect` = `FlyoutShadowEffect`，与 Flyout / ContextMenu 同一套；Popup 会把 Margin 算进定位，不需要额外偏移抵消 |
 | 右侧箭头 | `ChevronDownGeometry` 共用几何，`Margin="0,0,10,0"` |
 | 悬停 | 触发器底变 `ControlHoverBackgroundBrush` |
 | 聚焦 | 描边变 `AccentBrush` |

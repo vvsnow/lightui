@@ -112,16 +112,23 @@
                             IsOpen="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                             Placement="Bottom"
                             PopupAnimation="Fade"
-                            StaysOpen="False">
+                            StaysOpen="False"
+                            VerticalOffset="2">
+                            <!--
+                                Margin 用 FlyoutShadowRoom（12）给阴影留空间。
+                                Popup 会把子元素的 Margin 算进定位，内容仍对齐到目标左下角，所以不需要水平/垂直补偿。
+                                VerticalOffset=4 是下拉框与 ComboBox 之间留的 4px 间隙。
+                            -->
                             <Border
                                 x:Name="DropDownBd"
                                 MinWidth="{Binding ActualWidth, RelativeSource={RelativeSource TemplatedParent}}"
                                 MaxHeight="{TemplateBinding MaxDropDownHeight}"
-                                Margin="0,4,0,0"
+                                Margin="{DynamicResource FlyoutShadowRoom}"
                                 Background="{DynamicResource ControlBackgroundBrush}"
                                 BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="{DynamicResource ControlBorderThickness}"
-                                CornerRadius="{DynamicResource ControlCornerRadius}">
+                                CornerRadius="{DynamicResource ControlCornerRadius}"
+                                Effect="{DynamicResource FlyoutShadowEffect}">
                                 <ScrollViewer Foreground="{TemplateBinding Foreground}">
                                     <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
                                 </ScrollViewer>
