@@ -66,15 +66,15 @@ public class ThemeManager : DependencyObject
     public static Color? CurrentAccentColor =>
         ( Application.Current?.TryFindResource("AccentBrush") as SolidColorBrush )?.Color;
 
-    /// <summary>切到指定主题。</summary>
-    public static void ApplyTheme(ApplicationTheme theme)
+    /// <summary>切到指定主题。返回应用后的当前主题（主题非法或 Application 未就绪时返回原主题）。</summary>
+    public static ApplicationTheme ApplyTheme(ApplicationTheme theme)
     {
         if (!_themeSources.TryGetValue(theme, out var source))
-            return;
+            return Current.CurrentTheme;
 
         var target = Application.Current?.Resources;
         if (target is null)
-            return;
+            return Current.CurrentTheme;
 
         var palette = new ResourceDictionary { Source = source };
 
@@ -93,6 +93,24 @@ public class ThemeManager : DependencyObject
 
         Current.SetCurrentTheme(theme);
         CurrentThemeChanged?.Invoke(null, theme);
+
+        return Current.CurrentTheme;
+    }
+
+    /// <summary>在 Light / Dark 之间切换，返回切换后的当前主题。</summary>
+    public static ApplicationTheme ToggleTheme()
+    {
+        ApplicationTheme next;
+        if (Current.CurrentTheme == ApplicationTheme.Dark)
+        {
+            next = ApplicationTheme.Light;
+        }
+        else
+        {
+            next = ApplicationTheme.Dark;
+        }
+
+        return ApplyTheme(next);
     }
 
     /// <summary>

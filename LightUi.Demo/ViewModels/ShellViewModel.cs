@@ -35,10 +35,7 @@ internal class ShellViewModel : Conductor<IScreen>.Collection.OneActive
 
     public void ToggleTheme()
     {
-        ThemeManager.ApplyTheme(
-            ThemeManager.Current.CurrentTheme == ApplicationTheme.Dark
-                ? ApplicationTheme.Light
-                : ApplicationTheme.Dark);
+        ThemeManager.ToggleTheme();
     }
 
 

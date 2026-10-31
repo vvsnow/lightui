@@ -84,7 +84,8 @@ ThemeManager.ApplyTheme(ApplicationTheme.Light);
 
 | 成员 | 说明 |
 |---|---|
-| `ApplyTheme(ApplicationTheme)` | 切主题。把主题 xaml 里的每个 brush 逐个写进 `Application.Resources` **自己那一层**的键上 |
+| `ApplyTheme(ApplicationTheme)` | 切主题。把主题 xaml 里的每个 brush 逐个写进 `Application.Resources` **自己那一层**的键上；返回应用后的当前主题（主题非法或 Application 未就绪时返回原主题） |
+| `ToggleTheme()` | 在 Light / Dark 之间切换，返回切换后的当前主题 |
 | `ApplyAccentColor(Color)` | 自定义强调色。按钮 / 复选框 / 开关 / 链接 / 进度条 / 光标选中色一起变 |
 | `ResetAccentColor()` | 丢掉自定义强调色，回到主题自带的那套 |
 | `Current.AccentColor` | 当前生效的强调色（直接读资源里的 `AccentBrush`，不另存状态） |
@@ -952,7 +953,7 @@ VS Code 资源管理器风格的文件树：行高紧凑、每级**只缩进内�
 | | | `CloakUntilFirstFrame` (`bool`) | 启动不闪 |
 | | | `HoveredCaptionButton` (只读) | 鼠标停在哪颗标题栏按钮上 |
 | | | `PressedCaptionButton` (只读) | 鼠标按在哪颗标题栏按钮上 |
-| `ThemeManager` | 静态类 | `ApplyTheme` / `ApplyAccentColor` / `ResetAccentColor` | 切主题、换强调色 |
+| `ThemeManager` | 静态类 | `ApplyTheme` / `ToggleTheme` / `ApplyAccentColor` / `ResetAccentColor` | 切主题、换强调色 |
 | | | `Current.CurrentTheme` (只读 DP) | 当前主题，可绑定 |
 | | | `CurrentThemeChanged` | 切主题完成事件 |
 | `ui:FlyoutBase` | 静态成员 | `CloseCommand` | 关闭弹层的 `RoutedCommand`，给弹层内容里的按钮用 |

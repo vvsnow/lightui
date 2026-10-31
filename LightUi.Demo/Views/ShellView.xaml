@@ -29,7 +29,6 @@
             Margin="6"
             Background="Transparent"
             DisplayMemberPath="Title"
-            DockPanel.Dock="Top"
             ItemsSource="{Binding NavItems, Mode=OneWay}"
             SelectedValue="{Binding ActiveItem}"
             SelectedValuePath="ViewModel"
